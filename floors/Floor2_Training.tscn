@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://kv34a60mokl8"]
+
+[ext_resource type="PackedScene" uid="uid://bwo3kcv40y1rh" path="res://Employee.tscn" id="1_xll4e"]
+[ext_resource type="PackedScene" uid="uid://m54sd6wypa3s" path="res://StaticEmployee.tscn" id="2_utj0s"]
+[ext_resource type="PackedScene" uid="uid://dhg8caguiut4g" path="res://EmployeeConversation.tscn" id="3_5yc0u"]
+
+[node name="Floor2_Training" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 257.0
+offset_top = 183.0
+offset_right = 996.0
+offset_bottom = 320.0
+theme_override_font_sizes/font_size = 100
+text = "Floor2_Training"
+
+[node name="StaticEmployee" parent="." instance=ExtResource("2_utj0s")]
+position = Vector2(583, 645)
+
+[node name="EmployeeConversation" parent="." instance=ExtResource("3_5yc0u")]
+layout_mode = 1
+offset_left = 727.0
+offset_top = 395.0
+offset_right = 727.0
+offset_bottom = 395.0
+
+[node name="Employee" parent="." instance=ExtResource("1_xll4e")]
+position = Vector2(188, 651)

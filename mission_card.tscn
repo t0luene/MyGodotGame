@@ -1,0 +1,78 @@
+[gd_scene load_steps=2 format=3 uid="uid://bexq857dlfo6x"]
+
+[ext_resource type="Script" uid="uid://dqio8pkysjog3" path="res://MissionCard.gd" id="1_lb4c8"]
+
+[node name="MissionCard" type="Control"]
+custom_minimum_size = Vector2(400, 100)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_lb4c8")
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(700, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Title" type="Label" parent="Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Card"
+
+[node name="EmployeeSelector" type="OptionButton" parent="Panel"]
+layout_mode = 0
+offset_left = 77.0
+offset_right = 109.0
+offset_bottom = 20.0
+
+[node name="PeriodLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 290.0
+offset_top = -1.0
+offset_right = 330.0
+offset_bottom = 22.0
+
+[node name="RewardLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 298.0
+offset_top = 16.0
+offset_right = 338.0
+offset_bottom = 39.0
+
+[node name="StartButton" type="Button" parent="Panel"]
+layout_mode = 0
+offset_top = 9.0
+offset_right = 46.0
+offset_bottom = 40.0
+text = "Start"
+
+[node name="TimeLeftLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 164.0
+offset_top = 19.0
+offset_right = 261.0
+offset_bottom = 42.0
+text = "Time Left: —"
+
+[node name="CompletedLabel" type="Label" parent="Panel"]
+visible = false
+layout_mode = 0
+offset_left = 283.0
+offset_top = -1.0
+offset_right = 461.0
+offset_bottom = 41.0
+theme_override_font_sizes/font_size = 30
+text = "COMPLETED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

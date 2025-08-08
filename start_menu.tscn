@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0okp6fag70ea"]
+
+[ext_resource type="Script" uid="uid://ca6733w2df0hm" path="res://start_menu.gd" id="1_jwbto"]
+
+[node name="StartMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jwbto")
+
+[node name="NewGameButton" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "New Game"
+
+[node name="ExitButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = -544.0
+offset_top = -297.0
+offset_right = -507.0
+offset_bottom = -266.0
+text = "Exit"
+
+[connection signal="pressed" from="NewGameButton" to="." method="_on_new_game_button_pressed"]
+[connection signal="pressed" from="ExitButton" to="." method="_on_exit_button_pressed"]

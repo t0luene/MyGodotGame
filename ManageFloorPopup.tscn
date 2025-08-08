@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=3 uid="uid://gk4lks8rmy0y"]
+
+[ext_resource type="Script" uid="uid://d26ilyu4q706o" path="res://ManageFloorPopup.gd" id="1_ebayi"]
+
+[node name="ManageFloorPopup" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ebayi")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Assign Employees"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="slot_1" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="slot_2" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="slot_3" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="slot_4" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="employee_list" type="PopupMenu" parent="VBoxContainer"]
+
+[node name="Close" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Close"

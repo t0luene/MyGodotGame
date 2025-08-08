@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://0ius4e6ugvbw"]
+
+[ext_resource type="TileSet" uid="uid://dvoywuwc8py7" path="res://Floor1Inspection.tres" id="1_03h7u"]
+[ext_resource type="Script" uid="uid://dx1lsnvfxis7p" path="res://Floors.gd" id="1_ixxyp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cxpxv"]
+
+[node name="ElevatorUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ixxyp")
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = ExtResource("1_03h7u")
+format = 2
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_cxpxv")
+
+[node name="Characters" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+
+[node name="FloorNumberLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 64.0
+offset_right = 152.0
+offset_bottom = 87.0

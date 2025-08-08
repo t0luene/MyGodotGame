@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://disq3lorsktng"]
+
+[ext_resource type="Script" uid="uid://bdn5itn7x00ir" path="res://ElevatorUI.gd" id="1_57qq1"]
+
+[node name="ElevatorUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_57qq1")
+
+[node name="FloorSelector" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Floors"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="FloorSelector"]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 0
+offset_top = 51.0
+offset_right = 636.0
+offset_bottom = 456.0
+
+[node name="FloorList" type="VBoxContainer" parent="FloorSelector/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="FloorNumberLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 64.0
+offset_right = 152.0
+offset_bottom = 87.0
+
+[node name="FloorContainer" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0

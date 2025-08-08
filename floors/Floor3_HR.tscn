@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpx6keuxm0thl"]
+
+[ext_resource type="PackedScene" uid="uid://bwo3kcv40y1rh" path="res://Employee.tscn" id="1_ldnyu"]
+
+[node name="Node2D" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 257.0
+offset_top = 183.0
+offset_right = 996.0
+offset_bottom = 320.0
+theme_override_font_sizes/font_size = 100
+text = "Floor3_HR"
+
+[node name="EmployeeCard" parent="." instance=ExtResource("1_ldnyu")]
+position = Vector2(188, 651)
+
+[node name="EmployeeCard2" parent="." instance=ExtResource("1_ldnyu")]
+position = Vector2(350, 651)
+
+[node name="EmployeeCard3" parent="." instance=ExtResource("1_ldnyu")]
+position = Vector2(77, 651)

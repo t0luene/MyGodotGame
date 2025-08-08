@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://csvate8k5dvw3"]
+
+[ext_resource type="PackedScene" uid="uid://m54sd6wypa3s" path="res://StaticEmployee.tscn" id="1_5rb05"]
+[ext_resource type="Script" uid="uid://ckg5d7my5hfki" path="res://floors/Floor1_Work.gd" id="1_7mjyh"]
+[ext_resource type="PackedScene" uid="uid://dhg8caguiut4g" path="res://EmployeeConversation.tscn" id="2_cmgjn"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="4_snfut"]
+
+[node name="Floor1_Work" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_7mjyh")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 257.0
+offset_top = 183.0
+offset_right = 996.0
+offset_bottom = 320.0
+theme_override_font_sizes/font_size = 100
+text = "FLOOR 1 WORK"
+
+[node name="StaticEmployee" parent="." instance=ExtResource("1_5rb05")]
+position = Vector2(583, 645)
+
+[node name="EmployeeConversation" parent="." instance=ExtResource("2_cmgjn")]
+layout_mode = 1
+offset_left = 727.0
+offset_top = 395.0
+offset_right = 727.0
+offset_bottom = 395.0
+
+[node name="Player" parent="." instance=ExtResource("4_snfut")]
+visible = false
+position = Vector2(954, 648)
+
+[node name="PauseTimer" type="Timer" parent="."]

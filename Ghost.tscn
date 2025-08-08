@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://8ubf7ca11y7b"]
+
+[ext_resource type="Script" uid="uid://duhtmh1opmj7w" path="res://ghost.gd" id="1_k73yw"]
+[ext_resource type="Texture2D" uid="uid://s4or52hpq53t" path="res://Assets/square-xxl.png" id="2_d6xk1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k73yw"]
+
+[node name="Ghost" type="Area2D"]
+script = ExtResource("1_k73yw")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("2_d6xk1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_k73yw")
+
+[node name="DialogueLabel" type="Label" parent="."]
+visible = false
+offset_top = -40.0
+offset_right = 78.0
+offset_bottom = -17.0
+text = "empty (\"\")"

@@ -1,0 +1,245 @@
+[gd_scene load_steps=6 format=3 uid="uid://4322hlalkkpu"]
+
+[ext_resource type="Script" uid="uid://borel8b50vikl" path="res://game.gd" id="1_80nbo"]
+[ext_resource type="AudioStream" uid="uid://bvnea1o611v1w" path="res://click1.ogg" id="2_e2o6t"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_feb5d"]
+[ext_resource type="Script" uid="uid://bdn5itn7x00ir" path="res://ElevatorUI.gd" id="3_sb48q"]
+[ext_resource type="PackedScene" uid="uid://0ius4e6ugvbw" path="res://Floors.tscn" id="5_t88pq"]
+
+[node name="Game" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(1.01131, 1)
+script = ExtResource("1_80nbo")
+floor_scene = ExtResource("5_t88pq")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 471.666
+offset_top = 579.0
+offset_right = 712.666
+offset_bottom = 602.0
+text = "Welcome to Business Manager!"
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD"]
+offset_left = 530.0
+offset_top = 307.0
+offset_right = 695.0
+offset_bottom = 575.0
+
+[node name="MoneyLabel" type="Label" parent="HUD/VBoxContainer"]
+layout_mode = 2
+text = "Money: $0
+
+"
+
+[node name="TimeLabel" type="Label" parent="HUD/VBoxContainer"]
+layout_mode = 2
+text = "Time: Day 1
+
+"
+
+[node name="StatsLabel" type="Label" parent="HUD/VBoxContainer"]
+layout_mode = 2
+text = "Stats: Stress 0 / Rep 0
+
+"
+
+[node name="WorkButton" type="Button" parent="HUD/VBoxContainer"]
+layout_mode = 2
+text = "\"Work Day\""
+
+[node name="BlackOverlay" type="ColorRect" parent="HUD"]
+visible = false
+z_index = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="DayLabel" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -188.0
+offset_top = -17.0
+offset_bottom = 17.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "\"Day 1 Begins...\""
+
+[node name="DayStartSound" type="AudioStreamPlayer" parent="HUD"]
+stream = ExtResource("2_e2o6t")
+
+[node name="EmployeeList" type="VBoxContainer" parent="HUD"]
+offset_left = 13.0
+offset_top = 399.0
+offset_right = 53.0
+offset_bottom = 439.0
+
+[node name="Employee1" type="Button" parent="HUD/EmployeeList"]
+layout_mode = 2
+
+[node name="Employee2" type="Button" parent="HUD/EmployeeList"]
+layout_mode = 2
+
+[node name="Employee3" type="Button" parent="HUD/EmployeeList"]
+layout_mode = 2
+
+[node name="HiredList" type="VBoxContainer" parent="HUD"]
+offset_left = 1022.0
+offset_top = 51.0
+offset_right = 1062.0
+offset_bottom = 91.0
+
+[node name="HiredLabel" type="Label" parent="HUD"]
+offset_left = 1022.0
+offset_top = 51.0
+offset_right = 1062.0
+offset_bottom = 74.0
+
+[node name="DailyReport" type="Panel" parent="HUD"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/DailyReport"]
+layout_mode = 0
+offset_left = 482.0
+offset_top = 126.0
+offset_right = 691.0
+offset_bottom = 237.0
+
+[node name="TitleLabel" type="Label" parent="HUD/DailyReport/VBoxContainer"]
+layout_mode = 2
+text = "📝 Daily Report"
+
+[node name="BreakdownLabel" type="Label" parent="HUD/DailyReport/VBoxContainer"]
+layout_mode = 2
+text = "(We’ll fill this in using code)
+"
+
+[node name="CloseButton" type="Button" parent="HUD/DailyReport/VBoxContainer"]
+layout_mode = 2
+text = "Continue"
+
+[node name="EmployeeCapacityLabel" type="Label" parent="HUD"]
+offset_left = 1025.0
+offset_top = 32.0
+offset_right = 1065.0
+offset_bottom = 55.0
+
+[node name="MoneyLabel" type="Label" parent="HUD"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ElevatorUI" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 131.0
+offset_top = 7.0
+offset_right = 171.0
+offset_bottom = 47.0
+script = ExtResource("3_sb48q")
+
+[node name="FloorSelector" type="Button" parent="HUD/ElevatorUI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="HUD/ElevatorUI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(1, 1, 1, 0.272)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HUD/ElevatorUI"]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="FloorList" type="VBoxContainer" parent="HUD/ElevatorUI/ScrollContainer"]
+layout_mode = 2
+
+[node name="ManageEmployees" type="Button" parent="."]
+layout_mode = 0
+offset_left = 532.0
+offset_top = 5.0
+offset_right = 690.0
+offset_bottom = 36.0
+text = "Manage Employees"
+
+[node name="BuildingButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 703.0
+offset_top = 5.0
+offset_right = 775.0
+offset_bottom = 36.0
+text = "Building"
+
+[node name="OperationsButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 414.0
+offset_top = 5.0
+offset_right = 509.0
+offset_bottom = 36.0
+text = "Operations"
+
+[node name="GridButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 357.952
+offset_top = 6.0
+offset_right = 398.952
+offset_bottom = 37.0
+text = "Grid
+"
+
+[node name="Characters" type="CanvasLayer" parent="."]
+
+[node name="Player" parent="Characters" instance=ExtResource("3_feb5d")]
+position = Vector2(954, 648)
+
+[node name="Employees" type="Node2D" parent="Characters"]
+
+[node name="EmployeeSpawnPoint" type="Marker2D" parent="Characters"]
+position = Vector2(373, 648)
+
+[node name="FloorsContainer" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0001
+offset_bottom = 40.0
+
+[node name="Floor1" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
+
+[node name="Floor2" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
+
+[node name="Floor3" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
+
+[node name="Floor4" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
+
+[node name="Floor5" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
+
+[connection signal="pressed" from="HUD/VBoxContainer/WorkButton" to="." method="_on_work_button_pressed"]
+[connection signal="pressed" from="HUD/EmployeeList/Employee1" to="." method="_on_employee_1_pressed"]
+[connection signal="pressed" from="HUD/EmployeeList/Employee2" to="." method="_on_employee_2_pressed"]
+[connection signal="pressed" from="HUD/EmployeeList/Employee3" to="." method="_on_employee_3_pressed"]
+[connection signal="pressed" from="HUD/DailyReport/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="ManageEmployees" to="." method="_on_manage_employees_pressed"]
+[connection signal="pressed" from="BuildingButton" to="." method="_on_building_button_pressed"]
+[connection signal="pressed" from="OperationsButton" to="." method="_on_operations_button_pressed"]
+[connection signal="pressed" from="GridButton" to="." method="_on_grid_button_pressed"]

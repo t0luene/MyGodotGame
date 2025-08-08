@@ -1,0 +1,181 @@
+extends Node2D
+
+var total_rooms := 0
+var visited_rooms := 0
+var visited_flags := {}
+
+@onready var rps_popup = $RPSPopup
+@onready var unlock_button := $UI/UnlockButton
+@onready var progress_label := $UI/Floor1  # adjust if your label has a different name
+@onready var dialogue_panel = $UI/DialoguePanel
+@onready var dialogue_label = $UI/DialoguePanel/DialogueLabel
+@export var inspected_floor_index: int = -1
+
+signal inspection_complete(floor_index: int)
+
+
+func _ready():
+	print("Testing signal manually...")
+	print("🔍 UnlockButton signals:", unlock_button.get_signal_connection_list("pressed"))
+
+	unlock_button.visible = false
+	progress_label.text = "Rooms Inspected: 0 / 0"
+	total_rooms = 0
+	visited_flags.clear()
+
+	for room in $RoomAreas.get_children():
+		if not room.has_signal("inspected"):
+			print("❌ Skipping room, no signal: ", room.name)
+			continue
+
+		var room_id = room.room_name
+		visited_flags[room_id] = false
+		total_rooms += 1
+
+		room.inspected.connect(_on_room_inspected)
+		print("✅ Connected to room:", room_id)
+
+	progress_label.text = "Rooms Inspected: %d / %d" % [visited_rooms, total_rooms]
+
+	for interactable in $Interactables.get_children():
+		if interactable.has_signal("picked_up"):
+			interactable.picked_up.connect(_on_item_picked_up)
+		if interactable.has_signal("interacted"):
+			interactable.interacted.connect(_on_ghost_interacted)
+		if interactable.has_signal("talked_to"):
+			interactable.talked_to.connect(_on_ghost_talked_to)
+
+	print("🕵️ Checking RPSPopup:", rps_popup)
+	if rps_popup and rps_popup.has_signal("rps_result"):
+		rps_popup.connect("rps_result", Callable(self, "_on_rps_result"))
+		print("✅ rps_result signal connected")
+	else:
+		print("❌ ERROR: RPSPopup not found or missing rps_result signal")
+
+	var player = get_node_or_null("Player")
+	if not player:
+		print("Player node not found")
+		return
+
+	# Enable vertical movement for inspection mode
+	player.allow_vertical_movement = true
+
+	var camera = player.get_node_or_null("Camera2D")
+	if camera:
+		print("Camera node class:", camera.get_class())
+		camera.make_current()
+		print("Camera activated for inspection.")
+	else:
+		print("Camera2D node not found under Player")
+
+
+
+func _on_ghost_talked_to(ghost_name: String, dialogue: String) -> void:
+	dialogue_label.text = "%s says:\n%s" % [ghost_name, dialogue]
+	dialogue_panel.visible = true
+
+	if ghost_name == "Battle Ghost":
+		var ghost = $Interactables.get_node_or_null(ghost_name)
+		if ghost:
+			show_rps(ghost_name)
+	else:
+		await get_tree().create_timer(2.0).timeout
+		var ghost = $Interactables.get_node_or_null(ghost_name)
+		if ghost:
+			ghost.queue_free()
+		dialogue_panel.visible = false
+
+
+func handle_rps_result(success: bool, ghost: Node) -> void:
+	if success:
+		print("🎉 Beat the ghost!")
+		dialogue_label.text = "%s: Hmph... you win..." % ghost.name
+		dialogue_panel.visible = true
+		await get_tree().create_timer(2.0).timeout
+		ghost.queue_free()
+	else:
+		print("👻 You lost! Returning to building.")
+		dialogue_label.text = "You lost! Returning to building."
+		dialogue_panel.visible = true
+		await get_tree().create_timer(2.0).timeout
+		get_tree().change_scene_to_file("res://buildingpage.tscn")
+
+	hide_rps()
+
+
+func _on_rps_result(success: bool, ghost_name: String) -> void:
+	print("🎯 _on_rps_result called with success =", success, " ghost_name =", ghost_name)
+	if not success:
+		dialogue_label.text = "You lost! Returning to building."
+		dialogue_label.visible = true
+		await get_tree().create_timer(2.0).timeout
+		get_tree().change_scene_to_file("res://buildingpage.tscn")
+	else:
+		dialogue_label.text = "%s: Hmph... you win..." % ghost_name
+		dialogue_label.visible = true
+		await get_tree().create_timer(2.0).timeout
+		var ghost = $Interactables.get_node_or_null(ghost_name)
+		if ghost:
+			ghost.queue_free()
+
+
+func show_rps(ghost_name: String) -> void:
+	$UI.visible = false
+	rps_popup.show_rps(ghost_name)
+	rps_popup.grab_focus()
+
+
+func hide_rps() -> void:
+	rps_popup.hide()
+	$UI.visible = true
+	$UI.grab_focus()
+
+
+func _on_item_picked_up(item_name):
+	print("🪙 Collected:", item_name)
+
+
+func _on_ghost_interacted(ghost_id):
+	print("👻 Talked to ghost:", ghost_id)
+
+
+func _on_room_inspected(room_name: String):
+	if visited_flags.get(room_name, false):
+		return
+
+	visited_flags[room_name] = true
+	visited_rooms += 1
+	print("✅ Inspected:", room_name)
+
+	progress_label.text = "Rooms Inspected: %d / %d" % [visited_rooms, total_rooms]
+
+	if visited_rooms >= total_rooms:
+		print("🎉 All rooms inspected!")
+		unlock_button.visible = true
+
+
+func _on_unlock_button_pressed():
+	print("🔓 Unlock button pressed")
+
+	if inspected_floor_index == -1:
+		return
+
+	# Update floor state globally
+	var floor = Global.building_floors[inspected_floor_index]
+	floor["state"] = Global.FloorState.READY
+	if not floor.has("type") or floor["type"] == null:
+		floor["type"] = "Unassigned"
+	Global.building_floors[inspected_floor_index] = floor
+
+	print("🏁 Floor %d marked READY!" % (inspected_floor_index + 1))
+
+	# Emit signal to BuildingPage to mark inspection complete
+	inspection_complete.emit(inspected_floor_index)
+
+	# Change scene back to building page
+	get_tree().change_scene_to_file("res://BuildingPage.tscn")
+
+
+
+func _on_back_button_pressed():
+	get_tree().change_scene_to_file("res://buildingpage.tscn")

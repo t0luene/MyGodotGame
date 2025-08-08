@@ -1,0 +1,109 @@
+[gd_scene load_steps=2 format=3 uid="uid://d0xeaua0edbx6"]
+
+[ext_resource type="Script" uid="uid://w0hc3nk4u3t2" path="res://employeepage.gd" id="1_vhjd0"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vhjd0")
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 535.0
+offset_right = 55.0
+offset_bottom = 566.0
+text = "BACK"
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 437.0
+offset_top = 266.0
+offset_right = 587.0
+offset_bottom = 289.0
+text = "Manage Employees"
+
+[node name="MainLayout_OLD" type="HBoxContainer" parent="."]
+visible = false
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 59.0
+
+[node name="EmployeeScroll" type="ScrollContainer" parent="MainLayout_OLD"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EmployeeListContainer" type="HBoxContainer" parent="MainLayout_OLD/EmployeeScroll"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ActionPanel" type="VBoxContainer" parent="MainLayout_OLD"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SelectedEmployeeLabel" type="Label" parent="MainLayout_OLD/ActionPanel"]
+layout_mode = 2
+
+[node name="FireButton" type="Button" parent="MainLayout_OLD/ActionPanel"]
+layout_mode = 2
+
+[node name="InspectButton" type="Button" parent="MainLayout_OLD/ActionPanel"]
+layout_mode = 2
+
+[node name="TalkButton" type="Button" parent="MainLayout_OLD/ActionPanel"]
+layout_mode = 2
+
+[node name="ConfirmPopup" type="ConfirmationDialog" parent="."]
+
+[node name="EmployeeListContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(600, 500)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="ActionPanel" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 906.0
+offset_top = 78.0
+offset_right = 979.0
+offset_bottom = 206.0
+
+[node name="SelectedEmployeeLabel" type="Label" parent="ActionPanel"]
+layout_mode = 2
+
+[node name="InspectButton" type="Button" parent="ActionPanel"]
+layout_mode = 2
+text = "INSPECT"
+
+[node name="TalkButton" type="Button" parent="ActionPanel"]
+layout_mode = 2
+text = "TALK"
+
+[node name="FireButton" type="Button" parent="ActionPanel"]
+layout_mode = 2
+text = "FIRE"
+
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainLayout_OLD/ActionPanel/FireButton" to="." method="_on_fire_button_pressed"]
+[connection signal="pressed" from="MainLayout_OLD/ActionPanel/InspectButton" to="." method="_on_inspect_button_pressed"]
+[connection signal="confirmed" from="ConfirmPopup" to="." method="_on_confirm_popup_confirmed"]
+[connection signal="pressed" from="ActionPanel/InspectButton" to="." method="_on_inspect_button_pressed"]
+[connection signal="pressed" from="ActionPanel/TalkButton" to="." method="_on_talk_button_pressed"]
+[connection signal="pressed" from="ActionPanel/FireButton" to="." method="_on_fire_button_pressed"]

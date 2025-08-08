@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckp5km3bmnkye"]
+
+[ext_resource type="Script" uid="uid://dlc3gunips78p" path="res://HiringPage.gd" id="1_sbq3v"]
+
+[node name="HiringPage" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sbq3v")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LeftPanel" type="Panel" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EmployeeGrid" type="GridContainer" parent="HBoxContainer/LeftPanel"]
+layout_mode = 2
+grow_horizontal = 2
+grow_vertical = 2
+columns = 4
+
+[node name="RightPanel" type="Panel" parent="HBoxContainer"]
+layout_mode = 2

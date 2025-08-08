@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=3 uid="uid://y42rok8t4c4u"]
+
+[ext_resource type="PackedScene" uid="uid://bexq857dlfo6x" path="res://mission_card.tscn" id="1_gwaw2"]
+[ext_resource type="Script" uid="uid://cke3n0dj38cpw" path="res://grid_page.gd" id="1_ob6qr"]
+
+[node name="GridPage" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ob6qr")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="MissionList" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 208.0
+offset_top = 190.0
+offset_right = 248.0
+offset_bottom = 230.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MissionList"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MissionList/ScrollContainer"]
+layout_mode = 2
+
+[node name="MissionCard" parent="MissionList/ScrollContainer/VBoxContainer" instance=ExtResource("1_gwaw2")]
+layout_mode = 2
+
+[node name="MissionCard2" parent="MissionList/ScrollContainer/VBoxContainer" instance=ExtResource("1_gwaw2")]
+layout_mode = 2
+
+[node name="MissionCard3" parent="MissionList/ScrollContainer/VBoxContainer" instance=ExtResource("1_gwaw2")]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 273.0
+offset_right = 48.0
+offset_bottom = 304.0
+text = "Back"

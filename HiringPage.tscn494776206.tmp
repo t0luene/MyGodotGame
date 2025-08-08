@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckp5km3bmnkye"]
+
+[ext_resource type="Script" uid="uid://dlc3gunips78p" path="res://HiringPage.gd" id="1_sbq3v"]
+
+[node name="HiringPage" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sbq3v")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+
+[node name="DescriptionPanel" type="Panel" parent="."]
+layout_mode = 2
+offset_left = 363.0
+offset_top = 50.0
+offset_right = 863.0
+offset_bottom = 550.0
+grow_horizontal = 0
+
+[node name="NameLabel" type="Label" parent="DescriptionPanel"]
+layout_mode = 0
+offset_left = 11.0
+offset_right = 51.0
+offset_bottom = 23.0
+
+[node name="BioLabel" type="Label" parent="DescriptionPanel"]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 33.0
+offset_right = 51.0
+offset_bottom = 56.0

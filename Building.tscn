@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://00vy6vmhnulp"]
+
+[ext_resource type="Script" uid="uid://dbvr7b3m3j3oc" path="res://Building.gd" id="1_e37n3"]
+[ext_resource type="PackedScene" uid="uid://dgyiy44g50po8" path="res://BuildingTechTree.tscn" id="2_pe7t1"]
+[ext_resource type="PackedScene" uid="uid://cc6awakg6tvwj" path="res://Tower.tscn" id="3_ah46h"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_e37n3")
+
+[node name="BuildingTechTree" parent="." instance=ExtResource("2_pe7t1")]
+
+[node name="Tower" parent="." instance=ExtResource("3_ah46h")]
+layout_mode = 1
+
+[node name="TowerButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 516.0
+offset_right = 580.0
+offset_bottom = 31.0
+text = "TOWER"
+
+[node name="TechTreeButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 689.0
+offset_right = 779.0
+offset_bottom = 31.0
+text = "TECH TREE"

@@ -1,0 +1,142 @@
+[gd_scene load_steps=2 format=3 uid="uid://cc6awakg6tvwj"]
+
+[ext_resource type="Script" uid="uid://dbqv8878duaf0" path="res://buildingpage.gd" id="1_cvrs4"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cvrs4")
+inspected_floor_index = null
+metadata/_edit_lock_ = true
+
+[node name="FloorsContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 283.0
+offset_top = 93.0
+offset_right = 353.0
+offset_bottom = 194.0
+
+[node name="Floor1" type="Button" parent="FloorsContainer"]
+layout_mode = 2
+text = "FLOOR1"
+
+[node name="Floor2" type="Button" parent="FloorsContainer"]
+layout_mode = 2
+text = "FLOOR2"
+
+[node name="Floor3" type="Button" parent="FloorsContainer"]
+layout_mode = 2
+text = "FLOOR3"
+
+[node name="MoneyLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 949.0
+offset_right = 989.0
+offset_bottom = 23.0
+
+[node name="FloorOptionsPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 605.0
+offset_top = 88.0
+offset_right = 645.0
+offset_bottom = 128.0
+
+[node name="TrainingButton" type="Button" parent="FloorOptionsPanel"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 48.0
+offset_right = 115.0
+offset_bottom = 79.0
+text = "Training Floor"
+
+[node name="WorkButton" type="Button" parent="FloorOptionsPanel"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 85.0
+offset_right = 95.0
+offset_bottom = 116.0
+text = "Work Floor"
+
+[node name="FloorInfoLabel" type="Label" parent="FloorOptionsPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Floor Info Label"
+
+[node name="InspectionButton" type="Button" parent="FloorOptionsPanel"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 122.0
+offset_right = 75.0
+offset_bottom = 153.0
+text = "INSPECT"
+
+[node name="ManageButton" type="Button" parent="FloorOptionsPanel"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 157.0
+offset_right = 74.0
+offset_bottom = 188.0
+text = "Manage"
+
+[node name="FloorInspectionMode" type="Node2D" parent="."]
+visible = false
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 0
+offset_top = 532.0
+offset_right = 50.0
+offset_bottom = 563.0
+text = "BACK"
+
+[node name="ManagePanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 875.0
+offset_top = 91.0
+offset_right = 915.0
+offset_bottom = 131.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ManagePanel"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="ManagePanel/VBoxContainer"]
+layout_mode = 2
+text = "Assign Employees to Floor"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ManagePanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="slot_1" type="Button" parent="ManagePanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="slot_2" type="Button" parent="ManagePanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="slot_3" type="Button" parent="ManagePanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="slot_4" type="Button" parent="ManagePanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="EmployeeList" type="PopupMenu" parent="ManagePanel/VBoxContainer"]
+auto_translate_mode = 1
+
+[node name="CloseManageButton" type="Button" parent="ManagePanel/VBoxContainer"]
+layout_mode = 2
+text = "Close"
+
+[node name="Label" type="Label" parent="ManagePanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Choose an employee:"
+
+[connection signal="pressed" from="FloorOptionsPanel/TrainingButton" to="." method="_on_training_button_pressed"]
+[connection signal="pressed" from="FloorOptionsPanel/WorkButton" to="." method="_on_work_button_pressed"]
+[connection signal="pressed" from="FloorOptionsPanel/InspectionButton" to="." method="_on_inspection_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

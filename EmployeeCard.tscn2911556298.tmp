@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://cj63sufyi1p2v"]
+
+[ext_resource type="Script" uid="uid://cfave25vs6680" path="res://EmployeeCard.gd" id="1_6tefg"]
+[ext_resource type="SpriteFrames" uid="uid://ukx5kd5expkk" path="res://Employee.tres" id="1_dtit4"]
+
+[node name="Control" type="Control"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_6tefg")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+z_index = 1
+texture_filter = 3
+scale = Vector2(4, 4)
+sprite_frames = ExtResource("1_dtit4")
+animation = &"avatar"
+frame_progress = 0.692437
+
+[node name="HoverLabel" type="Label" parent="AnimatedSprite2D"]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Border" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -41.0
+offset_top = 1.0
+offset_right = -1.0
+offset_bottom = 41.0
