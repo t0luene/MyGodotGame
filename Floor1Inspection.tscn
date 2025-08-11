@@ -85,13 +85,6 @@ offset_right = 317.0
 offset_bottom = 469.0
 text = "Unlock!"
 
-[node name="BackButton" type="Button" parent="."]
-offset_left = 204.0
-offset_top = -195.0
-offset_right = 254.0
-offset_bottom = -164.0
-text = "BACK"
-
 [node name="Interactables" type="Node2D" parent="."]
 
 [node name="Dumb Ghost" parent="Interactables" instance=ExtResource("7_ugq2x")]
@@ -136,4 +129,3 @@ scale = Vector2(0.5, 0.5)
 enabled = false
 
 [connection signal="pressed" from="UI/UnlockButton" to="." method="_on_unlock_button_pressed"]
-[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

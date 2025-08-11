@@ -13,16 +13,21 @@ func _ready():
 
 func set_employee_data(data: Dictionary):
 	emp_id = data.get("id", -1)
-
+	print("Setting employee card for:", data.get("name", "Unknown"))
+	
 	if name_label:
 		name_label.text = data.get("name", "Unknown")
-		print("[EmployeeCard] Setting name_label.text to:", name_label.text)
-
+		print("Name label updated to:", name_label.text)
+		
 	if avatar:
 		var tex = data.get("avatar", null)
 		if tex is Texture2D:
 			avatar.texture = tex
-			print("[EmployeeCard] Setting avatar.texture to:", tex)
+			print("Avatar texture set to:", tex)
+			if avatar.texture:
+				print("[EmployeeCard] Avatar texture size:", avatar.texture.get_size())
+			else:
+				print("[EmployeeCard] Avatar texture is null!")
 
 func _pressed():
 	print("[EmployeeCard] Button pressed for emp_id:", emp_id)

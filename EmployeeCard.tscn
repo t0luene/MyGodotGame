@@ -1,14 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://cj63sufyi1p2v"]
+[gd_scene load_steps=2 format=3 uid="uid://cj63sufyi1p2v"]
 
-[ext_resource type="Script" uid="uid://cfave25vs6680" path="res://EmployeeCard.gd" id="1_6tefg"]
-[ext_resource type="Texture2D" uid="uid://i6d76tdj1r8n" path="res://Assets/Avatars/emp4.png" id="2_6tefg"]
+[ext_resource type="Texture2D" uid="uid://dhdjq06j40ydj" path="res://Assets/square-xxs.png" id="2_6tefg"]
 
 [node name="EmployeeCard" type="Button"]
 custom_minimum_size = Vector2(300, 100)
 offset_right = 300.0
 offset_bottom = 100.0
 size_flags_horizontal = 3
-script = ExtResource("1_6tefg")
 
 [node name="Avatar" type="TextureRect" parent="."]
 layout_mode = 0
@@ -20,8 +18,32 @@ texture = ExtResource("2_6tefg")
 
 [node name="NameLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 181.0
-offset_top = 38.0
-offset_right = 221.0
-offset_bottom = 61.0
-text = "Name"
+offset_left = 125.0
+offset_top = 3.0
+offset_right = 172.0
+offset_bottom = 26.0
+text = "Name: Bob Meow"
+
+[node name="RoleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 125.0
+offset_top = 27.0
+offset_right = 172.0
+offset_bottom = 50.0
+text = "Role: Engineer"
+
+[node name="ProficiencyLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 125.0
+offset_top = 48.0
+offset_right = 172.0
+offset_bottom = 71.0
+text = "Proficiency: B-"
+
+[node name="CostLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 125.0
+offset_top = 71.0
+offset_right = 172.0
+offset_bottom = 94.0
+text = "Cost: 🐟55"

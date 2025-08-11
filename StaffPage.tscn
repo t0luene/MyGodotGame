@@ -12,50 +12,79 @@ grow_vertical = 2
 script = ExtResource("1_07qji")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
-custom_minimum_size = Vector2(350, 600)
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(350, 400)
+layout_mode = 0
+offset_left = 30.0
+offset_top = 50.0
+offset_right = 380.0
+offset_bottom = 678.0
 
 [node name="CardsContainer" type="VBoxContainer" parent="ScrollContainer"]
 layout_mode = 2
 
 [node name="DescriptionPanel" type="Panel" parent="."]
-offset_left = 363.0
-offset_top = 50.0
-offset_right = 863.0
-offset_bottom = 550.0
-grow_horizontal = 0
+layout_mode = 0
+offset_left = 408.0
+offset_top = 84.0
+offset_right = 958.0
+offset_bottom = 684.0
 
 [node name="NameLabel" type="Label" parent="DescriptionPanel"]
 layout_mode = 0
 offset_left = 11.0
-offset_right = 51.0
-offset_bottom = 23.0
+offset_top = 8.0
+offset_right = 58.0
+offset_bottom = 31.0
+text = "NAME"
+
+[node name="FloorLabel" type="Label" parent="DescriptionPanel"]
+layout_mode = 0
+offset_left = 216.0
+offset_top = 8.0
+offset_right = 288.0
+offset_bottom = 31.0
+text = "Floor 100"
 
 [node name="BioLabel" type="Label" parent="DescriptionPanel"]
+custom_minimum_size = Vector2(525, 0)
 layout_mode = 0
 offset_left = 11.0
-offset_top = 33.0
-offset_right = 51.0
-offset_bottom = 56.0
+offset_top = 41.0
+offset_right = 536.0
+offset_bottom = 376.0
+text = "Bio:
+Whiskers is a curious and playful feline with a knack for getting into mischief. Known for chasing laser pointers and napping in sunbeams, this clever kitty loves cuddles and has a special talent for finding the coziest spots in the house. When not busy knocking things off tables, Whiskers enjoys birdwatching from the window and purring contentedly during quiet evenings.
 
-[node name="AccomplishmentsLabel" type="Label" parent="DescriptionPanel"]
-layout_mode = 2
-offset_left = 238.0
-offset_top = -19.0
-offset_right = 638.0
-offset_bottom = 4.0
+Skills:
+
+Expert napper
+Laser pointer chaser
+Master of stealthy pounces"
+autowrap_mode = 3
 
 [node name="HobbiesLabel" type="Label" parent="DescriptionPanel"]
 layout_mode = 2
-offset_left = 238.0
-offset_top = 8.0
-offset_right = 638.0
-offset_bottom = 31.0
+offset_left = 12.0
+offset_top = 405.0
+offset_right = 412.0
+offset_bottom = 532.0
+text = "Hobbies:
 
-[node name="CurrentWorkLabel" type="Label" parent="DescriptionPanel"]
-layout_mode = 2
-offset_left = 238.0
-offset_top = 62.0
-offset_right = 638.0
-offset_bottom = 85.0
+Birdwatching
+Climbing curtains
+Demanding attention at 3 AM"
+
+[node name="FireButton" type="Button" parent="DescriptionPanel"]
+layout_mode = 0
+offset_left = 101.0
+offset_top = -38.0
+offset_right = 139.0
+offset_bottom = -7.0
+text = "Fire"
+
+[node name="PromoteButton" type="Button" parent="DescriptionPanel"]
+layout_mode = 0
+offset_top = -38.0
+offset_right = 76.0
+offset_bottom = -7.0
+text = "Promote"

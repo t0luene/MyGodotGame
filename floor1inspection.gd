@@ -69,7 +69,6 @@ func _ready():
 		print("Camera2D node not found under Player")
 
 
-
 func _on_ghost_talked_to(ghost_name: String, dialogue: String) -> void:
 	dialogue_label.text = "%s says:\n%s" % [ghost_name, dialogue]
 	dialogue_panel.visible = true
@@ -99,7 +98,6 @@ func handle_rps_result(success: bool, ghost: Node) -> void:
 		dialogue_panel.visible = true
 		await get_tree().create_timer(2.0).timeout
 		get_tree().change_scene_to_file("res://buildingpage.tscn")
-
 	hide_rps()
 
 
@@ -124,20 +122,16 @@ func show_rps(ghost_name: String) -> void:
 	rps_popup.show_rps(ghost_name)
 	rps_popup.grab_focus()
 
-
 func hide_rps() -> void:
 	rps_popup.hide()
 	$UI.visible = true
 	$UI.grab_focus()
 
-
 func _on_item_picked_up(item_name):
 	print("🪙 Collected:", item_name)
 
-
 func _on_ghost_interacted(ghost_id):
 	print("👻 Talked to ghost:", ghost_id)
-
 
 func _on_room_inspected(room_name: String):
 	if visited_flags.get(room_name, false):
@@ -146,9 +140,7 @@ func _on_room_inspected(room_name: String):
 	visited_flags[room_name] = true
 	visited_rooms += 1
 	print("✅ Inspected:", room_name)
-
 	progress_label.text = "Rooms Inspected: %d / %d" % [visited_rooms, total_rooms]
-
 	if visited_rooms >= total_rooms:
 		print("🎉 All rooms inspected!")
 		unlock_button.visible = true
@@ -159,8 +151,6 @@ func _on_unlock_button_pressed():
 
 	if inspected_floor_index == -1:
 		return
-
-	# Update floor state globally
 	var floor = Global.building_floors[inspected_floor_index]
 	floor["state"] = Global.FloorState.READY
 	if not floor.has("type") or floor["type"] == null:
@@ -168,14 +158,8 @@ func _on_unlock_button_pressed():
 	Global.building_floors[inspected_floor_index] = floor
 
 	print("🏁 Floor %d marked READY!" % (inspected_floor_index + 1))
-
-	# Emit signal to BuildingPage to mark inspection complete
 	inspection_complete.emit(inspected_floor_index)
-
-	# Change scene back to building page
+	# Remove this scene from the tree before switching
+	queue_free()
+	# Go back to building page
 	get_tree().change_scene_to_file("res://BuildingPage.tscn")
-
-
-
-func _on_back_button_pressed():
-	get_tree().change_scene_to_file("res://buildingpage.tscn")

@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://cjx1kiverlqjp"]
+
+[ext_resource type="Texture2D" uid="uid://dhdjq06j40ydj" path="res://Assets/square-xxs.png" id="1_0pkqi"]
+
+[node name="CommentItem" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -498.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ReactionButton" type="Button" parent="."]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+text = "👍"
+
+[node name="Avatar" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("1_0pkqi")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="Panel" parent="."]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+offset_right = 900.0
+offset_bottom = 23.0
+text = "Name"
+
+[node name="CommentLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+offset_top = 27.0
+offset_right = 900.0
+offset_bottom = 76.0
+text = "Blahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+autowrap_mode = 3

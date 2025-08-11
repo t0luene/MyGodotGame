@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://dep16q1gf6g8b"]
+
+[ext_resource type="Script" uid="uid://dtmwtrh78ehd2" path="res://GridPage.gd" id="1_dcgkf"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dcgkf")
+
+[node name="InfoButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 233.0
+offset_right = 297.0
+offset_bottom = 31.0
+text = "INFO"
+
+[node name="MissionsButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 453.0
+offset_right = 543.0
+offset_bottom = 31.0
+text = "MISSIONS"
+
+[node name="TechTreeButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 737.0
+offset_right = 827.0
+offset_bottom = 31.0
+text = "TECH TREE"
+
+[node name="ContentContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 35.0
+offset_top = 33.0
+offset_right = 1115.0
+offset_bottom = 613.0
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 0
+offset_right = 45.0
+offset_bottom = 31.0
+text = "Back"

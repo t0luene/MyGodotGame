@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=3 uid="uid://bdgff0hfyq8j1"]
+
+[ext_resource type="Texture2D" uid="uid://bgmqvjh1bju6" path="res://Assets/DailyNewspaper.png" id="1_o10wl"]
+
+[node name="DailyNewspaper" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 377.0
+offset_top = 25.0
+offset_right = 1379.0
+offset_bottom = 1319.0
+scale = Vector2(0.45, 0.45)
+mouse_filter = 2
+texture = ExtResource("1_o10wl")
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 367.0
+offset_right = 407.0
+offset_bottom = 40.0
+
+[node name="Tier" type="Label" parent="Control"]
+visible = false
+layout_mode = 0
+offset_left = 36.0
+offset_top = 188.0
+offset_right = 76.0
+offset_bottom = 211.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Tier SSSSSS+"
+
+[node name="Profit" type="Label" parent="Control"]
+visible = false
+layout_mode = 0
+offset_left = 36.0
+offset_top = 214.0
+offset_right = 137.0
+offset_bottom = 237.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Performance"
+
+[node name="Info" type="Label" parent="Control"]
+visible = false
+layout_mode = 0
+offset_left = 272.0
+offset_top = 188.0
+offset_right = 373.0
+offset_bottom = 236.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 10
+text = "Info:  Missions reset 
+2 Missions returned
+New applicants"
+
+[node name="ContinueButton" type="Button" parent="Control"]
+visible = false
+layout_mode = 0
+offset_left = 12.0
+offset_top = 603.0
+offset_right = 103.0
+offset_bottom = 634.0
+text = "CONTINUE"

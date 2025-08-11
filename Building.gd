@@ -1,27 +1,35 @@
 extends Control
 
-@onready var tower_page = $Tower
-@onready var tech_tree_page = $BuildingTechTree
 
 func _ready():
-	print("TowerButton:", $TowerButton)
-	print("TechTreeButton:", $TechTreeButton)
+	$TowerButton.pressed.connect(_on_tower_button_pressed)
+	$TechTreeButton.pressed.connect(_on_tech_tree_button_pressed)
+	$ManagementButton.pressed.connect(_on_management_button_pressed)
+	$InspectionButton.pressed.connect(_on_inspection_button_presssed)
+	$BackButton.pressed.connect(_on_back_button_presssed)
 
-	$TowerButton.pressed.connect(Callable(self, "_on_tower_button_pressed"))
-	$TechTreeButton.pressed.connect(Callable(self, "_on_tech_tree_button_pressed"))
-
-	show_tower_page()
+	# Load Tower page by default
+	_on_tower_button_pressed()
 
 func _on_tower_button_pressed():
-	show_tower_page()
+	load_subpage("res://Tower.tscn")
 
 func _on_tech_tree_button_pressed():
-	show_tech_tree_page()
+	load_subpage("res://BuildingTechTree.tscn")
 
-func show_tower_page():
-	tower_page.visible = true
-	tech_tree_page.visible = false
+func _on_management_button_pressed():
+	load_subpage("res://BuildingManagement.tscn")
 
-func show_tech_tree_page():
-	tower_page.visible = false
-	tech_tree_page.visible = true
+func _on_inspection_button_presssed():
+	load_subpage("res://Floor1Inspection.tscn")
+
+func _on_back_button_presssed():
+	get_tree().change_scene_to_file("res://Game.tscn")
+		
+	
+func load_subpage(scene_path: String):
+	var scene = load(scene_path)
+	if scene:
+		var instance = scene.instantiate()
+		Global.clear_children($ContentContainer)
+		$ContentContainer.add_child(instance)

@@ -1,28 +1,21 @@
 extends Control  # Or Node2D depending on your root
 
 @onready var day_label = $HUD/DayLabel
-@onready var day_start_sound = $HUD/DayStartSound
-
 @onready var building_page_scene = preload("res://Building.tscn")
 @onready var operations_page_scene = preload("res://OperationsPage.tscn")
-
-@onready var grid_page_scene = preload("res://grid_page.tscn")
-
+@onready var grid_page_scene = preload("res://GridPage.tscn")
 @onready var black_overlay = $HUD/BlackOverlay
 @onready var work_button = $HUD/VBoxContainer/WorkButton
-
 @onready var employee_container = $Characters/Employees
-
-var employee_scene := preload("res://Employee.tscn")
 @onready var employee_spawn_point = $Characters/EmployeeSpawnPoint
-
 @export var floor_scene: PackedScene
 @onready var floors_container = $FloorsContainer
 @onready var scroll_container = $HUD/ElevatorUI/ScrollContainer
-
 @onready var elevator_ui = $HUD/ElevatorUI
 @onready var grid_button = $GridButton
+@onready var daily_newspaper_scene = preload("res://DailyNewspaper.tscn") # adjust path if needed
 
+var employee_scene := preload("res://Employee.tscn")
 
 func get_random_spawn_position() -> Vector2:
 	var base_pos = employee_spawn_point.global_position
@@ -48,16 +41,14 @@ func hide_busy_employees():
 			emp.visible = true
 
 
-
 func _on_grid_button_pressed() -> void:
-	print("🟩 Grid button pressed – switching to grid_page.tscn")
+	print("🟩 Grid button pressed – switching to GridPage.tscn")
 
-	var scene_path = "res://grid_page.tscn"
+	var scene_path = "res://GridPage.tscn"
 	var error = get_tree().change_scene_to_file(scene_path)
 
 	if error != OK:
 		push_error("❌ Failed to load scene: " + scene_path)
-
 
 func _on_building_button_pressed():
 	get_tree().change_scene_to_packed(building_page_scene)
@@ -67,17 +58,13 @@ func _on_operations_button_pressed():
 
 
 # Game variables
-var employee_page_scene = preload("res://EmployeePage.tscn")
-
+var employee_page_scene = preload("res://EmployeeManagement.tscn")
 var stress = 0
 var reputation = 0
-
 var employees = []
 var all_roles = ["Engineer", "Artist", "Designer", "Support"]
-
 var last_day_base_income := 0
 var last_day_employee_income := 0
-
 var employee_capacity = 3  # Starting capacity
 
 func update_hud():
@@ -94,7 +81,6 @@ func _on_floor_selected(floor_index: int) -> void:
 
 func _ready():
 	print("MainPage ready!")
-
 	# Connect floor_selected signal from ElevatorUI to this scene's handler
 	$ElevatorUI.floor_selected.connect(Callable(self, "_on_floor_selected"))
 
@@ -226,9 +212,6 @@ func update_employee_list_ui():
 		$HUD/HiredList.add_child(label)
 
 func update_ui():
-	
-	
-	
 	$HUD/EmployeeCapacityLabel.text = "Employees: %d / %d" % [Global.hired_employees.size(), employee_capacity]
 	$HUD/MoneyLabel.text = "Money: $" + str(Global.money)
 	$HUD/DayLabel.text = "Day: " + str(Global.day)
@@ -237,45 +220,74 @@ func update_ui():
 	$HUD/VBoxContainer/StatsLabel.text = "Stats: Stress " + str(Global.stress) + " / Rep " + str(Global.reputation)
 	$HUD/EmployeeCapacityLabel.text = "Employees: %d / %d" % [Global.hired_employees.size(), Global.employee_capacity]
 
+var current_newspaper = null
 
 func some_update_function():
 	Global.money += 100
 
+# Daily Report UI
+func show_daily_report():
+	print("show_daily_report() called")
 
-func _on_work_button_pressed():
-	fade_to_black_and_process_day()
+	var report_title = "S Tier Work Day"  # You can make this dynamic later
+	var total_profit = last_day_base_income + last_day_employee_income
+	var breakdown_text = "Total Profit: $" + str(total_profit) + "\n"
+	breakdown_text += "- Base Operations: $" + str(last_day_base_income) + "\n"
+	breakdown_text += "- Employee Impact: $" + str(last_day_employee_income)
+	$HUD/DailyReport/VBoxContainer/TitleLabel.text = report_title
+	$HUD/DailyReport/VBoxContainer/BreakdownLabel.text = breakdown_text
+	$HUD/DailyReport.visible = true
+	print("DailyReport visible set to true")
+
+
+func _on_close_button_pressed() -> void:
+	# Close button is in main scene, closes DailyReport and newspaper if open
+	$HUD/DailyReport.visible = false
+	if current_newspaper != null:
+		current_newspaper.queue_free()
+		current_newspaper = null
+
+
+func _on_work_button_pressed() -> void:
+	await fade_to_black()  # screen goes black
+	show_daily_newspaper() # newspaper appears *while* black overlay still visible
+	black_overlay.visible = false  # immediately hide black so newspaper (and close button) are visible right now
+	await fade_to_day_start()  # now do day label + sound fade-in, without blocking newspaper
+	next_day()  # advance the day
 	generate_daily_employees()
 
+func show_daily_newspaper() -> void:
+	if current_newspaper != null:
+		current_newspaper.queue_free()
 
+	current_newspaper = daily_newspaper_scene.instantiate()
+	$HUD.add_child(current_newspaper)  # add to HUD, not root
+	current_newspaper.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# Move newspaper to top inside HUD to appear above black overlay and DailyReport
+	$HUD.move_child(current_newspaper, $HUD.get_child_count() - 1)
+	print("Children order inside HUD:")
+	for i in range($HUD.get_child_count()):
+		print(i, ":", $HUD.get_child(i).name)
 
-func fade_to_black_and_process_day():
-
+func fade_to_black() -> void:
 	black_overlay.visible = true
 	day_label.visible = false
 	await get_tree().create_timer(1.0).timeout
+	# Now the screen is black and ready
 
-	# Advance game state by calling next_day()
-	next_day()
-
-	# Hide black overlay after updating UI and showing report
+func fade_to_day_start() -> void:
 	black_overlay.visible = false
-
-	# Show the "Day X Begins..." message
 	day_label.text = "Day " + str(Global.day) + " Begins..."
 	day_label.visible = true
-	
-	day_start_sound.play()  # 🔊 Play the sound here
-
-
-	await get_tree().create_timer(1.5).timeout  # hold the text for a moment
+	await get_tree().process_frame  # wait for a frame, same as 0.0 timeout
 	day_label.visible = false
 	black_overlay.visible = false
-
 
 #Employees
 
 	#workday logic
 func next_day():
+	print("next_day() called from:", get_stack())
 	Global.day += 1
 	Global.should_reset_missions = true
 	print("📅 Day advanced to: ", Global.day)
@@ -315,27 +327,9 @@ func next_day():
 	# ✅ Final updates
 	Global.reset_all_missions()
 	update_ui()
-	show_daily_report()
 
-
-	#Daily Report
-func show_daily_report():
-	print("show_daily_report() called")  # Debug print
-
-	var report_title = "S Tier Work Day"  # You can make this dynamic later
-	var total_profit = last_day_base_income + last_day_employee_income
-	var breakdown_text = "Total Profit: $" + str(total_profit) + "\n"
-	breakdown_text += "- Base Operations: $" + str(last_day_base_income) + "\n"
-	breakdown_text += "- Employee Impact: $" + str(last_day_employee_income)
-
-	$HUD/DailyReport/VBoxContainer/TitleLabel.text = report_title
-	$HUD/DailyReport/VBoxContainer/BreakdownLabel.text = breakdown_text
-	$HUD/DailyReport.visible = true
-	
-	print("DailyReport visible set to true")
-
-func _on_close_button_pressed() -> void:
-	$HUD/DailyReport.visible = false
+	if Global.day > 1:
+		show_daily_report()
 
 
 	#income logic
@@ -359,7 +353,6 @@ func generate_daily_employees():
 		var name = generate_random_name()
 		var cost = randi() % 151 + 100  # $100–250
 		var boost = randi() % 16 + 5    # $5–20/day
-
 		var emp_data = {
 			"id": i + 1,
 			"name": name,
@@ -369,9 +362,7 @@ func generate_daily_employees():
 			"is_busy": false,
 			"avatar_frames": default_avatar_frames  # 🎨 add avatar!
 		}
-
 		Global.hire_candidates.append(emp_data)
-
 	update_employee_buttons()
 
 	
@@ -391,7 +382,6 @@ func update_employee_buttons():
 	for i in range(Global.hire_candidates.size()):
 		var emp = Global.hire_candidates[i]
 		var btn = $HUD/EmployeeList.get_child(i)
-		
 		if emp != null:
 			btn.text = "%s – %s\n💵 $%d – Productivity: %s" % [
 				emp.name, emp.role, emp.cost, get_productivity_label(emp.boost)
@@ -401,48 +391,39 @@ func update_employee_buttons():
 			btn.text = "✅ Already Hired"
 			btn.disabled = true
 
-
 	#Employee buttons
 func _on_employee_1_pressed() -> void:
 	print("Button 1 clicked!")
 	hire_employee(0)
 	pass # Replace with function body.
 
-
 func _on_employee_2_pressed() -> void:
 	print("Button 1 clicked!")
 	hire_employee(1)
 	pass # Replace with function body.
-
 
 func _on_employee_3_pressed() -> void:
 	print("Button 1 clicked!")
 	hire_employee(2)
 	pass # Replace with function body.
 
-
 func hire_employee(index):
 	if Global.hired_employees.size() >= Global.employee_capacity:
 		$HUD/EmployeeList.get_child(index).text = "❌ Capacity reached!"
 		return
-
 	var emp = Global.hire_candidates[index]
 	if emp == null:
 		return
-
 	if Global.money >= emp.cost:
 		Global.money -= emp.cost
 		Global.hired_employees.append(emp)
 		Global.hire_candidates[index] = null  # Mark as hired
-
 		var btn = $HUD/EmployeeList.get_child(index)
 		btn.text = "✅ Hired: %s" % emp.name
 		btn.disabled = true
-
 		var hired_label = Label.new()
 		hired_label.text = "✅ %s – %s (+$%d/day)" % [emp.name, emp.role, emp.boost]
 		$HUD/HiredList.add_child(hired_label)
-
 		update_hired_employees_ui()
 		update_ui()
 		spawn_employees()
@@ -457,32 +438,26 @@ func clear_children(node):
 func update_hired_employees_ui():
 	clear_children($HUD/HiredList)
 	for i in range(Global.hired_employees.size()):
-		var emp = Global.hired_employees[i]
-		
-		var hbox = HBoxContainer.new()
-		
+		var emp = Global.hired_employees[i]	
+		var hbox = HBoxContainer.new()	
 		var label = Label.new()
 		label.text = "%s – %s (+$%d/day)" % [emp.name, emp.role, emp.boost]
-		hbox.add_child(label)
-		
+		hbox.add_child(label)	
 		var fire_button = Button.new()
 		fire_button.text = "Fire"
 		fire_button.connect("pressed", Callable(self, "_on_fire_employee_pressed").bind(i))
 		hbox.add_child(fire_button)
-		
 		$HUD/HiredList.add_child(hbox)
 
 func _on_fire_employee_pressed(index):
 	var emp = Global.hired_employees[index]
 	Global.hired_employees.remove_at(index)
 	print("Fired: %s" % emp.name)
-	
 	update_hired_employees_ui()
 	update_ui()
 
 func _on_manage_employees_pressed() -> void:
 	get_tree().change_scene_to_packed(employee_page_scene)
-
 
 var target_floor_index = 0
 
@@ -528,12 +503,6 @@ func switch_to_floor(floor_index: int) -> void:
 	else:
 		push_error("❌ Floor node not found: " + floor_name)
 
-	# Optional: print debug list of floor names
-	# Uncomment if you need it
-	# for f in floors_container.get_children():
-	#     print("Floor in container:", f.name)
-
-
 
 func populate_floor_list():
 	var floor_list = $HUD/ElevatorUI/ScrollContainer/FloorList
@@ -548,7 +517,6 @@ func populate_floor_list():
 		floor_list.add_child(btn)
 		print("Game.gd: Created button for Floor %d" % (i + 1))
 
-
 	
 func _on_floor_selector_pressed():
 	var scroll = $HUD/ElevatorUI/ScrollContainer
@@ -556,7 +524,6 @@ func _on_floor_selector_pressed():
 		scroll.visible = !scroll.visible
 	else:
 		print("ScrollContainer node not found!")
-		
 		
 		
 func _on_static_employee_conversation_started(data: Dictionary) -> void:

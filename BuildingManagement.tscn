@@ -1,0 +1,108 @@
+[gd_scene load_steps=4 format=3 uid="uid://bdnusifnstyiq"]
+
+[ext_resource type="Script" uid="uid://dd8dbghv8tlis" path="res://BuildingManagement.gd" id="1_svglq"]
+[ext_resource type="Texture2D" uid="uid://s4or52hpq53t" path="res://Assets/square-xxl.png" id="2_g8jmf"]
+[ext_resource type="Texture2D" uid="uid://dhdjq06j40ydj" path="res://Assets/square-xxs.png" id="2_gfkr4"]
+
+[node name="BuildingManagement" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_svglq")
+
+[node name="Label" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 534.0
+offset_top = 335.0
+offset_right = 730.0
+offset_bottom = 358.0
+text = "BUILDING MANAGEMENT"
+
+[node name="ManagePanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -72.0
+offset_bottom = -148.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftPanel" type="VBoxContainer" parent="ManagePanel"]
+layout_mode = 2
+offset_right = 400.0
+offset_bottom = 635.0
+
+[node name="FloorDropdown" type="OptionButton" parent="ManagePanel/LeftPanel"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="FloorVisual" type="TextureRect" parent="ManagePanel/LeftPanel"]
+layout_mode = 2
+texture = ExtResource("2_g8jmf")
+
+[node name="FloorInfo" type="Label" parent="ManagePanel/LeftPanel"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+text = "\"This floor is dedicated to maximizing productivity and skill development. Equipped with state-of-the-art training rooms and comfortable workspaces, employees assigned here can focus on enhancing their abilities and completing important tasks efficiently. The atmosphere fosters collaboration and innovation, making it an essential part of the tower’s daily operations.\""
+autowrap_mode = 3
+
+[node name="RightPanel" type="VBoxContainer" parent="ManagePanel"]
+layout_mode = 2
+offset_left = 450.0
+offset_right = 850.0
+offset_bottom = 635.0
+
+[node name="Label" type="Label" parent="ManagePanel/RightPanel"]
+layout_mode = 2
+text = "Manage Floor X"
+
+[node name="PowerBar" type="TextureProgressBar" parent="ManagePanel/RightPanel"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+max_value = 6.0
+texture_progress = ExtResource("2_gfkr4")
+
+[node name="EmployeeSlotsGrid" type="GridContainer" parent="ManagePanel/RightPanel"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+columns = 3
+
+[node name="slot_1" type="Button" parent="ManagePanel/RightPanel/EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="slot_2" type="Button" parent="ManagePanel/RightPanel/EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="slot_3" type="Button" parent="ManagePanel/RightPanel/EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="slot_4" type="Button" parent="ManagePanel/RightPanel/EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="slot_5" type="Button" parent="ManagePanel/RightPanel/EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="slot_6" type="Button" parent="ManagePanel/RightPanel/EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+custom_minimum_size = Vector2(350, 300)
+layout_mode = 0
+offset_left = 453.0
+offset_top = 307.0
+offset_right = 803.0
+offset_bottom = 607.0
+
+[node name="CardsContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2

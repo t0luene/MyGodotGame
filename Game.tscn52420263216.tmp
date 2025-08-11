@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://4322hlalkkpu"]
 
 [ext_resource type="Script" uid="uid://borel8b50vikl" path="res://game.gd" id="1_80nbo"]
+[ext_resource type="AudioStream" uid="uid://bvnea1o611v1w" path="res://Assets/Audio/Sounds/click1.ogg" id="2_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_feb5d"]
 [ext_resource type="PackedScene" uid="uid://dhg8caguiut4g" path="res://EmployeeConversation.tscn" id="4_r0x5m"]
 [ext_resource type="PackedScene" uid="uid://disq3lorsktng" path="res://ElevatorUI.tscn" id="5_r0x5m"]
 [ext_resource type="PackedScene" uid="uid://0ius4e6ugvbw" path="res://Floors.tscn" id="5_t88pq"]
-[ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="6_r0x5m"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -18,18 +18,12 @@ scale = Vector2(1.01131, 1)
 script = ExtResource("1_80nbo")
 floor_scene = ExtResource("5_t88pq")
 
-[node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 0
-offset_right = 1152.0
-offset_bottom = 648.0
-texture = ExtResource("6_r0x5m")
-
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
 offset_left = 471.666
-offset_top = 45.0
+offset_top = 579.0
 offset_right = 712.666
-offset_bottom = 68.0
+offset_bottom = 602.0
 text = "Welcome to Business Manager!"
 
 [node name="HUD" type="CanvasLayer" parent="."]
@@ -88,6 +82,9 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 24
 text = "\"Day 1 Begins...\""
 
+[node name="DayStartSound" type="AudioStreamPlayer" parent="HUD"]
+stream = ExtResource("2_e2o6t")
+
 [node name="EmployeeList" type="VBoxContainer" parent="HUD"]
 offset_left = 13.0
 offset_top = 399.0
@@ -125,10 +122,10 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HUD/DailyReport"]
 layout_mode = 0
-offset_left = 374.0
-offset_top = 499.0
-offset_right = 583.0
-offset_bottom = 610.0
+offset_left = 482.0
+offset_top = 126.0
+offset_right = 691.0
+offset_bottom = 237.0
 
 [node name="TitleLabel" type="Label" parent="HUD/DailyReport/VBoxContainer"]
 layout_mode = 2
@@ -175,29 +172,33 @@ offset_bottom = 157.0
 [node name="ManageEmployees" type="Button" parent="."]
 layout_mode = 0
 offset_left = 532.0
-offset_right = 719.0
-offset_bottom = 31.0
+offset_top = 5.0
+offset_right = 690.0
+offset_bottom = 36.0
 text = "EmployeeManagement"
 
 [node name="BuildingButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 750.512
+offset_top = 5.0
 offset_right = 822.512
-offset_bottom = 31.0
+offset_bottom = 36.0
 text = "Building"
 
 [node name="OperationsButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 414.0
+offset_top = 5.0
 offset_right = 509.0
-offset_bottom = 31.0
+offset_bottom = 36.0
 text = "Operations"
 
 [node name="GridButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 357.952
+offset_top = 6.0
 offset_right = 398.952
-offset_bottom = 31.0
+offset_bottom = 37.0
 text = "Grid
 "
 

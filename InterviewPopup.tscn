@@ -5,14 +5,15 @@
 [ext_resource type="Texture2D" uid="uid://ljxrxla5cy4r" path="res://Assets/Avatars/emp1.png" id="3_5i2k0"]
 
 [node name="PopupPanel" type="Window"]
-size = Vector2i(800, 600)
+position = Vector2i(0, 50)
+size = Vector2i(800, 500)
 script = ExtResource("1_gourt")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 offset_left = 144.0
-offset_top = 38.0
+offset_top = 58.0
 offset_right = 644.0
-offset_bottom = 438.0
+offset_bottom = 458.0
 
 [node name="Question1Button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
@@ -31,29 +32,20 @@ text = "Q3: \"What’s your stance on belly rubs. firmly yes, or a trap?\"
 "
 autowrap_mode = 3
 
-[node name="AnswerLabel" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-text = "Answer"
-autowrap_mode = 3
-
-[node name="CloseButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Close"
-
 [node name="Candidate" type="TextureRect" parent="."]
 offset_left = 11.0
-offset_top = 72.0
+offset_top = 195.0
 offset_right = 803.0
-offset_bottom = 1261.16
+offset_bottom = 1384.16
 scale = Vector2(0.15, 0.15)
 texture = ExtResource("2_d64n1")
 expand_mode = 5
 
 [node name="Employer" type="TextureRect" parent="."]
 offset_left = 660.0
-offset_top = 7.0
+offset_top = 58.0
 offset_right = 1452.0
-offset_bottom = 1196.16
+offset_bottom = 1247.16
 scale = Vector2(0.15, 0.15)
 texture = ExtResource("3_5i2k0")
 expand_mode = 5
@@ -63,3 +55,26 @@ offset_left = 126.0
 offset_right = 275.0
 offset_bottom = 23.0
 text = "Interview with Cleo"
+
+[node name="EmployerLabel" type="Label" parent="."]
+offset_left = 668.0
+offset_top = 38.0
+offset_right = 768.0
+offset_bottom = 61.0
+text = "Employer"
+
+[node name="EmployerLabel2" type="Label" parent="."]
+offset_left = 26.0
+offset_top = 202.0
+offset_right = 126.0
+offset_bottom = 225.0
+text = "Candidate"
+
+[node name="AnswerLabel" type="Label" parent="."]
+custom_minimum_size = Vector2(100, 50)
+offset_left = 148.0
+offset_top = 280.0
+offset_right = 648.0
+offset_bottom = 330.0
+text = "Answer"
+autowrap_mode = 3
