@@ -2,7 +2,24 @@ extends Control
 
 @onready var mission_list = $Panel/ScrollContainer/MissionContainer
 @onready var game_scene = preload("res://Game.tscn")
+
 @onready var back_button = $BackButton
+var mission_card_scene = preload("res://mission_card.tscn")
+
+
+
+var mission_names = [
+	"Data Mining Operation",
+	"Secure the Vault",
+	"Network Recon",
+	"Ghost Hunt",
+	"Software Debug",
+	"Cyber Defense",
+	"Hardware Upgrade",
+	"Resource Allocation",
+	"AI Training",
+	"System Overclock"
+]
 
 func _on_back_button_pressed():
 	print("Back button pressed")
@@ -10,11 +27,51 @@ func _on_back_button_pressed():
 
 func _ready():
 	print("GridPage ready!")
-	# Check if missions should be reset (e.g., new day)
+	randomize()  # Initialize RNG
+
+	var mission_container = $Panel/ScrollContainer/MissionContainer
+
+	# Clear any existing cards first, so we start fresh
+	for child in mission_container.get_children():
+		child.queue_free()
+
+	# Create 3 unique random mission names
+	var mission_names = [
+		"Data Mining Operation",
+		"Secure the Vault",
+		"Network Recon",
+		"Ghost Hunt",
+		"Software Debug",
+		"Cyber Defense",
+		"Hardware Upgrade",
+		"Resource Allocation",
+		"AI Training",
+		"System Overclock"
+	]
+
+	var chosen_names = []
+	while chosen_names.size() < 3:
+		var name = mission_names[randi() % mission_names.size()]
+		if name not in chosen_names:
+			chosen_names.append(name)
+
+	# Instantiate and add the 3 mission cards
+	for i in range(3):
+		var card = mission_card_scene.instantiate()
+		card.mission_name = chosen_names[i]
+		card.mission_id = "mission_" + str(i + 1)
+		card.period_seconds = 10 + i * 5
+		card.reward_money = 100 + i * 50
+		card.reward_xp = 10 + i * 5
+		mission_container.add_child(card)
+
+	# Now continue with your existing code
 	if Global.should_reset_missions:
 		print("🌞 New day detected, resetting missions from GridPage")
 		reset_missions_for_new_day()
 		Global.should_reset_missions = false  # Reset the flag
+
+	# Your existing debug prints
 	print("Mission list node: ", mission_list)
 	print("Resolved mission_list:", mission_list)
 	print("Current node name: ", name)
@@ -40,6 +97,7 @@ func _ready():
 		if mission_card.mission_started.is_connected(_on_mission_completed):
 			mission_card.mission_started.disconnect(_on_mission_completed)
 		mission_card.mission_started.connect(_on_mission_completed)
+
 
 func reset_missions_for_new_day():
 	print("📆 Resetting missions for new day")

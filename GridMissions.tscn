@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://y42rok8t4c4u"]
+[gd_scene load_steps=2 format=3 uid="uid://y42rok8t4c4u"]
 
 [ext_resource type="Script" uid="uid://cke3n0dj38cpw" path="res://GridMissions.gd" id="1_irmoo"]
-[ext_resource type="PackedScene" uid="uid://bexq857dlfo6x" path="res://mission_card.tscn" id="2_eloec"]
 
 [node name="GridPage" type="Control"]
 layout_mode = 3
@@ -13,30 +12,20 @@ grow_vertical = 2
 script = ExtResource("1_irmoo")
 
 [node name="Panel" type="Panel" parent="."]
-custom_minimum_size = Vector2(600, 500)
+custom_minimum_size = Vector2(600, 300)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
 layout_mode = 2
-offset_right = 500.0
+offset_right = 800.0
 offset_bottom = 500.0
 size_flags_vertical = 3
 
 [node name="MissionContainer" type="VBoxContainer" parent="Panel/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="MissionCard" parent="Panel/ScrollContainer/MissionContainer" instance=ExtResource("2_eloec")]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="MissionCard2" parent="Panel/ScrollContainer/MissionContainer" instance=ExtResource("2_eloec")]
-layout_mode = 2
-
-[node name="MissionCard3" parent="Panel/ScrollContainer/MissionContainer" instance=ExtResource("2_eloec")]
-layout_mode = 2
 
 [node name="BackButton" type="Button" parent="."]
 layout_mode = 0

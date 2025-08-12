@@ -6,15 +6,24 @@ var visited_flags := {}
 
 @onready var rps_popup = $RPSPopup
 @onready var unlock_button := $UI/UnlockButton
-@onready var progress_label := $UI/Floor1  # adjust if your label has a different name
+@onready var progress_label := $UI/Floor1
 @onready var dialogue_panel = $UI/DialoguePanel
 @onready var dialogue_label = $UI/DialoguePanel/DialogueLabel
 @export var inspected_floor_index: int = -1
 
 signal inspection_complete(floor_index: int)
 
+@onready var fog_opaque: TileMap = $FogOpaqueTileMap
+@onready var fog_faded: TileMap = $FogFadedTileMap
+@onready var player: CharacterBody2D = $Player
+@export var clear_radius: int = 2  # You can keep or remove if unused
+@export var visible_radius: int = 2  # Tiles fully cleared around player
+@export var explored_radius: int = 4 # Tiles with faded fog beyond visible
+
+var fog_states := {}
 
 func _ready():
+	initialize_fog()
 	print("Testing signal manually...")
 	print("🔍 UnlockButton signals:", unlock_button.get_signal_connection_list("pressed"))
 
@@ -45,19 +54,17 @@ func _ready():
 		if interactable.has_signal("talked_to"):
 			interactable.talked_to.connect(_on_ghost_talked_to)
 
-	print("🕵️ Checking RPSPopup:", rps_popup)
 	if rps_popup and rps_popup.has_signal("rps_result"):
 		rps_popup.connect("rps_result", Callable(self, "_on_rps_result"))
 		print("✅ rps_result signal connected")
 	else:
 		print("❌ ERROR: RPSPopup not found or missing rps_result signal")
 
-	var player = get_node_or_null("Player")
-	if not player:
+	var player_node = get_node_or_null("Player")
+	if not player_node:
 		print("Player node not found")
 		return
 
-	# Enable vertical movement for inspection mode
 	player.allow_vertical_movement = true
 
 	var camera = player.get_node_or_null("Camera2D")
@@ -68,6 +75,51 @@ func _ready():
 	else:
 		print("Camera2D node not found under Player")
 
+func _process(_delta: float) -> void:
+	update_fog()
+
+func initialize_fog():
+	# Initialize all fog tiles as unexplored and clear faded fog tiles
+	fog_states.clear()
+	for cell in fog_opaque.get_used_cells(0):
+		fog_states[cell] = 0
+		fog_faded.set_cell(0, cell, -1)
+
+func update_fog():
+	var player_tile = fog_opaque.local_to_map(player.global_position)
+
+	for tile_pos in fog_states.keys():
+		var dist = player_tile.distance_to(tile_pos)
+
+		if dist <= visible_radius:
+			if fog_states[tile_pos] != 2:
+				fog_states[tile_pos] = 2
+				fog_opaque.set_cell(0, tile_pos, -1)
+				fog_faded.set_cell(0, tile_pos, -1)
+
+		elif dist <= explored_radius:
+			if fog_states[tile_pos] != 1:
+				fog_states[tile_pos] = 1
+				fog_opaque.set_cell(0, tile_pos, -1)
+				fog_faded.set_cell(0, tile_pos, tile_faded_tile_id())
+
+		else:
+			if fog_states[tile_pos] != 0:
+				fog_states[tile_pos] = 0
+				fog_opaque.set_cell(0, tile_pos, tile_opaque_tile_id())
+				fog_faded.set_cell(0, tile_pos, -1)
+
+	if not 0 in fog_states.values():
+		print("✅ All fog explored!")
+		emit_signal("inspection_complete", 0)
+
+func tile_opaque_tile_id() -> int:
+	# Change if your opaque fog tile ID is different
+	return 0
+
+func tile_faded_tile_id() -> int:
+	# Change if your faded fog tile ID is different
+	return 0
 
 func _on_ghost_talked_to(ghost_name: String, dialogue: String) -> void:
 	dialogue_label.text = "%s says:\n%s" % [ghost_name, dialogue]
@@ -84,7 +136,6 @@ func _on_ghost_talked_to(ghost_name: String, dialogue: String) -> void:
 			ghost.queue_free()
 		dialogue_panel.visible = false
 
-
 func handle_rps_result(success: bool, ghost: Node) -> void:
 	if success:
 		print("🎉 Beat the ghost!")
@@ -100,7 +151,6 @@ func handle_rps_result(success: bool, ghost: Node) -> void:
 		get_tree().change_scene_to_file("res://buildingpage.tscn")
 	hide_rps()
 
-
 func _on_rps_result(success: bool, ghost_name: String) -> void:
 	print("🎯 _on_rps_result called with success =", success, " ghost_name =", ghost_name)
 	if not success:
@@ -115,7 +165,6 @@ func _on_rps_result(success: bool, ghost_name: String) -> void:
 		var ghost = $Interactables.get_node_or_null(ghost_name)
 		if ghost:
 			ghost.queue_free()
-
 
 func show_rps(ghost_name: String) -> void:
 	$UI.visible = false
@@ -144,7 +193,6 @@ func _on_room_inspected(room_name: String):
 	if visited_rooms >= total_rooms:
 		print("🎉 All rooms inspected!")
 		unlock_button.visible = true
-
 
 func _on_unlock_button_pressed():
 	print("🔓 Unlock button pressed")

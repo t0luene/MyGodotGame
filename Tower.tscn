@@ -12,16 +12,18 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cvrs4")
 
-[node name="Tower" type="Sprite2D" parent="."]
-position = Vector2(155, 328)
+[node name="Tower" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 309.0
+offset_bottom = 513.0
 texture = ExtResource("2_bn6qc")
 
 [node name="FloorsContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 325.0
-offset_top = 93.0
-offset_right = 395.0
-offset_bottom = 194.0
+offset_top = 21.5
+offset_right = 404.0
+offset_bottom = 472.5
 
 [node name="Floor14" type="Button" parent="FloorsContainer"]
 layout_mode = 2
@@ -84,9 +86,9 @@ offset_bottom = 23.0
 [node name="FloorOptionsPanel" type="Panel" parent="."]
 layout_mode = 0
 offset_left = 614.0
-offset_top = 88.0
+offset_top = 16.5
 offset_right = 654.0
-offset_bottom = 128.0
+offset_bottom = 56.5
 
 [node name="TrainingButton" type="Button" parent="FloorOptionsPanel"]
 layout_mode = 0

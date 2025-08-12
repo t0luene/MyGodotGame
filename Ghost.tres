@@ -1,0 +1,44 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://bj5f1fb77rsou"]
+
+[ext_resource type="Texture2D" uid="uid://chqet25rbwa7y" path="res://Assets/Ghost.png" id="1_am0rl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ff2av"]
+atlas = ExtResource("1_am0rl")
+region = Rect2(0, 0, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_41nkq"]
+atlas = ExtResource("1_am0rl")
+region = Rect2(150, 0, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_am0rl"]
+atlas = ExtResource("1_am0rl")
+region = Rect2(0, 0, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i23t0"]
+atlas = ExtResource("1_am0rl")
+region = Rect2(150, 0, 150, 150)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ff2av")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_41nkq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_am0rl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i23t0")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]

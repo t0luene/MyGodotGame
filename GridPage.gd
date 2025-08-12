@@ -5,7 +5,11 @@ func _ready():
 	$InfoButton.pressed.connect(_on_info_button_pressed)
 	$MissionsButton.pressed.connect(_on_missions_button_pressed)
 	$TechTreeButton.pressed.connect(_on_tech_tree_button_pressed)	
-	$BackButton.pressed.connect(_on_back_button_presssed)	
+	$BackButton.pressed.connect(_on_back_button_presssed)
+
+	# Load GridMissions as default page:
+	_on_missions_button_pressed()
+
 
 func _on_info_button_pressed():
 	load_subpage("res://GridInfo.tscn")

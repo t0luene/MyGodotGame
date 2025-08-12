@@ -204,7 +204,7 @@ text = "Grid
 [node name="Characters" type="CanvasLayer" parent="."]
 
 [node name="Player" parent="Characters" instance=ExtResource("3_feb5d")]
-position = Vector2(954, 648)
+position = Vector2(955, 614)
 
 [node name="Employees" type="Node2D" parent="Characters"]
 

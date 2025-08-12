@@ -1,4 +1,4 @@
-extends Area2D
+extends CharacterBody2D
 
 @export var ghost_name: String = "Challenger Ghost"
 @export var dialogue: String = "You shall not pass... unless you beat me in Rock Paper Scissors!"
@@ -12,6 +12,10 @@ func _ready():
 	$DialogueLabel.visible = false
 	connect("body_entered", Callable(self, "_on_body_entered"))
 	connect("body_exited", Callable(self, "_on_body_exited"))
+	
+	# Play idle animation looping
+	$AnimatedSprite2D.play("idle")
+
 
 func _on_body_entered(body):
 	if body.is_in_group("player"):

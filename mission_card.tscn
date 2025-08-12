@@ -16,57 +16,59 @@ script = ExtResource("1_lb4c8")
 [node name="Panel" type="Panel" parent="."]
 custom_minimum_size = Vector2(700, 0)
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 700.0
+offset_bottom = 60.0
 
 [node name="Title" type="Label" parent="Panel"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
-text = "Card"
+text = "Card name!"
 
 [node name="EmployeeSelector" type="OptionButton" parent="Panel"]
 layout_mode = 0
-offset_left = 77.0
-offset_right = 109.0
-offset_bottom = 20.0
+offset_top = 30.0
+offset_right = 32.0
+offset_bottom = 50.0
 
 [node name="PeriodLabel" type="Label" parent="Panel"]
 layout_mode = 0
-offset_left = 290.0
+offset_left = 299.0
 offset_top = -1.0
-offset_right = 330.0
+offset_right = 350.0
 offset_bottom = 22.0
+text = "Period"
 
 [node name="RewardLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 298.0
-offset_top = 16.0
-offset_right = 338.0
-offset_bottom = 39.0
+offset_top = 33.0
+offset_right = 357.0
+offset_bottom = 56.0
+text = "Reward"
 
 [node name="StartButton" type="Button" parent="Panel"]
 layout_mode = 0
-offset_top = 9.0
-offset_right = 46.0
-offset_bottom = 40.0
+offset_left = 555.0
+offset_right = 601.0
+offset_bottom = 31.0
 text = "Start"
 
 [node name="TimeLeftLabel" type="Label" parent="Panel"]
 layout_mode = 0
-offset_left = 164.0
-offset_top = 19.0
-offset_right = 261.0
-offset_bottom = 42.0
+offset_left = 532.0
+offset_top = 33.0
+offset_right = 629.0
+offset_bottom = 56.0
 text = "Time Left: —"
 
 [node name="CompletedLabel" type="Label" parent="Panel"]
 visible = false
 layout_mode = 0
 offset_left = 283.0
-offset_top = -1.0
+offset_top = 9.0
 offset_right = 461.0
-offset_bottom = 41.0
+offset_bottom = 51.0
 theme_override_font_sizes/font_size = 30
 text = "COMPLETED"
 horizontal_alignment = 1

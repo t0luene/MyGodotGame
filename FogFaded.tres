@@ -1,0 +1,11 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://d2sao5oyx3rsv"]
+
+[ext_resource type="Texture2D" uid="uid://bwmvtqach6j5y" path="res://Assets/FogFaded.png" id="1_v187x"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_h6wlj"]
+texture = ExtResource("1_v187x")
+0:0/0 = 0
+
+[resource]
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_h6wlj")

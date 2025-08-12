@@ -20,6 +20,7 @@ offset_bottom = 648.0
 texture = ExtResource("2_v8dyh")
 
 [node name="TextureRect3" type="TextureRect" parent="."]
+layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 texture = ExtResource("3_pe7t1")
@@ -58,7 +59,7 @@ anchors_preset = 0
 offset_left = 35.0
 offset_top = 109.0
 offset_right = 1115.0
-offset_bottom = 689.0
+offset_bottom = 614.0
 
 [node name="BackButton" type="Button" parent="."]
 layout_mode = 0

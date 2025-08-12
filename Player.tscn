@@ -4,19 +4,20 @@
 [ext_resource type="SpriteFrames" uid="uid://o6bh4pebwtlm" path="res://Player.tres" id="2_kpjcp"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0rwas"]
+size = Vector2(13.9062, 10.4688)
 
 [node name="Player" type="CharacterBody2D"]
 texture_filter = 1
 script = ExtResource("1_kpjcp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -31)
 scale = Vector2(4, 4)
 sprite_frames = ExtResource("2_kpjcp")
-animation = &"idle"
-centered = false
-offset = Vector2(0, -32)
+animation = &"walk"
+frame_progress = 0.458998
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(64, -64)
+position = Vector2(-3.5, 0)
 scale = Vector2(6.4, 6.4)
 shape = SubResource("RectangleShape2D_0rwas")
