@@ -16,6 +16,7 @@ var employees = [
 	{"id": 2, "name": "Mario"},
 	# add more employees here...
 ]
+var can_inspect := true  # whether the player can inspect floors today
 
 
 

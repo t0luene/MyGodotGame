@@ -24,14 +24,6 @@ offset_right = 1152.0
 offset_bottom = 648.0
 texture = ExtResource("6_r0x5m")
 
-[node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_left = 471.666
-offset_top = 45.0
-offset_right = 712.666
-offset_bottom = 68.0
-text = "Welcome to Business Manager!"
-
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 10
 

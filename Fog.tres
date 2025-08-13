@@ -1,0 +1,21 @@
+[gd_resource type="TileSet" load_steps=7 format=3 uid="uid://dl68yk3i85dbh"]
+
+[ext_resource type="Texture2D" uid="uid://dwjxounc4gs4i" path="res://Assets/FogOpaque.png" id="1_ecgls"]
+[ext_resource type="Texture2D" uid="uid://bwmvtqach6j5y" path="res://Assets/FogFaded.png" id="2_uyx4f"]
+[ext_resource type="Texture2D" uid="uid://cehwvog7nlgvq" path="res://Assets/FogClear.png" id="3_eupmw"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_yjqap"]
+texture = ExtResource("1_ecgls")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ecgls"]
+texture = ExtResource("2_uyx4f")
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uyx4f"]
+texture = ExtResource("3_eupmw")
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_yjqap")
+sources/1 = SubResource("TileSetAtlasSource_ecgls")
+sources/2 = SubResource("TileSetAtlasSource_uyx4f")
