@@ -1,0 +1,114 @@
+[gd_scene load_steps=13 format=3 uid="uid://cjwbwa37isp0h"]
+
+[ext_resource type="Script" uid="uid://b8l6spbio0b8o" path="res://DuctCat.gd" id="1_4nrad"]
+[ext_resource type="Texture2D" uid="uid://brlyvlu3g7ei6" path="res://Assets/DuctCat.png" id="2_4nrad"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jysqx"]
+atlas = ExtResource("2_4nrad")
+region = Rect2(0, 0, 288, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m2bhf"]
+atlas = ExtResource("2_4nrad")
+region = Rect2(288, 0, 288, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t4h4o"]
+atlas = ExtResource("2_4nrad")
+region = Rect2(576, 0, 288, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jo5qk"]
+atlas = ExtResource("2_4nrad")
+region = Rect2(864, 0, 288, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ic27h"]
+atlas = ExtResource("2_4nrad")
+region = Rect2(1152, 0, 288, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eoiui"]
+atlas = ExtResource("2_4nrad")
+region = Rect2(1440, 0, 288, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xm2cx"]
+atlas = ExtResource("2_4nrad")
+region = Rect2(1728, 0, 288, 288)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8hgoq"]
+atlas = ExtResource("2_4nrad")
+region = Rect2(2016, 0, 288, 288)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0uic8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jysqx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m2bhf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t4h4o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jo5qk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ic27h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eoiui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xm2cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8hgoq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jysqx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m2bhf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t4h4o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jo5qk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ic27h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eoiui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xm2cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8hgoq")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4nrad"]
+size = Vector2(16, 16)
+
+[node name="DuctCat" type="CharacterBody2D"]
+script = ExtResource("1_4nrad")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.16, 0.16)
+sprite_frames = SubResource("SpriteFrames_0uic8")
+animation = &"idle"
+frame_progress = 0.383389
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_4nrad")
+
+[node name="Camera2D" type="Camera2D" parent="."]

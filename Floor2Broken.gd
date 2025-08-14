@@ -8,8 +8,11 @@ extends Node2D
 @onready var ghosts = $Ghosts
 @onready var black_fade = $Camera2D/UI/BlackFade  # Adjust path to your fade UI node
 @onready var spooked_text = $Camera2D/UI/SpookedText  # Your Label or RichTextLabel for message
+var camera_target: Node2D = null
 
 func _ready():
+	camera_target = get_tree().get_first_node_in_group("player")
+	camera.make_current()
 	black_fade.visible = false
 	spooked_text.visible = false
 
@@ -62,9 +65,18 @@ func _on_room_trigger_body_exited(body, trigger):
 	if room_fog:
 		room_fog.visible = true
 
+var last_camera_target: Node2D = null
+
 func _process(delta):
-	camera.position = player.position
-	clear_fog_around_player()
+	if camera_target and is_instance_valid(camera_target):
+		camera.global_position = camera_target.global_position
+		clear_fog_around_player()
+
+		if camera_target != last_camera_target:
+			print("Camera switched to: ", camera_target.name)
+			last_camera_target = camera_target
+
+
 
 func clear_fog_around_player(radius = 10):
 	var local_pos = fog_map.to_local(player.global_position)

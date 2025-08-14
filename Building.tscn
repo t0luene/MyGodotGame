@@ -27,29 +27,29 @@ texture = ExtResource("3_pe7t1")
 
 [node name="TowerButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 233.0
-offset_right = 297.0
+offset_left = 198.0
+offset_right = 262.0
 offset_bottom = 31.0
 text = "TOWER"
 
 [node name="InspectionButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 453.0
-offset_right = 543.0
+offset_left = 416.0
+offset_right = 519.0
 offset_bottom = 31.0
 text = "INSPECTION"
 
 [node name="ManagementButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 678.0
-offset_right = 768.0
+offset_left = 656.0
+offset_right = 779.0
 offset_bottom = 31.0
 text = "MANAGEMENT"
 
 [node name="TechTreeButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 844.0
-offset_right = 934.0
+offset_left = 908.0
+offset_right = 998.0
 offset_bottom = 31.0
 text = "TECH TREE"
 

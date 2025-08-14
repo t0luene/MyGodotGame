@@ -1,7 +1,61 @@
-[gd_resource type="TileSet" load_steps=5 format=3 uid="uid://cgrxj7h15k211"]
+[gd_resource type="TileSet" load_steps=7 format=3 uid="uid://cgrxj7h15k211"]
 
 [ext_resource type="Texture2D" uid="uid://bt6b3kpg2rplk" path="res://Assets/Tiles/GroundTiles.png" id="1_b33f0"]
+[ext_resource type="Texture2D" uid="uid://cj5cjgnpo0vt8" path="res://Assets/DuctTiles.png" id="1_euvnp"]
 [ext_resource type="Texture2D" uid="uid://cjw8ja4gxok1v" path="res://Assets/ObjectsTiles.png" id="2_euvnp"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_oal7g"]
+texture = ExtResource("1_euvnp")
+texture_region_size = Vector2i(32, 32)
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+4:1/0 = 0
+13:1/0 = 0
+4:2/0 = 0
+10:2/0 = 0
+12:2/0 = 0
+4:3/0 = 0
+4:4/0 = 0
+7:4/0 = 0
+1:5/0 = 0
+4:5/0 = 0
+7:5/0 = 0
+13:5/0 = 0
+1:6/0 = 0
+4:6/0 = 0
+7:6/0 = 0
+13:6/0 = 0
+14:6/0 = 0
+1:7/0 = 0
+4:7/0 = 0
+7:7/0 = 0
+12:7/0 = 0
+13:7/0 = 0
+14:7/0 = 0
+15:7/0 = 0
+4:8/0 = 0
+5:8/0 = 0
+6:8/0 = 0
+7:8/0 = 0
+12:8/0 = 0
+13:8/0 = 0
+14:8/0 = 0
+15:8/0 = 0
+2:1/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+1:0/0 = 0
+9:3/0 = 0
+9:2/0 = 0
+4:9/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7si2p"]
 texture = ExtResource("1_b33f0")
@@ -441,3 +495,4 @@ tile_size = Vector2i(32, 32)
 physics_layer_0/collision_layer = 1
 sources/1 = SubResource("TileSetAtlasSource_7si2p")
 sources/2 = SubResource("TileSetAtlasSource_1cnn7")
+sources/0 = SubResource("TileSetAtlasSource_oal7g")
