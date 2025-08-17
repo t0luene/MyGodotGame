@@ -19,6 +19,7 @@ config/icon="res://Assets/icon.svg"
 
 Global="*res://Global.gd"
 ButtonSounds="*res://ButtonSounds.gd"
+Fade="*res://Fade.tscn"
 
 [rendering]
 

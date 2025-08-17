@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3 uid="uid://cflllaq8uw74m"]
+
+[ext_resource type="Texture2D" uid="uid://ma2int6gpdvy" path="res://Assets/Floors/Hallway1.png" id="1_hj3te"]
+[ext_resource type="Script" uid="uid://binwvw6dp1xmw" path="res://Hallway1.gd" id="1_vwktm"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="2_01lhd"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_01lhd"]
+size = Vector2(72, 184)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vwktm"]
+size = Vector2(96, 216)
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_vwktm")
+
+[node name="FloorSprite" type="Sprite2D" parent="."]
+position = Vector2(544, 248)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_hj3te")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="FloorSprite"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="FloorSprite/StaticBody2D"]
+polygon = PackedVector2Array(-208, -48, -752, 256, 192, 720, 736, 448, 736, 800, -1088, 800, -736, -272, 400, -368, 944, 112, 736, 416, 512, 304, 512, 160, 384, 96, 384, 240, 128, 112, 128, 0, 0, -64, 0, 48)
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("2_01lhd")]
+z_index = 20
+position = Vector2(440, 408)
+
+[node name="Entrance1" type="Area2D" parent="."]
+position = Vector2(584, 280)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance1"]
+position = Vector2(-12, -52)
+shape = SubResource("RectangleShape2D_01lhd")
+
+[node name="Entrance2" type="Area2D" parent="."]
+position = Vector2(768, 376)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance2"]
+position = Vector2(0, -52)
+shape = SubResource("RectangleShape2D_vwktm")
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(536, 432)

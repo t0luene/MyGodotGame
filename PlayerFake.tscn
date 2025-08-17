@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dgtfyugrdnygs"]
+
+[ext_resource type="SpriteFrames" uid="uid://o6bh4pebwtlm" path="res://Player.tres" id="2_25ee4"]
+
+[node name="Node2D" type="Node2D"]
+texture_filter = 1
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(4, 4)
+sprite_frames = ExtResource("2_25ee4")
+animation = &"walk"
+speed_scale = 2.0
+offset = Vector2(0, -16)

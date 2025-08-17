@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 @export var move_speed := 150.0
 @onready var anim := $AnimatedSprite2D  # Update this path if your sprite has a different name or location
-@export var allow_vertical_movement: bool = false
+@export var allow_vertical_movement: bool = true
 
 func _ready():
 	if has_node("Camera2D"):
@@ -45,12 +45,25 @@ func _physics_process(delta):
 	_update_animation()
 
 func _update_animation():
-	if velocity.length() > 0:
-		if anim.animation != "walk":
-			anim.play("walk")
-	else:
+	if velocity.length() == 0:
 		if anim.animation != "idle":
 			anim.play("idle")
+		return
 
-	if velocity.x != 0:
+	# Determine dominant direction
+	var abs_x = abs(velocity.x)
+	var abs_y = abs(velocity.y)
+
+	if allow_vertical_movement and abs_y > abs_x:
+		# Vertical movement
+		if velocity.y < 0:
+			if anim.animation != "walk_up":
+				anim.play("walk_up")
+		else:
+			if anim.animation != "walk_down":
+				anim.play("walk_down")
+	else:
+		# Horizontal movement
+		if anim.animation != "walk":
+			anim.play("walk")
 		anim.flip_h = velocity.x < 0

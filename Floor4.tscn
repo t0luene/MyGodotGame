@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dbo36nbpe76ey"]
+
+[ext_resource type="Texture2D" uid="uid://cxbxp7o4356wt" path="res://Assets/Floors/Room1.png" id="1_liiwj"]
+
+[node name="Floor3" type="Node2D"]
+
+[node name="FloorSprite" type="Sprite2D" parent="."]
+position = Vector2(600, 344)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_liiwj")
