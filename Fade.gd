@@ -6,6 +6,8 @@ func _ready():
 	rect.color.a = 0.0  # start invisible
 	# Make sure it's always on top
 	layer = 100
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE  # <-- ignore mouse input
+
 
 func fade_out(duration: float = 0.4) -> void:
 	var tween = create_tween()

@@ -2,6 +2,7 @@ extends Control
 
 
 func _ready():
+	Fade.fade_in(0.5)
 	$TowerButton.pressed.connect(_on_tower_button_pressed)
 	$TechTreeButton.pressed.connect(_on_tech_tree_button_pressed)
 	$ManagementButton.pressed.connect(_on_management_button_pressed)

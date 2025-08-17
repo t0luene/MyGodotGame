@@ -4,21 +4,21 @@
 [ext_resource type="SpriteFrames" uid="uid://bj5f1fb77rsou" path="res://Ghost.tres" id="2_ff2av"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k73yw"]
-size = Vector2(58.5, 61.5)
+size = Vector2(105, 117.75)
 
 [node name="Ghost" type="CharacterBody2D"]
 collision_layer = 2
 script = ExtResource("1_k73yw")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.5, 0.5)
+position = Vector2(0, -64)
 sprite_frames = ExtResource("2_ff2av")
 animation = &"idle"
-frame_progress = 0.815903
+frame_progress = 0.292152
 speed_scale = 0.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(2, 4)
+position = Vector2(2.5, -59.125)
 shape = SubResource("RectangleShape2D_k73yw")
 
 [node name="DialogueLabel" type="Label" parent="."]

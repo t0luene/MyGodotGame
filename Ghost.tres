@@ -12,11 +12,11 @@ region = Rect2(150, 0, 150, 150)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_am0rl"]
 atlas = ExtResource("1_am0rl")
-region = Rect2(0, 0, 150, 150)
+region = Rect2(0, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_i23t0"]
 atlas = ExtResource("1_am0rl")
-region = Rect2(150, 0, 150, 150)
+region = Rect2(128, 0, 128, 128)
 
 [resource]
 animations = [{
