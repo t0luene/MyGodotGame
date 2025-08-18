@@ -6,7 +6,7 @@ signal balance_finished(success: bool)
 # --- EXPORTS ---
 @export var drift_speed: float = 10.0        # constant drift speed for scale
 @export var fail_threshold: float = 50.0
-@export var auto_move_speed: float = 50.0
+@export var auto_move_speed: float = 150.0
 @export var input_strength: float = 40.0     # how strong each button press is
 @export var input_decay: float = 5.0
 @export var fake_player_scene: PackedScene   # PlayerFake.tscn

@@ -280,6 +280,8 @@ var quests = {
 		"hallway1": {"desc": "Reach the end of Hallway1", "done": false},
 		"room3": {"desc": "Enter Room3", "done": false},
 		"room4": {"desc": "Enter Room4", "done": false},
+		"room2": {"desc": "Inspect the item in Room2", "done": false},  # ✅
+
 	}
 	# Later: add floor5, floor6, etc.
 }

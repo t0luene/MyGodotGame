@@ -58,9 +58,15 @@ shape = SubResource("RectangleShape2D_rfh7t")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Box/StaticBody2D"]
 shape = SubResource("RectangleShape2D_x8amc")
 
+[node name="InspectButton" type="Button" parent="Box"]
+visible = false
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Inspect"
+
 [node name="Player" parent="." groups=["player"] instance=ExtResource("6_ijra2")]
 z_index = 20
-position = Vector2(344, 288)
+position = Vector2(346, 314)
 
 [node name="ExitToHallway" type="Area2D" parent="."]
 position = Vector2(448, 112)
@@ -70,4 +76,10 @@ position = Vector2(-20, 17)
 shape = SubResource("RectangleShape2D_8i6ag")
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
-position = Vector2(344, 288)
+position = Vector2(346, 314)
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1072.0
+offset_right = 1127.0
+offset_bottom = 23.0
+text = "Room4"

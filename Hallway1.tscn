@@ -5,10 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="2_01lhd"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_01lhd"]
-size = Vector2(72, 184)
+size = Vector2(72, 176)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vwktm"]
-size = Vector2(96, 216)
+size = Vector2(72, 176)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vwktm"]
 radius = 40.0
@@ -31,24 +31,24 @@ polygon = PackedVector2Array(-208, -48, -752, 256, 192, 720, 736, 448, 736, 800,
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_01lhd")]
 z_index = 20
-position = Vector2(440, 408)
+position = Vector2(504, 448)
 
 [node name="Entrance1" type="Area2D" parent="."]
 position = Vector2(584, 280)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance1"]
-position = Vector2(-12, -52)
+position = Vector2(-12, -48)
 shape = SubResource("RectangleShape2D_01lhd")
 
 [node name="Entrance2" type="Area2D" parent="."]
 position = Vector2(768, 376)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance2"]
-position = Vector2(0, -52)
+position = Vector2(-4, -48)
 shape = SubResource("RectangleShape2D_vwktm")
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
-position = Vector2(536, 432)
+position = Vector2(504, 448)
 
 [node name="ChecklistTrigger" type="Area2D" parent="."]
 position = Vector2(328, 304)
@@ -70,3 +70,9 @@ offset_top = 544.0
 offset_right = 870.0
 offset_bottom = 575.0
 text = "Elevator- Exit"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1056.0
+offset_right = 1127.0
+offset_bottom = 23.0
+text = "Hallway1"

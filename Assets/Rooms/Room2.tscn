@@ -1,0 +1,152 @@
+[gd_scene load_steps=17 format=3 uid="uid://dfxbhscpnecin"]
+
+[ext_resource type="Script" uid="uid://1op0i4v3ovn8" path="res://Assets/Rooms/Room2.gd" id="1_56gl1"]
+[ext_resource type="Texture2D" uid="uid://cxbxp7o4356wt" path="res://Assets/Floors/Room1.png" id="2_wxkit"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_nmtq4"]
+[ext_resource type="Script" uid="uid://d2wd6qefausdd" path="res://Box.gd" id="8_on84k"]
+[ext_resource type="Shader" uid="uid://dr8onwec0vema" path="res://PropOutline.gdshader" id="9_56gl1"]
+[ext_resource type="Texture2D" uid="uid://c26noynfelbpb" path="res://Assets/Props/Box2.png" id="11_56gl1"]
+[ext_resource type="Script" uid="uid://dq0ceib0pucta" path="res://BalanceArea.gd" id="13_qxeow"]
+[ext_resource type="PackedScene" uid="uid://dgtfyugrdnygs" path="res://PlayerFake.tscn" id="14_8xnvp"]
+[ext_resource type="Script" uid="uid://jn8tbu8itcd7" path="res://UI_BalanceBar.gd" id="15_gasgw"]
+[ext_resource type="Texture2D" uid="uid://lmu56paub53g" path="res://Assets/BalanceBar_Hud.png" id="16_rf8da"]
+[ext_resource type="Texture2D" uid="uid://uosly14hodol" path="res://Assets/BalanceBar_Widget.png" id="17_t14s2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_owafi"]
+size = Vector2(104, 64)
+
+[sub_resource type="Curve2D" id="Curve2D_owafi"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 32, 32, 0, 0, 0, 0, 168, 120, 0, 0, 0, 0, 288, 56, 0, 0, 0, 0, 464, 160, 0, 0, 0, 0, 712, 32)
+}
+point_count = 5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gn4e1"]
+shader = ExtResource("9_56gl1")
+shader_parameter/outline_enabled = false
+shader_parameter/outline_size = 2.0
+shader_parameter/outline_color = Color(0, 0.946931, 0.911298, 1)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/min_opacity = 0.4
+shader_parameter/size_pulse_strength = 0.3
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r6vbi"]
+size = Vector2(144, 152)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8abfj"]
+size = Vector2(112, 112)
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_56gl1")
+
+[node name="FloorSprite" type="Sprite2D" parent="."]
+position = Vector2(600, 344)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_wxkit")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="FloorSprite"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="FloorSprite/StaticBody2D"]
+polygon = PackedVector2Array(-1152, 64, -1152, 688, 1072, 656, 1104, -688, -1184, -688, -1184, 0, -688, -512, 640, -560, 1024, -112, 944, 544, -160, 592, -864, 528)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+offset_left = -896.0
+offset_top = -992.0
+offset_right = 2880.0
+offset_bottom = 1016.0
+color = Color(0, 0, 0, 1)
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("3_nmtq4")]
+z_index = 20
+position = Vector2(336, 280)
+
+[node name="BalanceArea" type="Area2D" parent="."]
+position = Vector2(256, 336)
+script = ExtResource("13_qxeow")
+fake_player_scene = ExtResource("14_8xnvp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BalanceArea"]
+position = Vector2(72, 24)
+shape = SubResource("RectangleShape2D_owafi")
+
+[node name="PipePath" type="Path2D" parent="BalanceArea"]
+position = Vector2(32, -8)
+curve = SubResource("Curve2D_owafi")
+
+[node name="PipePathFollow" type="PathFollow2D" parent="BalanceArea/PipePath"]
+position = Vector2(32, 32)
+rotates = false
+loop = false
+
+[node name="BalanceButton" type="Button" parent="BalanceArea"]
+offset_left = 96.0
+offset_top = -8.0
+offset_right = 203.0
+offset_bottom = 23.0
+text = "Balance Pipe"
+
+[node name="UI_BalanceBar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 616.0
+offset_top = 280.0
+offset_right = 656.0
+offset_bottom = 320.0
+script = ExtResource("15_gasgw")
+
+[node name="CenterMark" type="Sprite2D" parent="UI_BalanceBar"]
+position = Vector2(14.5, 5)
+texture = ExtResource("16_rf8da")
+
+[node name="BarIndicator" type="Sprite2D" parent="UI_BalanceBar"]
+position = Vector2(14.5, 5)
+texture = ExtResource("17_t14s2")
+
+[node name="LeftButton" type="Button" parent="UI_BalanceBar"]
+layout_mode = 0
+offset_left = -192.0
+offset_top = -16.0
+offset_right = -148.0
+offset_bottom = 15.0
+scale = Vector2(1.5, 1.5)
+text = "LEFT"
+
+[node name="RightButton" type="Button" parent="UI_BalanceBar"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = -16.0
+offset_right = 216.0
+offset_bottom = 15.0
+scale = Vector2(1.5, 1.5)
+text = "RIGHT"
+
+[node name="Box" type="Node2D" parent="."]
+position = Vector2(1048, 208)
+script = ExtResource("8_on84k")
+
+[node name="Sprite2D" type="Sprite2D" parent="Box"]
+material = SubResource("ShaderMaterial_gn4e1")
+texture = ExtResource("11_56gl1")
+
+[node name="Area2D" type="Area2D" parent="Box"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box/Area2D"]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_r6vbi")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Box"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box/StaticBody2D"]
+shape = SubResource("RectangleShape2D_8abfj")
+
+[node name="InspectButton" type="Button" parent="Box"]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Inspect"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1080.0
+offset_right = 1135.0
+offset_bottom = 23.0
+text = "Room2"
