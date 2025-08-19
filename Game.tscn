@@ -171,12 +171,12 @@ offset_right = 719.0
 offset_bottom = 31.0
 text = "EmployeeManagement"
 
-[node name="BuildingButton" type="Button" parent="."]
+[node name="MaintenanceButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 750.512
 offset_right = 822.512
 offset_bottom = 31.0
-text = "Building"
+text = "Maintenance"
 
 [node name="OperationsButton" type="Button" parent="."]
 layout_mode = 0
@@ -220,12 +220,20 @@ offset_bottom = 40.0
 
 [node name="ElevatorUI" parent="." instance=ExtResource("5_r0x5m")]
 
+[node name="BossButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 193.808
+offset_right = 297.808
+offset_bottom = 31.0
+text = "BOSS ROOM"
+
 [connection signal="pressed" from="HUD/VBoxContainer/WorkButton" to="." method="_on_work_button_pressed"]
 [connection signal="pressed" from="HUD/EmployeeList/Employee1" to="." method="_on_employee_1_pressed"]
 [connection signal="pressed" from="HUD/EmployeeList/Employee2" to="." method="_on_employee_2_pressed"]
 [connection signal="pressed" from="HUD/EmployeeList/Employee3" to="." method="_on_employee_3_pressed"]
 [connection signal="pressed" from="HUD/DailyReport/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="pressed" from="ManageEmployees" to="." method="_on_manage_employees_pressed"]
-[connection signal="pressed" from="BuildingButton" to="." method="_on_building_button_pressed"]
+[connection signal="pressed" from="MaintenanceButton" to="." method="_on_maintenance_button_pressed"]
 [connection signal="pressed" from="OperationsButton" to="." method="_on_operations_button_pressed"]
 [connection signal="pressed" from="GridButton" to="." method="_on_grid_button_pressed"]
+[connection signal="pressed" from="BossButton" to="." method="_on_boss_button_pressed"]

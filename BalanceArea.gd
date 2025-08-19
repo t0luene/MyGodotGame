@@ -14,7 +14,7 @@ signal balance_finished(success: bool)
 # --- NODES ---
 @onready var balance_button = $BalanceButton
 @onready var path_follow = $PipePath/PipePathFollow
-@onready var ui_bar = get_tree().current_scene.get_node("UI_BalanceBar")
+@onready var ui_bar = $"../UI_BalanceBar"
 
 # --- STATE VARIABLES ---
 var balancing: bool = false

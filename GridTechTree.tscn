@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ck414d03gc77e"]
 
-[ext_resource type="Script" uid="uid://dtts2ubvyykcv" path="res://BuildingTechTree.gd" id="1_2a4yd"]
+[ext_resource type="Script" uid="uid://dtts2ubvyykcv" path="res://Scenes/Maintenance/TechTree.gd" id="1_2a4yd"]
 
 [node name="BuildingTechTree" type="Control"]
 layout_mode = 3

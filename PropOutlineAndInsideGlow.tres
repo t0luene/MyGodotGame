@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bb4aqt7rimlh7"]
+
+[ext_resource type="Shader" uid="uid://d2j2u4n6ve7oc" path="res://PropOutlineAndInsideGlow.gdshader" id="1_68la0"]
+
+[resource]
+shader = ExtResource("1_68la0")
+shader_parameter/outline_enabled = false
+shader_parameter/glow_enabled = false
+shader_parameter/outline_size = 10.0
+shader_parameter/outline_color = Color(0.846359, 0.863725, 0.28997, 1)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/min_opacity = 0.4
+shader_parameter/size_pulse_strength = 0.3
+shader_parameter/glow_color = Color(0.945097, 9.72241e-06, 0.606381, 1)
+shader_parameter/glow_strength = 0.4

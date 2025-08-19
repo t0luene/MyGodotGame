@@ -281,9 +281,16 @@ var quests = {
 		"room3": {"desc": "Enter Room3", "done": false},
 		"room4": {"desc": "Enter Room4", "done": false},
 		"room2": {"desc": "Inspect the item in Room2", "done": false},  # ✅
-
+	},
+	"floor3": {
+		"hallway2": {"desc": "Reach the end of Hallway1", "done": false},
+		"room1": {"desc": "Enter Room1", "done": false},
+	},
+	"floor5": {
+		"hallway2": {"desc": "Reach the end of Hallway1", "done": false},
+		"room1": {"desc": "Enter Room1", "done": false},
 	}
-	# Later: add floor5, floor6, etc.
+
 }
 
 var current_floor: String = ""  # Which floor is active right now

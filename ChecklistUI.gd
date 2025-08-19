@@ -3,6 +3,10 @@ extends Control
 @onready var list = $VBoxContainer
 
 func _process(_delta):
+	rebuild()  # optional: keeps updating every frame if you want
+
+# --- NEW METHOD ---
+func rebuild():
 	if Global.current_floor == "":
 		visible = false
 		return
@@ -24,5 +28,5 @@ func _process(_delta):
 	if Global.is_floor_complete(Global.current_floor):
 		var done_label = Label.new()
 		done_label.text = "All objectives unlocked, exit through the elevator"
-		done_label.add_theme_color_override("font_color", Color(0, 1, 0))  # optional green
+		done_label.add_theme_color_override("font_color", Color(0, 1, 0))
 		list.add_child(done_label)

@@ -1,0 +1,89 @@
+[gd_scene load_steps=9 format=3 uid="uid://cflllaq8uw74m"]
+
+[ext_resource type="Script" uid="uid://binwvw6dp1xmw" path="res://Scenes/Rooms/Hallway1.gd" id="1_vwktm"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="2_01lhd"]
+[ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Rooms/Hallway2.png" id="2_m6f6p"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_01lhd"]
+size = Vector2(72, 176)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vwktm"]
+size = Vector2(72, 176)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m6f6p"]
+size = Vector2(76, 195)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vwktm"]
+radius = 40.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_53yia"]
+radius = 46.6476
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_vwktm")
+
+[node name="FloorSprite" type="Sprite2D" parent="."]
+position = Vector2(544, 248)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_m6f6p")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="FloorSprite"]
+position = Vector2(114, -68)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="FloorSprite/StaticBody2D"]
+polygon = PackedVector2Array(-350, -104, -426, -142, -592, -254, -788, -314, -1184, -198, -1194, 18, 420, 822, 676, 826, 1062, 648, 752, 424, 1098, 550, 1090, 860, -1200, 866, -1196, -426, -169.587, -388.699, 400, -368, 944, 112, 736, 416, 512, 304, 512, 160, 384, 96, 384, 240, -52, 38, -52, -60, -212, -146, -208, -42)
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("2_01lhd")]
+z_index = 20
+position = Vector2(551, 397)
+
+[node name="Entrance1" type="Area2D" parent="."]
+position = Vector2(631, 229)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance1"]
+position = Vector2(-97, -81)
+shape = SubResource("RectangleShape2D_01lhd")
+
+[node name="Entrance2" type="Area2D" parent="."]
+position = Vector2(815, 325)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance2"]
+position = Vector2(-4, -48)
+shape = SubResource("RectangleShape2D_vwktm")
+
+[node name="Entrance3" type="Area2D" parent="."]
+position = Vector2(344, 104)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance3"]
+position = Vector2(-3, -59.5)
+shape = SubResource("RectangleShape2D_m6f6p")
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(551, 397)
+
+[node name="ChecklistTrigger" type="Area2D" parent="."]
+position = Vector2(58, 152)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ChecklistTrigger"]
+shape = SubResource("CircleShape2D_vwktm")
+
+[node name="ElevatorTrigger" type="Area2D" parent="."]
+position = Vector2(995, 586)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ElevatorTrigger"]
+shape = SubResource("CircleShape2D_53yia")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="ElevatorButton" type="Button" parent="UI"]
+offset_left = 973.0
+offset_top = 621.0
+offset_right = 1083.0
+offset_bottom = 652.0
+text = "Elevator- Exit"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1056.0
+offset_right = 1127.0
+offset_bottom = 23.0
+text = "Hallway1"

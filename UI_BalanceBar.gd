@@ -3,6 +3,7 @@ extends Control
 @onready var bar = $BarIndicator
 @onready var left_button = $LeftButton
 @onready var right_button = $RightButton
+@onready var balance_area = $"../BalanceArea"  # FIXED: direct reference
 
 var is_balancing: bool = false
 
@@ -25,11 +26,9 @@ func hide_bar():
 	visible = false
 
 func _on_left_button_pressed():
-	if is_balancing:
-		var balance_area = get_tree().current_scene.get_node("BalanceArea")
-		balance_area.push_balance(-1)  # just push -1, BalanceArea scales it
+	if is_balancing and balance_area:
+		balance_area.push_balance(-1)
 
 func _on_right_button_pressed():
-	if is_balancing:
-		var balance_area = get_tree().current_scene.get_node("BalanceArea")
-		balance_area.push_balance(1)   # just push +1
+	if is_balancing and balance_area:
+		balance_area.push_balance(1)

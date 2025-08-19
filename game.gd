@@ -1,9 +1,10 @@
 extends Control  # Or Node2D depending on your root
 
 @onready var day_label = $HUD/DayLabel
-@onready var building_page_scene = preload("res://Building.tscn")
+@onready var maintenance_page_scene = preload("res://Scenes/Maintenance/Maintenance.tscn")
 @onready var operations_page_scene = preload("res://OperationsPage.tscn")
 @onready var grid_page_scene = preload("res://GridPage.tscn")
+@onready var boss_page_scene = preload("res://Scenes/Boss/Boss.tscn")
 @onready var black_overlay = $HUD/BlackOverlay
 @onready var work_button = $HUD/VBoxContainer/WorkButton
 @onready var employee_container = $Characters/Employees
@@ -50,15 +51,18 @@ func _on_grid_button_pressed() -> void:
 	if error != OK:
 		push_error("❌ Failed to load scene: " + scene_path)
 
-func _on_building_button_pressed():
-	get_tree().change_scene_to_packed(building_page_scene)
+func _on_maintenance_button_pressed():
+	get_tree().change_scene_to_packed(maintenance_page_scene)
 
 func _on_operations_button_pressed():
 	get_tree().change_scene_to_packed(operations_page_scene)
 
+func _on_boss_button_pressed():
+	get_tree().change_scene_to_packed(boss_page_scene)
+
 
 # Game variables
-var employee_page_scene = preload("res://EmployeeManagement.tscn")
+var employee_page_scene = preload("res://Scenes/HR/HR.tscn")
 var stress = 0
 var reputation = 0
 var employees = []

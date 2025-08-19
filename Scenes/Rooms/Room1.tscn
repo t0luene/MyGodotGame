@@ -1,0 +1,46 @@
+[gd_scene load_steps=5 format=3 uid="uid://0c1okna33yy7"]
+
+[ext_resource type="Script" uid="uid://bw65uw3ahb8lg" path="res://Scenes/Rooms/Room1.gd" id="1_f4spw"]
+[ext_resource type="Texture2D" uid="uid://bhoukxllo5mek" path="res://Assets/Rooms/HR.png" id="2_y7b8n"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_284sh"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k4lmf"]
+size = Vector2(108, 180)
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_f4spw")
+
+[node name="FloorSprite" type="Sprite2D" parent="."]
+position = Vector2(600, 321)
+scale = Vector2(0.63, 0.63)
+texture = ExtResource("2_y7b8n")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="FloorSprite"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="FloorSprite/StaticBody2D"]
+polygon = PackedVector2Array(-1152, 64, -1152, 688, 1072, 656, 1104, -688, -1184, -688, -1184, 0, -688, -512, 640, -560, 1024, -112, 944, 544, -160, 592, -864, 528)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+offset_left = -896.0
+offset_top = -992.0
+offset_right = 2880.0
+offset_bottom = 1016.0
+color = Color(0, 0, 0, 1)
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("3_284sh")]
+z_index = 20
+position = Vector2(336, 280)
+
+[node name="ExitToHallway" type="Area2D" parent="."]
+position = Vector2(448, 112)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
+position = Vector2(-21, -3)
+shape = SubResource("RectangleShape2D_k4lmf")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1080.0
+offset_right = 1135.0
+offset_bottom = 23.0
+text = "Room1"
