@@ -24,8 +24,7 @@ var node_buttons = {}
 
 func _ready():
 	close_requested.connect(_on_close_requested)
-	popup_centered_ratio(0.6)  # 60% of the screen
-	# Clear previous children just in case
+	popup_centered_ratio(0.8)
 	for child in get_children():
 		child.queue_free()
 

@@ -21,6 +21,11 @@ Global="*res://Global.gd"
 ButtonSounds="*res://ButtonSounds.gd"
 Fade="*res://Fade.tscn"
 
+[display]
+
+window/stretch/mode="viewport"
+
 [rendering]
 
 renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true

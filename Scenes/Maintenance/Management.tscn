@@ -15,6 +15,7 @@ offset_bottom = 40.0
 
 [node name="ManagePanel" type="Panel" parent="Control"]
 custom_minimum_size = Vector2(1080, 510)
+layout_mode = 0
 offset_right = 1080.0
 offset_bottom = 510.0
 
@@ -95,6 +96,7 @@ layout_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control"]
 custom_minimum_size = Vector2(350, 200)
+layout_mode = 0
 offset_left = 659.0
 offset_top = 276.0
 offset_right = 1009.0

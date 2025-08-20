@@ -10,7 +10,6 @@ var selected = {
 
 func _ready():
 	Fade.fade_in(0.5)
-
 	# Connect clicks
 	$TowerImage.gui_input.connect(_on_tower_input)
 	$TechTreeImage.gui_input.connect(_on_tech_input)
@@ -30,7 +29,6 @@ func _ready():
 
 	$InspectionImage.mouse_entered.connect(func(): _set_hover($InspectionImage, true))
 	$InspectionImage.mouse_exited.connect(func(): _set_hover($InspectionImage, false))
-
 
 # ---------- Input handlers ----------
 func _on_tower_input(event):
@@ -94,8 +92,11 @@ func load_subpage(scene_path: String):
 	var scene = load(scene_path)
 	if scene:
 		var instance = scene.instantiate()
-		Global.clear_children($ContentContainer)
-		$ContentContainer.add_child(instance)
+		Global.clear_children($ContentContainer) # keep clearing content container for other Control subpages
+		if instance is Window:
+			get_tree().current_scene.add_child(instance)
+		else:
+			$ContentContainer.add_child(instance)
 
 func _on_back_button_pressed():
 	get_tree().change_scene_to_file("res://Game.tscn")
