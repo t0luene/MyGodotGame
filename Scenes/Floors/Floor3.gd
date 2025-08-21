@@ -1,7 +1,6 @@
 extends Node2D
 
 @onready var scene_container = $SceneContainer
-@onready var elevator_button: Button = $ElevatorButton
 
 var current_room: Node = null
 

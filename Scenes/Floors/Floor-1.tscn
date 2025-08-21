@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://cxq46rxced7lc"]
+
+[ext_resource type="Script" uid="uid://d1p6rltci7n5p" path="res://Scenes/Floors/Floor-1.gd" id="1_x2jib"]
+[ext_resource type="Texture2D" uid="uid://lvog4n1225g8" path="res://Assets/vignette.png" id="2_8jiow"]
+[ext_resource type="PackedScene" uid="uid://b8vp0njl5yov7" path="res://ChecklistUI.tscn" id="3_3sjb6"]
+
+[node name="Floor-1" type="Node2D"]
+script = ExtResource("1_x2jib")
+
+[node name="SceneContainer" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -576.0
+offset_top = -324.0
+offset_right = 576.0
+offset_bottom = 324.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_8jiow")
+
+[node name="ChecklistUI" parent="CanvasLayer" instance=ExtResource("3_3sjb6")]
+mouse_filter = 2

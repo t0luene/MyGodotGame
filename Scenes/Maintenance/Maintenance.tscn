@@ -1,8 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://bqmoxujoid7bj"]
+[gd_scene load_steps=15 format=3 uid="uid://bqmoxujoid7bj"]
 
 [ext_resource type="Script" uid="uid://c7m2qqx6fi7xj" path="res://Scenes/Maintenance/Maintenance.gd" id="1_nwku6"]
-[ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="2_24gcr"]
 [ext_resource type="Texture2D" uid="uid://8i1jk7nasydo" path="res://Assets/Rooms/Maintenance.png" id="3_5gi4c"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_yo1he"]
 [ext_resource type="Shader" uid="uid://d2j2u4n6ve7oc" path="res://PropOutlineAndInsideGlow.gdshader" id="4_yo1he"]
 [ext_resource type="Texture2D" uid="uid://b2c3xvmrm4xb7" path="res://Assets/Props/Management.png" id="5_3x475"]
 [ext_resource type="Texture2D" uid="uid://dy64faa4dm4jg" path="res://Assets/Props/TechTree.png" id="6_j7m07"]
@@ -57,6 +57,12 @@ shader_parameter/size_pulse_strength = 0.3
 shader_parameter/glow_color = Color(0.945, 0, 0.606, 0.5)
 shader_parameter/glow_strength = 0.2
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_yo1he"]
+radius = 86.8332
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yo1he"]
+size = Vector2(128, 172)
+
 [node name="Control" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -66,19 +72,17 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_nwku6")
 
-[node name="TextureRect" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-offset_right = 1152.0
-offset_bottom = 648.0
-texture = ExtResource("2_24gcr")
-
-[node name="TextureRect3" type="TextureRect" parent="."]
+[node name="Image" type="TextureRect" parent="."]
 layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 scale = Vector2(0.635, 0.635)
 texture = ExtResource("3_5gi4c")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Image"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Image/StaticBody2D"]
+polygon = PackedVector2Array(55.1181, 659.843, 272.441, 532.283, 365.354, 559.055, 483.465, 502.362, 716.535, 387.402, 765.354, 398.425, 918.11, 330.709, 1332.28, 535.433, 1459.84, 593.701, 1746.46, 781.102, 1374.8, 1011.02, 600, 1011.02, 67.7165, 683.465, 4.72441, 1018.9, 1820.47, 1018.9, 1817.32, -1.5748, 3.14961, 36.2205, 1.5748, 662.992)
 
 [node name="TowerImage" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_sd6mi")
@@ -103,10 +107,10 @@ texture = ExtResource("6_j7m07")
 [node name="InspectionImage" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_xgg6g")
 layout_mode = 0
-offset_left = 426.0
-offset_top = 16.0
-offset_right = 675.0
-offset_bottom = 411.0
+offset_left = 408.0
+offset_top = -9.0
+offset_right = 707.0
+offset_bottom = 442.0
 scale = Vector2(0.635, 0.635)
 texture = ExtResource("7_u24gb")
 
@@ -134,3 +138,23 @@ layout_mode = 0
 offset_right = 45.0
 offset_bottom = 31.0
 text = "Back"
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(271, 508)
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("3_yo1he")]
+z_index = 20
+position = Vector2(275, 522)
+
+[node name="ElevatorTrigger" type="Area2D" parent="."]
+position = Vector2(110, 382)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ElevatorTrigger"]
+shape = SubResource("CircleShape2D_yo1he")
+
+[node name="ExitToHallway" type="Area2D" parent="."]
+position = Vector2(1051, 412)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
+position = Vector2(-33, 24)
+shape = SubResource("RectangleShape2D_yo1he")

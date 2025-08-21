@@ -1,17 +1,24 @@
 extends Node2D
 
 @onready var player: CharacterBody2D = $Player
-@onready var entrance1: Area2D = $Entrance1  # leads to Room1
+@onready var entrance1: Area2D = $Entrance1  # leads to Maintenance
+@onready var entrance2: Area2D = $Entrance2  # leads to Crew Room
 @onready var checklist_trigger = $ChecklistTrigger
 @onready var elevator_trigger: Area2D = $ElevatorTrigger  # the proximity trigger for elevator
 
 func _ready():
 	# Connect entrances
 	entrance1.body_entered.connect(func(body):
-		_on_entrance_entered(body, "Scenes/Rooms/Room1.tscn")
+		_on_entrance_entered(body, "res://Scenes/Maintenance/Maintenance.tscn")
 	)
+	entrance2.body_entered.connect(func(body):
+		_on_entrance_entered(body, "res://Scenes/Rooms/Crew.tscn")
+	)
+
+
 	# Connect checklist trigger
 	checklist_trigger.body_entered.connect(_on_checklist_trigger)
+
 	# Connect elevator proximity trigger
 	elevator_trigger.body_entered.connect(_on_elevator_triggered)
 	elevator_trigger.visible = false
@@ -38,7 +45,7 @@ func _on_checklist_trigger(body):
 		return
 
 	# Mark Hallway1 quest done
-	Global.mark_completed("floor3", "hallway2")
+	Global.mark_completed("floor-1", "hallway-1")
 
 # Handler for entrance triggers
 func _on_entrance_entered(body, target_room: String) -> void:

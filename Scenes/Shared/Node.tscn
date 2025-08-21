@@ -1,11 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://b0pr0bkdkqpyl"]
-
-[ext_resource type="Script" uid="uid://dtts2ubvyykcv" path="res://Scenes/Maintenance/TechTree.gd" id="1_cw4vo"]
+[gd_scene format=3 uid="uid://b0pr0bkdkqpyl"]
 
 [node name="Node" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-script = ExtResource("1_cw4vo")
 
 [node name="Button" type="Button" parent="."]
 custom_minimum_size = Vector2(64, 64)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dgyiy44g50po8"]
 
-[ext_resource type="Script" uid="uid://dtts2ubvyykcv" path="res://Scenes/Maintenance/TechTree.gd" id="1_6xy2v"]
+[ext_resource type="Script" uid="uid://dtts2ubvyykcv" path="res://Scenes/Shared/TechTree.gd" id="1_6xy2v"]
 
 [node name="Window" type="Window"]
 initial_position = 1

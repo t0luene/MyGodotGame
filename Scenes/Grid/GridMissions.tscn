@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://y42rok8t4c4u"]
 
-[ext_resource type="Script" uid="uid://cke3n0dj38cpw" path="res://GridMissions.gd" id="1_irmoo"]
+[ext_resource type="Script" uid="uid://cke3n0dj38cpw" path="res://Scenes/Grid/GridMissions.gd" id="1_irmoo"]
 
 [node name="GridPage" type="Control"]
 layout_mode = 3

@@ -1,6 +1,6 @@
 extends Window
 
-@export var node_scene: PackedScene = preload("res://Node.tscn")
+@export var node_scene: PackedScene = preload("res://Scenes/Shared/Node.tscn")
 @export var horizontal_spacing: int = 200
 @export var vertical_spacing: int = 120
 

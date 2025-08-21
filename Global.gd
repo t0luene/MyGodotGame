@@ -274,7 +274,6 @@ func generate_hire_candidates():
 
 
 #Floor Checklist
-
 var quests = {
 	"floor4": {
 		"hallway1": {"desc": "Reach the end of Hallway1", "done": false},
@@ -289,11 +288,17 @@ var quests = {
 	"floor5": {
 		"hallway2": {"desc": "Reach the end of Hallway1", "done": false},
 		"room1": {"desc": "Enter Room1", "done": false},
+	},
+	"floor-1": {
+		"hallway-1": {"desc": "Explore the hallway", "done": false},
+		"maintenance_room": {"desc": "Enter the Maintenance room", "done": false},
+		"talk_to_crew": {"desc": "Talk to all maintenance crew", "done": false},
 	}
-
 }
 
 var current_floor: String = ""  # Which floor is active right now
+var current_floor_scene: String = ""  # e.g. "res://Scenes/Floors/BossRoom.tscn"
+
 
 func set_floor(floor_name: String):
 	current_floor = floor_name

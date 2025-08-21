@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dep16q1gf6g8b"]
 
-[ext_resource type="Script" uid="uid://dtmwtrh78ehd2" path="res://GridPage.gd" id="1_dcgkf"]
+[ext_resource type="Script" uid="uid://dtmwtrh78ehd2" path="res://Scenes/Grid/Grid.gd" id="1_dcgkf"]
 [ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="2_7whr7"]
 [ext_resource type="Texture2D" uid="uid://bwoftkuypmuhq" path="res://Assets/GridMissions.png" id="3_mh8jq"]
 
