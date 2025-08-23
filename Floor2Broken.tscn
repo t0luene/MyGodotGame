@@ -1,7 +1,6 @@
-[gd_scene load_steps=30 format=3 uid="uid://dtrsocfi61xyy"]
+[gd_scene load_steps=29 format=3 uid="uid://dtrsocfi61xyy"]
 
 [ext_resource type="Script" uid="uid://babh5msf44mma" path="res://Floor2Broken.gd" id="1_hga62"]
-[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="2_7si2p"]
 [ext_resource type="TileSet" uid="uid://cgrxj7h15k211" path="res://Office.tres" id="2_yjqap"]
 [ext_resource type="Texture2D" uid="uid://lvog4n1225g8" path="res://Assets/vignette.png" id="5_dpy5r"]
 [ext_resource type="TileSet" uid="uid://dekoyebj5dkv8" path="res://FogOpaque.tres" id="5_yjqap"]
@@ -78,11 +77,6 @@ layer_0/tile_data = PackedInt32Array(131068, 65537, 4, 65532, 65537, 3, -4, 6553
 tile_set = ExtResource("2_yjqap")
 format = 2
 layer_0/tile_data = PackedInt32Array(458765, 458754, 4, -131055, 327682, 4, -65501, 262146, 4, 39, 262146, 4, 65544, 262146, 805306372, -851946, 262146, 24, -786410, 262146, 25, -851945, 327682, 24, -786409, 327682, 25, -851938, 196610, 24, -786402, 196610, 25, -851937, 196610, 24, -786401, 196610, 25, -851951, 196610, 22, -786415, 196610, 23, -262123, 2, 19, -327658, 65538, 28, -262122, 65538, 29, -196586, 65538, 30, -393193, 196610, 28, -327657, 196610, 29, -458731, 196610, 28, -393195, 196610, 29, -524258, 196610, 28, -458722, 196610, 29, -458721, 327682, 26, -393185, 327682, 27, 393233, 589826, 5, -524263, 262146, 5, -458727, 196610, 5, -131064, 393218, 8, -65528, 393218, 9, -131063, 458754, 8, -65527, 458754, 9, -131066, 262146, 8, -65530, 262146, 9, -131065, 327682, 8, -65529, 196610, 7, -131067, 262146, 4, -65531, 458754, 4, -65532, 262146, 4, 65546, 262146, 1610612740, -851940, 262146, 24, -786404, 262146, 25, -851939, 327682, 24, -786403, 327682, 25, 43, 983041, 5, 44, 1048577, 5, 46, 1048577, 5, 47, 1114113, 5, 48, 1048577, 5, 49, 1114113, 5)
-
-[node name="Player" parent="." groups=["player"] instance=ExtResource("2_7si2p")]
-visible = false
-z_index = 20
-position = Vector2(1224, 24)
 
 [node name="Rooms" type="Node2D" parent="."]
 visible = false

@@ -15,3 +15,13 @@ script = ExtResource("1_7cmko")
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="QuestLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="RequirementsList" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="FinishButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "FINISH"

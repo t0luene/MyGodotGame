@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://c6df1gpxyek05"]
+
+[ext_resource type="Script" uid="uid://i2actet7gt0b" path="res://Scenes/Characters/HRLady.gd" id="1_mul6o"]
+[ext_resource type="Texture2D" uid="uid://ljxrxla5cy4r" path="res://Assets/Avatars/emp1.png" id="2_arwbx"]
+[ext_resource type="SpriteFrames" uid="uid://o6bh4pebwtlm" path="res://Player.tres" id="2_vfkv6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0rwas"]
+size = Vector2(3.08592, 2.59278)
+
+[node name="HRLady" type="CharacterBody2D"]
+texture_filter = 1
+script = ExtResource("1_mul6o")
+npc_portrait = ExtResource("2_arwbx")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(4, 4)
+sprite_frames = ExtResource("2_vfkv6")
+animation = &"walk"
+frame_progress = 0.232403
+speed_scale = 2.0
+offset = Vector2(0, -16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(3, -18)
+scale = Vector2(6.4, 6.4)
+shape = SubResource("RectangleShape2D_0rwas")
+
+[node name="InteractButton" type="Button" parent="."]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "TOUCH ME"

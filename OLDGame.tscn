@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://4322hlalkkpu"]
+[gd_scene load_steps=6 format=3 uid="uid://4322hlalkkpu"]
 
-[ext_resource type="Script" uid="uid://borel8b50vikl" path="res://game.gd" id="1_80nbo"]
-[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_feb5d"]
+[ext_resource type="Script" uid="uid://borel8b50vikl" path="res://Oldgame.gd" id="1_80nbo"]
 [ext_resource type="PackedScene" uid="uid://dhg8caguiut4g" path="res://EmployeeConversation.tscn" id="4_r0x5m"]
 [ext_resource type="PackedScene" uid="uid://disq3lorsktng" path="res://ElevatorUI.tscn" id="5_r0x5m"]
 [ext_resource type="PackedScene" uid="uid://0ius4e6ugvbw" path="res://Floors.tscn" id="5_t88pq"]
@@ -194,9 +193,6 @@ text = "Grid
 "
 
 [node name="Characters" type="CanvasLayer" parent="."]
-
-[node name="Player" parent="Characters" instance=ExtResource("3_feb5d")]
-position = Vector2(955, 614)
 
 [node name="Employees" type="Node2D" parent="Characters"]
 

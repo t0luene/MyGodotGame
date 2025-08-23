@@ -11,6 +11,7 @@ var floors = [
 	{"scene":"res://Scenes/Floors/Floor1.tscn", "label":"Floor 1"},
 	{"scene":"res://Scenes/Floors/Floor2.tscn", "label":"Floor 2"},
 	{"scene":"res://Scenes/Floors/Floor3.tscn", "label":"Floor 3"},
+	{"scene":"res://Scenes/Floors/Floor4.tscn", "label":"Floor 4"},
 	{"scene":"res://Scenes/Floors/Floor5.tscn", "label":"Floor 5"}
 ]
 

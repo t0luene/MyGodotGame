@@ -1,56 +1,38 @@
 extends Control
 
-@onready var dialogue = $Dialogue
-@onready var options_panel = $OptionsPanel
-@onready var daily_panel = $DailyReportPanel
+@onready var dialogue_node: Control = get_tree().get_current_scene().get_node("HUD/CanvasLayer/Dialogue")
+@onready var exit_to_hallway: Area2D = $ExitToHallway
+@onready var checklist_ui: Control = get_tree().get_current_scene().get_node("HUD/CanvasLayer/CheckListUI")
 
-# Buttons
-@onready var elevator_button = $OptionsPanel/ElevatorButton
-@onready var staff_button    = $OptionsPanel/StaffButton
-@onready var building_button = $OptionsPanel/BuildingButton
-@onready var grid_button     = $OptionsPanel/GridButton
+var quest_completed := false
 
 func _ready():
-	# Make sure buttons are visible immediately
-	Global.set_floor("floor0")  # Boss is floor0
-	options_panel.visible = true
-	daily_panel.visible = true
+	exit_to_hallway.body_entered.connect(_on_exit_entered)
 	Fade.fade_in(0.5)
 
-	# Connect navigation buttons
-	elevator_button.pressed.connect(_on_elevator_pressed)
-	staff_button.pressed.connect(_on_staff_pressed)
-	building_button.pressed.connect(_on_building_pressed)
-	grid_button.pressed.connect(_on_grid_pressed)
+	if not quest_completed:
+		_start_conversation()
 
-	# Example intro dialogue
-	var intro_lines = [
-		"Welcome to the company!",
-		"I’m your boss. I’ll guide you through your first steps.",
-		"First, let’s learn how to hire an employee."
+func _start_conversation():
+	var lines = [
+		{"text": "Welcome to the company!", "speaker": "Boss"},
+		{"text": "Congrats on completing your first tasks.", "speaker": "Boss"}
 	]
+	dialogue_node.dialogue_finished.connect(_on_conversation_finished)
+	dialogue_node.start(lines)
 
-	# Connect dialogue finished before starting
-	dialogue.dialogue_finished.connect(_on_intro_finished)
-	dialogue.start(intro_lines)
-	
+func _on_conversation_finished():
+	QuestManager.complete_quest("hired")
+	quest_completed = true
 
-func _on_intro_finished():
-	# Can add tutorial logic here if needed
-	print("Intro finished")
+	if checklist_ui:
+		checklist_ui.rebuild()
 
+func _on_exit_entered(body):
+	if body.name != "Player":
+		return
 
-# --- Navigation handlers ---
-func _on_elevator_pressed():
 	Fade.fade_out(0.5)
 	await get_tree().create_timer(0.5).timeout
-	get_tree().change_scene_to_file("res://Scenes/Shared/Elevator.tscn")
 
-func _on_staff_pressed():
-	get_tree().change_scene_to_file("res://Scenes/HR/HR.tscn")
-
-func _on_building_pressed():
-	get_tree().change_scene_to_file("res://Scenes/Maintenance/Maintenance.tscn")
-
-func _on_grid_pressed():
-	get_tree().change_scene_to_file("res://Scenes/Grid/Grid.tscn")
+	get_parent().get_parent().load_room("Scenes/Rooms/Hallway0.tscn")

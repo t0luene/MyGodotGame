@@ -3,6 +3,7 @@ extends CharacterBody2D
 @export var move_speed := 250.0
 @onready var anim := $AnimatedSprite2D  # Update this path if your sprite has a different name or location
 @export var allow_vertical_movement: bool = true
+@export var player_portrait: Texture2D
 
 func _ready():
 	if has_node("Camera2D"):

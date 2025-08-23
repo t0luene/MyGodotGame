@@ -1,41 +1,53 @@
-[gd_scene load_steps=7 format=3 uid="uid://2b2pyda07nb8"]
+[gd_scene load_steps=8 format=3 uid="uid://2b2pyda07nb8"]
 
 [ext_resource type="Script" uid="uid://byeqct6a0hkuk" path="res://Scenes/HR/HR.gd" id="1_rns67"]
 [ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="2_dql1w"]
 [ext_resource type="Texture2D" uid="uid://bhoukxllo5mek" path="res://Assets/Rooms/HR.png" id="3_yl2s6"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="4_aqcuq"]
 [ext_resource type="PackedScene" uid="uid://c6df1gpxyek05" path="res://Scenes/Characters/HRLady.tscn" id="5_tqpae"]
-[ext_resource type="PackedScene" uid="uid://ba24dom3agjpy" path="res://Scenes/Shared/Dialogue.tscn" id="6_tqpae"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jfj6w"]
+radius = 86.8332
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bdolc"]
 size = Vector2(128, 172)
 
-[node name="Control" type="Node2D"]
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_rns67")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 texture = ExtResource("2_dql1w")
 
 [node name="TextureRect2" type="TextureRect" parent="."]
+layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 scale = Vector2(0.635, 0.635)
 texture = ExtResource("3_yl2s6")
 
 [node name="ContentContainer" type="Control" parent="."]
-layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 
 [node name="HiringButton" type="Button" parent="."]
+layout_mode = 2
 offset_left = 473.0
 offset_right = 582.0
 offset_bottom = 31.0
 text = "Hiring"
 
 [node name="BulletinBoardButton" type="Button" parent="."]
+layout_mode = 2
 offset_left = 782.0
 offset_right = 901.0
 offset_bottom = 31.0
@@ -43,33 +55,37 @@ text = "Bulletin Board
 "
 
 [node name="StaffButton" type="Button" parent="."]
+layout_mode = 2
 offset_left = 629.0
 offset_right = 727.0
 offset_bottom = 31.0
 text = "Staff"
 
 [node name="BackButton" type="Button" parent="."]
+layout_mode = 0
 offset_right = 45.0
 offset_bottom = 31.0
 text = "Back"
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
-position = Vector2(902, 513)
+position = Vector2(271, 508)
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("4_aqcuq")]
+z_index = 20
+position = Vector2(331, 570)
+
+[node name="ElevatorTrigger" type="Area2D" parent="."]
+position = Vector2(110, 382)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ElevatorTrigger"]
+shape = SubResource("CircleShape2D_jfj6w")
 
 [node name="ExitToHallway" type="Area2D" parent="."]
-position = Vector2(855, 285)
+position = Vector2(1051, 412)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
+position = Vector2(-33, 24)
 shape = SubResource("RectangleShape2D_bdolc")
 
 [node name="HRLady" parent="." instance=ExtResource("5_tqpae")]
 position = Vector2(622, 397)
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Dialogue" parent="CanvasLayer" instance=ExtResource("6_tqpae")]
-offset_left = 509.0
-offset_top = 145.0
-offset_right = 509.0
-offset_bottom = 145.0
-mouse_filter = 2

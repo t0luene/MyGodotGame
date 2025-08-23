@@ -273,50 +273,8 @@ func generate_hire_candidates():
 
 
 
-#Floor Checklist
-var quests = {
-	"floor4": {
-		"hallway1": {"desc": "Reach the end of Hallway1", "done": false},
-		"room3": {"desc": "Enter Room3", "done": false},
-		"room4": {"desc": "Enter Room4", "done": false},
-		"room2": {"desc": "Inspect the item in Room2", "done": false},  # ✅
-	},
-	"floor3": {
-		"hallway2": {"desc": "Reach the end of Hallway1", "done": false},
-		"room1": {"desc": "Enter Room1", "done": false},
-	},
-	"floor5": {
-		"hallway2": {"desc": "Reach the end of Hallway1", "done": false},
-		"room1": {"desc": "Enter Room1", "done": false},
-	},
-	"floor-1": {
-		"hallway-1": {"desc": "Explore the hallway", "done": false},
-		"maintenance_room": {"desc": "Enter the Maintenance room", "done": false},
-		"talk_to_crew": {"desc": "Talk to all maintenance crew", "done": false},
-	}
+# NPC states
+var npc_states = {
+	"Boss": {"last_conversation_index": 0},
+	"HRLady": {"last_conversation_index": 0}
 }
-
-var current_floor: String = ""  # Which floor is active right now
-var current_floor_scene: String = ""  # e.g. "res://Scenes/Floors/BossRoom.tscn"
-
-
-func set_floor(floor_name: String):
-	current_floor = floor_name
-
-func mark_completed(floor_name: String, quest_name: String):
-	if quests.has(floor_name) and quests[floor_name].has(quest_name):
-		quests[floor_name][quest_name]["done"] = true
-		print("Quest completed:", quest_name, "on", floor_name)
-
-func is_floor_complete(floor_name: String) -> bool:
-	if not quests.has(floor_name):
-		return false
-	for quest in quests[floor_name].values():
-		if not quest["done"]:
-			return false
-	return true
-
-func get_floor_quests(floor_name: String) -> Dictionary:
-	if quests.has(floor_name):
-		return quests[floor_name]
-	return {}

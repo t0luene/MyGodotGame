@@ -4,13 +4,10 @@ extends Node2D
 @onready var exit_to_hallway: Area2D = $ExitToHallway  # doorway back to Hallway1
 
 func _ready():
-	# Mark Room4 quest done immediately upon entering
 	Global.mark_completed("floor4", "room3")
 
-	# Connect the exit trigger
 	exit_to_hallway.body_entered.connect(_on_exit_entered)
 
-	# Fade in
 	Fade.fade_in(0.5)
 
 # Handler for exit trigger

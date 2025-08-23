@@ -1,29 +1,18 @@
-extends Control
+extends Node2D
 
 func _ready():
-	$HiringButton.pressed.connect(_on_hiring_button_pressed)
-	$StaffButton.pressed.connect(_on_staff_button_pressed)
-	$BulletinBoardButton.pressed.connect(_on_bulletin_board_button_pressed)
-	$BackButton.pressed.connect(_on_back_button_presssed)
+	# Move Player into this scene
+	if Player.get_parent() != self:
+		if Player.get_parent():
+			Player.get_parent().remove_child(Player)
+		add_child(Player)
 
-	# Load HiringPage by default when EM opens
-	load_subpage("res://Scenes/HR/Hiring.tscn")
+	Player.visible = true
+	# Place Player at scene spawn if exists
+	var spawn = get_node_or_null("PlayerSpawn")
+	if spawn:
+		Player.global_position = spawn.global_position
 
-func _on_hiring_button_pressed():
-	load_subpage("res://Scenes/HR/Hiring.tscn")
-	
-func _on_bulletin_board_button_pressed():
-	load_subpage("res://Scenes/HR/BulletinBoard.tscn")
-
-func _on_staff_button_pressed():
-	load_subpage("res://Scenes/HR/Staff.tscn")
-
-func _on_back_button_presssed():
-	get_tree().change_scene_to_file("res://Game.tscn")
-		
-func load_subpage(scene_path: String):
-	var scene = load(scene_path)
-	if scene:
-		var instance = scene.instantiate()
-		Global.clear_children($ContentContainer)
-		$ContentContainer.add_child(instance)
+	# Mark quest step complete
+	QuestManager.player_entered_hr()
+	print("Quest step completed: entered HR")
