@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="BusinessManager"
-run/main_scene="uid://bcookgc7d4421"
+run/main_scene="uid://cbn0d0sfo1uyb"
 config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://Assets/icon.svg"
 
@@ -20,11 +20,9 @@ config/icon="res://Assets/icon.svg"
 Global="*res://Global.gd"
 ButtonSounds="*res://ButtonSounds.gd"
 Fade="*res://Fade.tscn"
-QuestManager="*res://Scenes/Shared/QuestManager.gd"
 Pickup="*res://Pickup.tscn"
+QuestManager="*res://Scenes/Shared/QuestManager.gd"
 HUD="*res://Scenes/Shared/HUD.tscn"
-Player="*res://Player.tscn"
-Game="*res://Scenes/Game.tscn"
 
 [display]
 

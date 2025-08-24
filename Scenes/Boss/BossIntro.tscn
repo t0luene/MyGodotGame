@@ -22,7 +22,7 @@ scale = Vector2(0.635, 0.635)
 texture = ExtResource("2_npwxh")
 
 [node name="ExitToHallway" type="Area2D" parent="."]
-position = Vector2(115, 394)
+position = Vector2(82, 434)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
 shape = SubResource("CircleShape2D_yp3b2")

@@ -1,55 +1,47 @@
 extends Node2D
 
-@onready var entrance1: Area2D = $Entrance1
-@onready var entrance2: Area2D = $Entrance2
-@onready var checklist_trigger: Area2D = $ChecklistTrigger
+@onready var exit_to_boss = $ExitToBoss
+@onready var hr_door = $Entrance1
+@onready var boss_door = $Entrance2
+@onready var spawn = $SpawnPoint
 @onready var elevator_trigger: Area2D = $ElevatorTrigger
-@onready var player_spawn: Marker2D = $PlayerSpawn
 
-var floor_node: Node = null
+var player: Node2D = null
 
 func _ready():
-	# Move Player into this scene
-	if Player.get_parent() != self:
-		if Player.get_parent():
-			Player.get_parent().remove_child(Player)
-		add_child(Player)
-	Player.global_position = player_spawn.global_position
-	Player.visible = true
+	player = get_parent().get_node_or_null("Player")
+	if player:
+		player.global_position = spawn.global_position
+	else:
+		push_error("⚠️ Player not found in Hallway0")
 
-	# Reference Floor0 for load_room
-	floor_node = get_parent()
-
-	# Connect triggers
-	entrance1.body_entered.connect(_on_entrance1_entered)
-	entrance2.body_entered.connect(_on_entrance2_entered)
-	checklist_trigger.body_entered.connect(_on_checklist_trigger)
+	boss_door.body_entered.connect(_on_boss_door)
+	hr_door.body_entered.connect(_on_hr_door)
 	elevator_trigger.body_entered.connect(_on_elevator_triggered)
+	elevator_trigger.visible = false
+	elevator_trigger.monitoring = false
 
-# Checklist trigger
-func _on_checklist_trigger(body):
-	if body != Player:
-		return
-	QuestManager.complete_quest("hallway0")
+func _process(_delta):
+	elevator_trigger.visible = true
+	elevator_trigger.monitoring = true
 
-# Room entrances
-func _on_entrance1_entered(body):
-	if body != Player:
-		return
-	if floor_node and floor_node.has_method("load_room"):
-		floor_node.load_room("res://Scenes/HR/HR.tscn")
-
-func _on_entrance2_entered(body):
-	if body != Player:
-		return
-	if floor_node and floor_node.has_method("load_room"):
-		floor_node.load_room("res://Scenes/Boss/Boss.tscn")
-
-# Elevator
 func _on_elevator_triggered(body):
-	if body != Player:
+	if body.name != "Player":
 		return
-	if has_node("/root/Fade"):
-		Fade.fade_out(0.5)
+
+	if QuestManager.current_quest_id == 4:
+		QuestManager.player_entered_elevator_maint()
+
 	await get_tree().create_timer(0.5).timeout
 	get_tree().change_scene_to_file("res://Scenes/Shared/Elevator.tscn")
+
+func _on_boss_door(body):
+	if body.name == "Player":
+		print("Exit Hallway → Boss triggered")
+		get_node("/root/NEWGame").load_scene("res://Scenes/Boss/NEWBoss.tscn")
+
+func _on_hr_door(body):
+	if body.name == "Player":
+		print("Exit Hallway → HR triggered")
+		QuestManager.player_exited_boss()
+		get_node("/root/NEWGame").load_scene("res://Scenes/HR/HR.tscn")

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="2_dql1w"]
 [ext_resource type="Texture2D" uid="uid://bhoukxllo5mek" path="res://Assets/Rooms/HR.png" id="3_yl2s6"]
 [ext_resource type="PackedScene" uid="uid://c6df1gpxyek05" path="res://Scenes/Characters/HRLady.tscn" id="5_tqpae"]
-[ext_resource type="PackedScene" uid="uid://ba24dom3agjpy" path="res://Scenes/Shared/Dialogue.tscn" id="6_tqpae"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="6_jfj6w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bdolc"]
 size = Vector2(128, 172)
@@ -65,11 +65,12 @@ shape = SubResource("RectangleShape2D_bdolc")
 [node name="HRLady" parent="." instance=ExtResource("5_tqpae")]
 position = Vector2(622, 397)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Player" parent="." instance=ExtResource("6_jfj6w")]
+position = Vector2(906, 519)
 
-[node name="Dialogue" parent="CanvasLayer" instance=ExtResource("6_tqpae")]
-offset_left = 509.0
-offset_top = 145.0
-offset_right = 509.0
-offset_bottom = 145.0
-mouse_filter = 2
+[node name="InteractButton" type="Button" parent="."]
+offset_left = 626.0
+offset_top = 430.0
+offset_right = 710.0
+offset_bottom = 461.0
+text = "INTERACT"

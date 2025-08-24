@@ -4,7 +4,7 @@ extends Control
 @onready var go_button: Button = $GoButton
 @onready var close_button: Button = $CloseButton
 
-# Define main floors with their scene paths and labels
+# Floors list – make sure Floor-1 path is correct
 var floors = [
 	{"scene":"res://Scenes/Floors/Floor-1.tscn", "label":"Floor -1"},
 	{"scene":"res://Scenes/Boss/Boss.tscn", "label":"Floor 0"},
@@ -16,30 +16,23 @@ var floors = [
 ]
 
 func _ready():
-	Fade.fade_in(0.5)
-
 	_setup_floors()
-
 	go_button.pressed.connect(_on_go_pressed)
 	close_button.pressed.connect(_on_close_pressed)
 
 func _setup_floors():
 	floor_dropdown.clear()
 
-	# Add main floors to dropdown
 	for i in range(floors.size()):
 		var f = floors[i]
-		var display_label = f["label"]
-
-		# Highlight the current floor based on Global.current_floor_scene
+		var label = f["label"]
 		if f["scene"] == Global.current_floor_scene:
-			display_label += " (YOU ARE HERE)"
+			label += " (YOU ARE HERE)"
 			floor_dropdown.select(i)
+		floor_dropdown.add_item(label)
+		floor_dropdown.set_item_text(i, label)
 
-		floor_dropdown.add_item(display_label)
-		floor_dropdown.set_item_text(i, display_label)  # force exact text
-
-	# Add locked floors (Floor 2 -> Floor 12)
+	# Add locked floors (optional)
 	for i in range(2, 13):
 		var index = floor_dropdown.get_item_count()
 		var label = "Floor %d" % i
@@ -56,13 +49,15 @@ func _on_go_pressed():
 	var target_scene = floors[selected_index]["scene"]
 	Global.current_floor_scene = target_scene
 
-	# Fade out and change scene
-	Fade.fade_out(0.5)
+	# Quest step for arriving at Floor-1
+	if QuestManager.current_quest_id == 4 and target_scene == "res://Scenes/Floors/Floor-1.tscn":
+		QuestManager.player_arrived_floor_minus1()
+
+	# Fade and change scene
 	await get_tree().create_timer(0.5).timeout
 	get_tree().change_scene_to_file(target_scene)
 
 func _on_close_pressed():
 	if Global.current_floor_scene != "":
-		Fade.fade_out(0.5)
 		await get_tree().create_timer(0.5).timeout
 		get_tree().change_scene_to_file(Global.current_floor_scene)

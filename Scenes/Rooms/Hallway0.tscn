@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://y7ovugodt4bj"]
+[gd_scene load_steps=8 format=3 uid="uid://y7ovugodt4bj"]
 
 [ext_resource type="Script" uid="uid://do4fstp6jqpdi" path="res://Scenes/Rooms/Hallway0.gd" id="1_dvb7u"]
 [ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Rooms/Hallway2.png" id="2_su8bj"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_dvb7u"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_01lhd"]
 size = Vector2(72, 176)
@@ -44,7 +45,7 @@ position = Vector2(-4, -48)
 shape = SubResource("RectangleShape2D_vwktm")
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
-position = Vector2(551, 397)
+position = Vector2(690, 462)
 
 [node name="ElevatorTrigger" type="Area2D" parent="."]
 position = Vector2(995, 586)
@@ -65,10 +66,13 @@ text = "Elevator- Exit"
 offset_left = 1056.0
 offset_right = 1127.0
 offset_bottom = 23.0
-text = "Hallway1"
+text = "Hallway0"
 
 [node name="ChecklistTrigger" type="Area2D" parent="."]
-position = Vector2(557, 377)
+position = Vector2(28, 102)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ChecklistTrigger"]
 shape = SubResource("CircleShape2D_dvb7u")
+
+[node name="Player" parent="." instance=ExtResource("3_dvb7u")]
+position = Vector2(699, 484)

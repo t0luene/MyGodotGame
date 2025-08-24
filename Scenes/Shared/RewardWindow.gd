@@ -28,4 +28,9 @@ func hide_reward() -> void:
 
 func _on_close_pressed() -> void:
 	hide_reward()
+	
+	# Reference the HUD node
+	var hud = get_node("/root/NEWGame/HUD")
+	
+	# Call claim_reward on HUD
 	HUD.claim_reward(QuestManager.current_quest_id)

@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://c33kevexabplb"]
+
+[ext_resource type="Script" uid="uid://cpd411xmejecs" path="res://Scenes/Boss/NEWBoss.gd" id="1_k1djp"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="2_iw8qn"]
+[ext_resource type="Texture2D" uid="uid://kimdcjiemq2s" path="res://Assets/Rooms/BossRoom.png" id="2_pcl21"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k1djp"]
+size = Vector2(102, 92)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pcl21"]
+radius = 73.3553
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_k1djp")
+
+[node name="BossSprite" type="TextureRect" parent="."]
+offset_right = 1945.0
+offset_bottom = 1025.0
+scale = Vector2(0.635, 0.635)
+texture = ExtResource("2_pcl21")
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(381, 579)
+
+[node name="ExitToHallway" type="Area2D" parent="."]
+position = Vector2(16, 376)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
+position = Vector2(41, 36)
+shape = SubResource("RectangleShape2D_k1djp")
+
+[node name="Player" parent="." instance=ExtResource("2_iw8qn")]
+position = Vector2(449, 579)
+
+[node name="TriggerArea" type="Area2D" parent="."]
+position = Vector2(621, 553)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+shape = SubResource("CircleShape2D_pcl21")
+
+[node name="InteractButton" type="Button" parent="."]
+offset_left = 700.0
+offset_top = 280.0
+offset_right = 784.0
+offset_bottom = 311.0
+text = "INTERACT"

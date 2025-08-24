@@ -278,3 +278,55 @@ var npc_states = {
 	"Boss": {"last_conversation_index": 0},
 	"HRLady": {"last_conversation_index": 0}
 }
+
+
+# ---------------------------
+# Floor tracking for Elevator & Quest5
+# ---------------------------
+
+# Floor tracking for Elevator & Quest5
+var current_floor_scene: String = ""
+
+func init_building_floors(count: int = 6):
+	if building_floors.size() > 0:
+		return  # already initialized
+
+	for i in range(count):
+		var scene_path = ""
+		var label_text = ""
+		var state_val = FloorState.LOCKED
+		if i == 0:
+			scene_path = "res://Scenes/Floors/Floor-1.tscn"
+			label_text = "Floor -1"
+			state_val = FloorState.AVAILABLE
+		elif i == 1:
+			scene_path = "res://Scenes/Boss/Boss.tscn"
+			label_text = "Floor 0"
+			state_val = FloorState.AVAILABLE
+		elif i == 2:
+			scene_path = "res://Scenes/Floors/Floor1.tscn"
+			label_text = "Floor 1"
+		elif i == 3:
+			scene_path = "res://Scenes/Floors/Floor2.tscn"
+			label_text = "Floor 2"
+		elif i == 4:
+			scene_path = "res://Scenes/Floors/Floor3.tscn"
+			label_text = "Floor 3"
+		elif i == 5:
+			scene_path = "res://Scenes/Floors/Floor4.tscn"
+			label_text = "Floor 4"
+
+		var floor = {
+			"scene": scene_path,
+			"label": label_text,
+			"state": state_val,
+			"purpose": null,
+			"capacity": 3,
+			"assigned_employee_indices": []
+		}
+		building_floors.append(floor)
+
+
+func set_floor(floor_name: String):
+	current_floor_scene = floor_name
+	print("Global: current floor set to ", floor_name)

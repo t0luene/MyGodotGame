@@ -1,18 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://tad7rxdhjrsg"]
+[gd_scene load_steps=4 format=3 uid="uid://dpqx6oxdcnmfv"]
 
-[ext_resource type="Script" uid="uid://bn1lc7i4l5kjs" path="res://Scenes/Characters/CrewMember.gd" id="1_6qtx5"]
-[ext_resource type="SpriteFrames" uid="uid://o6bh4pebwtlm" path="res://Player.tres" id="2_5ulmn"]
+[ext_resource type="Script" uid="uid://dpw8cvg2a78lv" path="res://Scenes/Characters/MaintLead.gd" id="1_t33p1"]
+[ext_resource type="SpriteFrames" uid="uid://o6bh4pebwtlm" path="res://Player.tres" id="2_hyyi5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0rwas"]
 size = Vector2(10.1563, 6.9336)
 
-[node name="CrewMember" type="CharacterBody2D"]
+[node name="MaintLead" type="CharacterBody2D"]
 texture_filter = 1
-script = ExtResource("1_6qtx5")
+script = ExtResource("1_t33p1")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(4, 4)
-sprite_frames = ExtResource("2_5ulmn")
+sprite_frames = ExtResource("2_hyyi5")
 animation = &"walk"
 frame_progress = 0.232403
 speed_scale = 2.0

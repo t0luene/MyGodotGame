@@ -24,8 +24,3 @@ offset = Vector2(0, -16)
 position = Vector2(3, -18)
 scale = Vector2(6.4, 6.4)
 shape = SubResource("RectangleShape2D_0rwas")
-
-[node name="InteractButton" type="Button" parent="."]
-offset_right = 8.0
-offset_bottom = 8.0
-text = "TOUCH ME"
