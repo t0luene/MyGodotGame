@@ -21,7 +21,7 @@ func _ready():
 		print("✅ ChecklistUI connected to QuestManager signals")
 
 	# Load initial scene
-	load_scene("res://Scenes/Boss/NEWBoss.tscn")
+	load_scene("res://Scenes/Floors/Floor0.tscn")
 
 	# Debug skip to quest
 	if debug_start_quest >= 0:

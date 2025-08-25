@@ -58,20 +58,13 @@ shader_parameter/size_pulse_strength = 0.3
 shader_parameter/glow_color = Color(0.945, 0, 0.606, 0.5)
 shader_parameter/glow_strength = 0.2
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_yo1he"]
-size = Vector2(128, 172)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3x475"]
+size = Vector2(131, 194)
 
-[node name="Control" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Control" type="Node2D"]
 script = ExtResource("1_nwku6")
 
 [node name="Image" type="TextureRect" parent="."]
-layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 scale = Vector2(0.635, 0.635)
@@ -84,7 +77,6 @@ polygon = PackedVector2Array(55.1181, 659.843, 272.441, 532.283, 365.354, 559.05
 
 [node name="TowerImage" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_sd6mi")
-layout_mode = 0
 offset_left = 160.0
 offset_top = 126.0
 offset_right = 409.0
@@ -94,7 +86,6 @@ texture = ExtResource("5_3x475")
 
 [node name="ManagementImage" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_6hg1r")
-layout_mode = 0
 offset_left = 722.0
 offset_top = 97.0
 offset_right = 971.0
@@ -104,7 +95,6 @@ texture = ExtResource("6_j7m07")
 
 [node name="InspectionImage" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_xgg6g")
-layout_mode = 0
 offset_left = 408.0
 offset_top = -9.0
 offset_right = 707.0
@@ -114,7 +104,6 @@ texture = ExtResource("7_u24gb")
 
 [node name="TechTreeImage" type="TextureRect" parent="."]
 material = SubResource("ShaderMaterial_xugvy")
-layout_mode = 0
 offset_left = 404.0
 offset_top = 212.0
 offset_right = 1100.0
@@ -132,24 +121,23 @@ offset_bottom = 632.0
 mouse_filter = 2
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
-position = Vector2(271, 508)
+position = Vector2(461, 373)
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("3_yo1he")]
 z_index = 20
-position = Vector2(275, 522)
+position = Vector2(466, 392)
 
 [node name="ExitToHallway" type="Area2D" parent="."]
-position = Vector2(1051, 412)
+position = Vector2(157, 430)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
-position = Vector2(-33, 24)
-shape = SubResource("RectangleShape2D_yo1he")
+position = Vector2(-9, -5)
+shape = SubResource("RectangleShape2D_3x475")
 
 [node name="MaintLead" parent="." instance=ExtResource("9_3x475")]
 position = Vector2(507, 547)
 
 [node name="InteractButton" type="Button" parent="."]
-layout_mode = 0
 offset_left = 448.0
 offset_top = 469.0
 offset_right = 532.0

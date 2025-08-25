@@ -9,14 +9,18 @@ extends Node2D
 var player: Node2D = null
 
 func _ready():
+	hr_door.body_entered.connect(func(body):
+		_on_entrance_entered(body, "res://Scenes/HR/HR.tscn")
+	)
+	boss_door.body_entered.connect(func(body):
+		_on_entrance_entered(body, "res://Scenes/Boss/NEWBoss.tscn")
+	)
 	player = get_parent().get_node_or_null("Player")
 	if player:
 		player.global_position = spawn.global_position
 	else:
 		push_error("⚠️ Player not found in Hallway0")
 
-	boss_door.body_entered.connect(_on_boss_door)
-	hr_door.body_entered.connect(_on_hr_door)
 	elevator_trigger.body_entered.connect(_on_elevator_triggered)
 	elevator_trigger.visible = false
 	elevator_trigger.monitoring = false
@@ -29,19 +33,19 @@ func _on_elevator_triggered(body):
 	if body.name != "Player":
 		return
 
-	if QuestManager.current_quest_id == 4:
-		QuestManager.player_entered_elevator_maint()
+	# Unified elevator handling for multiple quests
+	if QuestManager.current_quest_id in [4, 5]:
+		QuestManager.player_entered_elevator()
 
 	await get_tree().create_timer(0.5).timeout
 	get_tree().change_scene_to_file("res://Scenes/Shared/Elevator.tscn")
 
-func _on_boss_door(body):
-	if body.name == "Player":
-		print("Exit Hallway → Boss triggered")
-		get_node("/root/NEWGame").load_scene("res://Scenes/Boss/NEWBoss.tscn")
 
-func _on_hr_door(body):
-	if body.name == "Player":
-		print("Exit Hallway → HR triggered")
-		QuestManager.player_exited_boss()
-		get_node("/root/NEWGame").load_scene("res://Scenes/HR/HR.tscn")
+
+
+func _on_entrance_entered(body, target_room: String) -> void:
+	if body.name != "Player":
+		return
+	Fade.fade_out(0.5)
+	await get_tree().create_timer(0.5).timeout
+	get_parent().get_parent().load_room(target_room)

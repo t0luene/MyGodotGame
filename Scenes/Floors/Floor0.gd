@@ -1,15 +1,41 @@
 extends Node2D
 
-@onready var spawn = $SpawnPoint
+@onready var scene_container = $SceneContainer
+var current_room: Node = null
 
 func _ready():
-	# Add Player if not already in scene
-	if Player:
-		if Player.get_parent() != self:
-			if Player.get_parent():
-				Player.get_parent().remove_child(Player)
-			add_child(Player)
-		Player.global_position = spawn.global_position
-		Player.visible = true
-	else:
-		push_error("⚠️ Player autoload not found!")
+	# Set current floor
+	Global.set_floor("floor0")
+
+	# Load initial room
+	load_room("res://Scenes/Boss/NEWBoss.tscn")
+
+func load_room(path: String):
+	var room_scene = load(path)
+	if not room_scene:
+		push_error("Failed to load room scene: " + path)
+		return
+
+	# Remove current room
+	if current_room:
+		current_room.queue_free()
+
+	# Instantiate and add to container
+	current_room = room_scene.instantiate()
+	scene_container.add_child(current_room)
+
+	# Reset transforms to avoid offscreen / invisible rooms
+	current_room.position = Vector2.ZERO
+	if current_room is Control:
+		current_room.rect_position = Vector2.ZERO
+
+	current_room.visible = true
+
+	# Mark rooms completed
+	match current_room.name:
+		"Hallway-1":
+			Global.mark_completed("floor-1", "hallway-1")
+		"NEWBoss":  # make sure your Maintenance.tscn root node is named "Maintenance"
+			Global.mark_completed("floor-1", "newboss")
+		"HR":  # make sure your Maintenance.tscn root node is named "Maintenance"
+			Global.mark_completed("floor-1", "hr")

@@ -1,16 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://dep16q1gf6g8b"]
+[gd_scene load_steps=7 format=3 uid="uid://dep16q1gf6g8b"]
 
 [ext_resource type="Script" uid="uid://dtmwtrh78ehd2" path="res://Scenes/Grid/Grid.gd" id="1_dcgkf"]
 [ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="2_7whr7"]
 [ext_resource type="Texture2D" uid="uid://bwoftkuypmuhq" path="res://Assets/GridMissions.png" id="3_mh8jq"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="4_xsig2"]
+[ext_resource type="PackedScene" uid="uid://bw7iuk58ibdum" path="res://Scenes/Characters/GridNavigator.tscn" id="5_vkble"]
 
-[node name="Control" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vkble"]
+size = Vector2(160, 266)
+
+[node name="Control" type="Node2D"]
 script = ExtResource("1_dcgkf")
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -19,26 +18,24 @@ offset_bottom = 648.0
 texture = ExtResource("2_7whr7")
 
 [node name="GridMissions" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(464, 367)
 scale = Vector2(0.45, 0.45)
 texture = ExtResource("3_mh8jq")
 
 [node name="InfoButton" type="Button" parent="."]
-layout_mode = 0
 offset_left = 233.0
 offset_right = 297.0
 offset_bottom = 31.0
 text = "INFO"
 
 [node name="MissionsButton" type="Button" parent="."]
-layout_mode = 0
 offset_left = 501.0
 offset_right = 591.0
 offset_bottom = 31.0
 text = "MISSIONS"
 
 [node name="TechTreeButton" type="Button" parent="."]
-layout_mode = 0
 offset_left = 785.0
 offset_right = 875.0
 offset_bottom = 31.0
@@ -53,8 +50,26 @@ offset_top = 164.0
 offset_right = 789.0
 offset_bottom = 479.0
 
-[node name="BackButton" type="Button" parent="."]
-layout_mode = 0
-offset_right = 45.0
-offset_bottom = 31.0
-text = "Back"
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(430, 543)
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("4_xsig2")]
+z_index = 20
+position = Vector2(451, 534)
+
+[node name="ExitToHallway" type="Area2D" parent="."]
+position = Vector2(99, 493)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
+position = Vector2(-24, -28)
+shape = SubResource("RectangleShape2D_vkble")
+
+[node name="InteractButton" type="Button" parent="."]
+offset_left = 603.0
+offset_top = 432.0
+offset_right = 687.0
+offset_bottom = 463.0
+text = "INTERACT"
+
+[node name="GridNavigator" parent="." instance=ExtResource("5_vkble")]
+position = Vector2(601, 524)

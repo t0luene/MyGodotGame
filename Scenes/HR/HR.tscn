@@ -1,23 +1,70 @@
-[gd_scene load_steps=7 format=3 uid="uid://2b2pyda07nb8"]
+[gd_scene load_steps=15 format=3 uid="uid://2b2pyda07nb8"]
 
 [ext_resource type="Script" uid="uid://byeqct6a0hkuk" path="res://Scenes/HR/HR.gd" id="1_rns67"]
-[ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="2_dql1w"]
 [ext_resource type="Texture2D" uid="uid://bhoukxllo5mek" path="res://Assets/Rooms/HR.png" id="3_yl2s6"]
 [ext_resource type="PackedScene" uid="uid://c6df1gpxyek05" path="res://Scenes/Characters/HRLady.tscn" id="5_tqpae"]
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="6_jfj6w"]
+[ext_resource type="Shader" uid="uid://d2j2u4n6ve7oc" path="res://PropOutlineAndInsideGlow.gdshader" id="6_ockr5"]
+[ext_resource type="Texture2D" uid="uid://b2c3xvmrm4xb7" path="res://Assets/Props/Management.png" id="7_i6ol2"]
+[ext_resource type="Texture2D" uid="uid://dy64faa4dm4jg" path="res://Assets/Props/TechTree.png" id="8_6b7cb"]
+[ext_resource type="Texture2D" uid="uid://2mdbhlwtnca1" path="res://Assets/Props/Inspect.png" id="9_y5fj3"]
+[ext_resource type="Texture2D" uid="uid://cvaluecwkcgy4" path="res://Assets/Props/Tower.png" id="10_1hxrl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bdolc"]
 size = Vector2(128, 172)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vxr0j"]
+shader = ExtResource("6_ockr5")
+shader_parameter/outline_enabled = false
+shader_parameter/glow_enabled = false
+shader_parameter/outline_size = 2.0
+shader_parameter/outline_color = Color(2.11775e-06, 0.809929, 0.41254, 1)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/min_opacity = 0.4
+shader_parameter/size_pulse_strength = 0.3
+shader_parameter/glow_color = Color(0.945, 0, 0.606, 0.5)
+shader_parameter/glow_strength = 0.2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aoxo7"]
+shader = ExtResource("6_ockr5")
+shader_parameter/outline_enabled = false
+shader_parameter/glow_enabled = false
+shader_parameter/outline_size = 2.0
+shader_parameter/outline_color = Color(2.11775e-06, 0.809929, 0.41254, 1)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/min_opacity = 0.4
+shader_parameter/size_pulse_strength = 0.3
+shader_parameter/glow_color = Color(0.945, 0, 0.606, 0.5)
+shader_parameter/glow_strength = 0.2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rxyhb"]
+shader = ExtResource("6_ockr5")
+shader_parameter/outline_enabled = false
+shader_parameter/glow_enabled = false
+shader_parameter/outline_size = 2.0
+shader_parameter/outline_color = Color(2.11775e-06, 0.809929, 0.41254, 1)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/min_opacity = 0.4
+shader_parameter/size_pulse_strength = 0.3
+shader_parameter/glow_color = Color(0.945, 0, 0.606, 0.5)
+shader_parameter/glow_strength = 0.2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ykln"]
+shader = ExtResource("6_ockr5")
+shader_parameter/outline_enabled = false
+shader_parameter/glow_enabled = false
+shader_parameter/outline_size = 2.0
+shader_parameter/outline_color = Color(2.11775e-06, 0.809929, 0.41254, 1)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/min_opacity = 0.4
+shader_parameter/size_pulse_strength = 0.3
+shader_parameter/glow_color = Color(0.945, 0, 0.606, 0.5)
+shader_parameter/glow_strength = 0.2
 
 [node name="Control" type="Node2D"]
 script = ExtResource("1_rns67")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-offset_right = 1152.0
-offset_bottom = 648.0
-texture = ExtResource("2_dql1w")
-
-[node name="TextureRect2" type="TextureRect" parent="."]
 offset_right = 1152.0
 offset_bottom = 648.0
 scale = Vector2(0.635, 0.635)
@@ -28,30 +75,6 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
-
-[node name="HiringButton" type="Button" parent="."]
-offset_left = 473.0
-offset_right = 582.0
-offset_bottom = 31.0
-text = "Hiring"
-
-[node name="BulletinBoardButton" type="Button" parent="."]
-offset_left = 782.0
-offset_right = 901.0
-offset_bottom = 31.0
-text = "Bulletin Board
-"
-
-[node name="StaffButton" type="Button" parent="."]
-offset_left = 629.0
-offset_right = 727.0
-offset_bottom = 31.0
-text = "Staff"
-
-[node name="BackButton" type="Button" parent="."]
-offset_right = 45.0
-offset_bottom = 31.0
-text = "Back"
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(902, 513)
@@ -74,3 +97,39 @@ offset_top = 430.0
 offset_right = 710.0
 offset_bottom = 461.0
 text = "INTERACT"
+
+[node name="DepartmentImage" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_vxr0j")
+offset_left = 54.0
+offset_top = 226.0
+offset_right = 303.0
+offset_bottom = 621.0
+scale = Vector2(0.635, 0.635)
+texture = ExtResource("7_i6ol2")
+
+[node name="HiringImage" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_aoxo7")
+offset_left = 584.0
+offset_top = 85.0
+offset_right = 845.0
+offset_bottom = 489.0
+scale = Vector2(0.635, 0.635)
+texture = ExtResource("8_6b7cb")
+
+[node name="StaffImage" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_rxyhb")
+offset_left = 341.0
+offset_top = 78.0
+offset_right = 640.0
+offset_bottom = 529.0
+scale = Vector2(0.635, 0.635)
+texture = ExtResource("9_y5fj3")
+
+[node name="BulletinImage" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_7ykln")
+offset_left = 157.0
+offset_top = 385.0
+offset_right = 853.0
+offset_bottom = 783.0
+scale = Vector2(0.635, 0.635)
+texture = ExtResource("10_1hxrl")

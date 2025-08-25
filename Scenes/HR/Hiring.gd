@@ -1,4 +1,4 @@
-extends Control
+extends Window
 
 @onready var cards_container = $ScrollContainer/CardsContainer
 @onready var description_panel = $DescriptionPanel
@@ -150,6 +150,8 @@ Hobbies:
 var selected_emp_id: int = -1
 
 func _ready():
+	close_requested.connect(_on_close_requested)
+	popup_centered_ratio(0.8)  # 60% of the screen
 	add_child(interview_popup)
 	interview_popup.hide()
 	description_panel.visible = false
@@ -182,6 +184,10 @@ func spawn_cards():
 		card.connect("pressed", Callable(self, "_on_card_pressed").bind(emp_data.get("id", -1)))
 		
 		cards_container.add_child(card)
+
+func _on_close_requested():
+	queue_free()
+
 
 func _on_card_pressed(emp_id: int) -> void:
 	selected_emp_id = emp_id

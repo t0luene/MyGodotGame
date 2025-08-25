@@ -16,7 +16,7 @@ func load_room(path: String):
 		push_error("Failed to load room scene: " + path)
 		return
 
-	# Remove current room if exists
+	# Remove current room
 	if current_room:
 		current_room.queue_free()
 
@@ -24,9 +24,16 @@ func load_room(path: String):
 	current_room = room_scene.instantiate()
 	scene_container.add_child(current_room)
 
-	# Mark rooms completed if needed
+	# Reset transforms to avoid offscreen / invisible rooms
+	current_room.position = Vector2.ZERO
+	if current_room is Control:
+		current_room.rect_position = Vector2.ZERO
+
+	current_room.visible = true
+
+	# Mark rooms completed
 	match current_room.name:
 		"Hallway-1":
 			Global.mark_completed("floor-1", "hallway-1")
-		"Maintenance":
+		"Maintenance":  # make sure your Maintenance.tscn root node is named "Maintenance"
 			Global.mark_completed("floor-1", "maintenance_room")

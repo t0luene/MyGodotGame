@@ -2,77 +2,17 @@ extends CharacterBody2D
 
 @export var npc_name: String = "HR Lady"
 @export var npc_portrait: Texture2D
-@export var quest_floor: String = "floor0"
-@export var quest_id: String = "talk_to_hr"
-@export var interaction_range: float = 150
 
-# ✅ Use the global HUD dialogue + interact button
-@onready var dialogue_node: Control = get_node("/root/NEWGame/HUD/CanvasLayer/Dialogue")
-@onready var interact_button: Button = get_node("/root/NEWGame/HUD/CanvasLayer/InteractButton")
-@onready var player_node: CharacterBody2D = get_node("/root/Game/Player") # adjust if Player is autoload/global
-
-var finished: bool = false
-var current_line_index: int = 0
-
-var dialogue_sequence: Array = [
-	{"text": "Hello. I am the HR lady, please sign the documents.", "speaker": "HR Lady"},
-	{"text": "Oh ok.", "speaker": "Player"},
-	{"text": "I'll be seeing you.", "speaker": "HR Lady"}
-]
+# References
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready():
-	# Hide button initially and connect it
-	if interact_button:
-		interact_button.visible = false
-		if not interact_button.is_connected("pressed", Callable(self, "_on_interact_pressed")):
-			interact_button.pressed.connect(_on_interact_pressed)
+	if not animated_sprite:
+		push_error("AnimatedSprite2D not found!")
 	else:
-		push_warning("InteractButton not found in HUD!")
+		animated_sprite.play("idle")  # default idle animation
 
-func _process(_delta):
-	if not player_node or not interact_button:
-		return
-
-	# Show button only if within range and dialogue not open
-	var distance = global_position.distance_to(player_node.global_position)
-	interact_button.visible = distance <= interaction_range and not finished and not dialogue_node.visible
-
-	# Position button above NPC
-	if interact_button.visible:
-		var viewport = get_viewport()
-		var screen_pos = viewport.get_camera_2d().unproject_position(global_position)
-		interact_button.position = screen_pos + Vector2(-interact_button.size.x/2, -50)
-
-func _on_interact_pressed():
-	if finished or dialogue_node.visible:
-		return
-	current_line_index = 0
-	_show_next_line()
-
-func _show_next_line():
-	if current_line_index >= dialogue_sequence.size():
-		# ✅ End of dialogue, mark quest complete
-		finished = true
-		QuestManager.complete_requirement(3, 0) # Quest4, requirement index 0
-
-		# ✅ Rebuild checklist if present
-		var checklist_ui = get_tree().get_current_scene().get_node("HUD/CanvasLayer/CheckListUI")
-		if checklist_ui:
-			checklist_ui.rebuild()
-		return
-
-	# Grab current line and ensure portrait is set
-	var line = dialogue_sequence[current_line_index]
-	if not line.has("portrait"):
-		line["portrait"] = npc_portrait
-
-	dialogue_node.start([line])
-
-	# Make sure we reconnect the signal cleanly
-	if dialogue_node.is_connected("dialogue_finished", Callable(self, "_on_line_finished")):
-		dialogue_node.disconnect("dialogue_finished", Callable(self, "_on_line_finished"))
-	dialogue_node.connect("dialogue_finished", Callable(self, "_on_line_finished"))
-
-func _on_line_finished():
-	current_line_index += 1
-	_show_next_line()
+# Optional: play an animation on some event
+func play_animation(anim_name: String):
+	if animated_sprite:
+		animated_sprite.play(anim_name)

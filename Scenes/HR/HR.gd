@@ -5,8 +5,25 @@ extends Node2D
 @onready var spawn = $SpawnPoint
 var player: Node2D = null
 
+# Track locked/highlighted state
+var locked_images = {
+	"department": true,
+	"hiring": true,
+	"staff": true,
+	"bulletin": true
+}
+var selected = {
+	"department": false,
+	"hiring": false,
+	"staff": false,
+	"bulletin": false
+}
+
 func _ready():
+	# Connect interact button
 	interact_button.pressed.connect(_on_interact_pressed)
+
+	# Player spawn
 	player = get_parent().get_node_or_null("Player")
 	if player:
 		player.global_position = spawn.global_position
@@ -14,21 +31,181 @@ func _ready():
 		push_error("⚠️ Player not found in Hallway0")
 
 	exit_to_hallway.body_entered.connect(_on_exit_door)
-	print("Hallway0 ready, player at spawn:", player.global_position if player else "null")
-	QuestManager.player_entered_hr()
+
+	# GUI input for images
+	$DepartmentImage.gui_input.connect(_on_department_input)
+	$HiringImage.gui_input.connect(_on_hiring_input)
+	$StaffImage.gui_input.connect(_on_staff_input)
+	$BulletinImage.gui_input.connect(_on_bulletin_input)
+
+	for node in [$DepartmentImage, $HiringImage, $StaffImage, $BulletinImage]:
+		node.mouse_entered.connect(func(): _set_hover(node, true))
+		node.mouse_exited.connect(func(): _set_hover(node, false))
+		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_highlight(node, false)
+	Fade.fade_in(0.5)
+
+# ---------- Helper functions ----------
+func _set_interactable(node: TextureRect, interactable: bool, highlight: bool=false):
+	node.mouse_filter = Control.MOUSE_FILTER_PASS if interactable else Control.MOUSE_FILTER_IGNORE
+	_highlight(node, highlight)
+
+func _highlight(node: TextureRect, enable: bool):
+	if node.material:
+		node.material.set_shader_parameter("outline_enabled", enable)
+
+func _set_hover(node: TextureRect, enable: bool):
+	if node.material:
+		node.material.set_shader_parameter("glow_enabled", enable)
+
+
+# ---------- Input handlers ----------
+func _on_department_input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_handle_click("department", $DepartmentImage, "res://Scenes/HR/Department.tscn")
+
+func _on_hiring_input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_handle_click("hiring", $HiringImage, "res://Scenes/HR/Hiring.tscn")
+
+func _on_staff_input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_handle_click("staff", $StaffImage, "res://Scenes/HR/Staff.tscn")
+
+func _on_bulletin_input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_handle_click("bulletin", $BulletinImage, "res://Scenes/HR/BulletinBoard.tscn")
+
+
+# ---------- Core click logic ----------
+# ---------- Core click logic ----------
+func _handle_click(key: String, node: TextureRect, path: String):
+	# -----------------------------
+	# Quest6 restrictions
+	# -----------------------------
+	if QuestManager.current_quest_id == 6:
+		# Check if "hire_employees" requirement (index 2) is completed
+		var hire_done = QuestManager.quests[6]["requirements"][2]["completed"]
+
+		# Department only unlocks after Hiring
+		if key == "department" and not hire_done:
+			print("Department clicked before hiring completed, ignore")
+			return
+
+		# Prevent other buttons until Hiring is done
+		if key != "hiring" and not selected["hiring"]:
+			return
+
+	# -----------------------------
+	# Handle clicks
+	# -----------------------------
+	if key == "hiring":
+		if not selected[key]:
+			_highlight(node, true)
+			selected[key] = true
+		QuestManager.complete_requirement(6, 2)  # hire_employees done
+		print("Hiring requirement completed")
+		# Unlock Department now
+		unlock_department_step()
+		load_subpage(path)
+
+	elif key == "department":
+		_highlight(node, true)
+		selected[key] = true
+		QuestManager.complete_requirement(6, 3)  # unlock_department done
+		print("Department requirement completed")
+		load_subpage(path)
+
+	elif key == "staff":
+		# Add your Staff logic here
+		pass
+	elif key == "bulletin":
+		# Add your Bulletin logic here
+		pass
+
+
+func get_node_for_key(key: String) -> TextureRect:
+	match key:
+		"department": return $DepartmentImage
+		"hiring": return $HiringImage
+		"staff": return $StaffImage
+		"bulletin": return $BulletinImage
+		_: return null
+
+
+func load_subpage(scene_path: String):
+	var scene = load(scene_path)
+	if scene:
+		var instance = scene.instantiate()
+		Global.clear_children($ContentContainer)
+		if instance is Window:
+			get_tree().current_scene.add_child(instance)
+		else:
+			$ContentContainer.add_child(instance)
 
 
 func _on_exit_door(body):
-	if body.name == "Player":
-		print("Exit Hallway → Boss triggered")
-		get_node("/root/NEWGame").load_scene("res://Scenes/Rooms/Hallway0.tscn")
+	if body.name != "Player":
+		return
+	print("Exit HR → Hallway0 triggered")
+	var floor0_root = get_parent().get_parent()  
+	if floor0_root and floor0_root.has_method("load_room"):
+		floor0_root.load_room("res://Scenes/Rooms/Hallway0.tscn")
+	else:
+		push_error("Cannot find Floor0 root to load Hallway0")
+
 
 func _on_interact_pressed():
-	print("Quest4: Talked to HR")
-	QuestManager.complete_requirement(3, 0)  # talk_hr done
+	print("Interacting with HRLady")
 
-	# Show dialogue in HUD
-	var dialogue_node = get_node("/root/NEWGame/HUD/CanvasLayer/Dialogue")
-	dialogue_node.start([
-		{"speaker": "HR", "text": "All your paperwork is done!"}
-	])
+	# ------------------------------
+	# Quest4: Talk to HR
+	# ------------------------------
+	if QuestManager.current_quest_id == 4:
+		print("Quest4: Talked to HR")
+		# ✅ Mark requirement done (talk_to_hr)
+		QuestManager.complete_requirement(6, 1)  # requirement index 1 = talk_to_hr
+
+		# Show simple dialogue in HUD
+		var dialogue_node = get_node_or_null("/root/HUD/CanvasLayer/Dialogue")
+		if dialogue_node:
+			dialogue_node.start([
+				{"speaker": "HR", "text": "All your paperwork is done!"}
+			])
+		else:
+			push_error("Dialogue node not found!")
+
+	# ------------------------------
+	# Quest6: Unlock Hiring step AFTER talking to HRLady
+	# ------------------------------
+	if QuestManager.current_quest_id == 6:
+		print("Quest6: Unlocking Hiring step")
+
+		# ✅ Mark the "talk_to_hr" requirement done
+		QuestManager.complete_requirement(6, 1)
+
+		# Unlock only Hiring image and highlight it
+		_set_interactable($HiringImage, true, true)
+		
+		# Keep all others locked and unhighlighted
+		_set_interactable($DepartmentImage, false)
+		_set_interactable($StaffImage, false)
+		_set_interactable($BulletinImage, false)
+		
+		# Update selection state
+		selected["hiring"] = true
+
+		# Show dialogue explaining Hiring page
+		var dialogue_node = get_node_or_null("/root/HUD/CanvasLayer/Dialogue")
+		if dialogue_node:
+			dialogue_node.start([
+				{"speaker": "HR Lady", "text": "Hey! Now you can manage your Hiring page."},
+				{"speaker": "HR Lady", "text": "Click the Hiring icon to hire employees and expand your team."}
+			])
+		else:
+			push_error("Dialogue node not found!")
+
+
+func unlock_department_step():
+	print("Unlocking Department after Hiring")
+	_set_interactable($DepartmentImage, true, true)

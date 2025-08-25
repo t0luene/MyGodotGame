@@ -6,6 +6,9 @@ signal quest_completed(quest_id)
 signal quest_updated(quest_id)
 
 # Track current active quest
+var hiring_progress := {"construction": false, "hr": false}
+var assignment_progress := {"hr": false, "construction": false}
+
 var current_quest_id: int = 0
 
 # Quest definitions
@@ -37,14 +40,40 @@ var quests = {
 		"reward_claimed": false
 	},
 	4: {
-		"name": "Assist Maintenance",
+		"name": "Maintenance Overview",
 		"requirements": [
 			{"type": "talk_to_boss_maint", "completed": false},
 			{"type": "exit_boss_for_maint", "completed": false},
-			{"type": "enter_elevator_maint", "completed": false},
+			{"type": "enter_elevator", "completed": false},
 			{"type": "arrive_floor_minus1", "completed": false},
 			{"type": "enter_maint_room", "completed": false},
 			{"type": "talk_maint_lead", "completed": false}
+		],
+		"reward_claimed": false
+	},
+	5: {
+		"id": 5,
+		"name": "Grid Overview",
+		"requirements": [
+			{"type": "talk_to_boss", "completed": false},           # 0
+			{"type": "enter_elevator", "completed": false},    # 1
+			{"type": "arrive_grid_floor", "completed": false},    # 2
+			{"type": "enter_grid_room", "completed": false},        # 3
+			{"type": "talk_to_grid_navigator", "completed": false}, # 4
+			{"type": "return_to_boss_grid", "completed": false}     # 5
+		],
+		"reward_claimed": false,
+	},
+	6: {
+		"id": 6,
+		"name": "Hiring and Assignment",
+		"requirements": [
+			{"type": "talk_to_boss", "completed": false},            # 0
+			{"type": "talk_to_hr", "completed": false},              # 1
+			{"type": "hire_employees", "completed": false},          # 2
+			{"type": "unlock_department", "completed": false},       # 3
+			{"type": "assign_hr", "completed": false},               # 4
+			{"type": "assign_construction", "completed": false}      # 5
 		],
 		"reward_claimed": false
 	}
@@ -55,8 +84,28 @@ var quests = {
 # ---------------------------
 func start_quest(quest_id: int) -> void:
 	current_quest_id = quest_id
+
+	# Reset tracking for Quest6
+	if quest_id == 6:
+		hiring_progress = {"construction": false, "hr": false}
+		assignment_progress = {"hr": false, "construction": false}
+
 	emit_signal("quest_updated", quest_id)
 	print("QuestManager: Started quest %s" % quests[quest_id]["name"])
+
+func complete_step(step_type: String) -> void:
+	if not quests.has(current_quest_id):
+		return
+	var reqs = quests[current_quest_id]["requirements"]
+	for i in range(reqs.size()):
+		var req = reqs[i]
+		if req.get("type", "") == step_type:
+			if req["completed"]:
+				return
+			complete_requirement(current_quest_id, i)
+			return
+	print("QuestManager: step type not found on current quest:", step_type)
+
 
 func complete_requirement(quest_id: int, req_id: int) -> void:
 	print("QuestManager: completing requirement ", req_id, " for quest ", quest_id)
@@ -92,7 +141,12 @@ func player_talked_to_boss():
 	if current_quest_id == 1:
 		complete_requirement(1, 0)  # Quest2
 	elif current_quest_id == 4:
-		complete_requirement(4, 0)  # Quest5: talk_to_boss_maint
+		complete_requirement(4, 0)  # Quest4
+	elif current_quest_id == 5:
+		complete_requirement(5, 0)  # Quest5
+	elif current_quest_id == 6:
+		complete_requirement(6, 0)  # Quest6 (talk to boss)
+
 
 # Reuse existing function
 func player_exited_boss():
@@ -116,12 +170,17 @@ func player_talked_boss_fulltime():
 func enter_maint_room():
 	complete_requirement(4, 4)  # Quest 4, requirement index 4 ("enter_maint_room")
 
-# ---------------------------
-# Quest5 specific functions
-# ---------------------------
-func player_entered_elevator_maint():
+func player_entered_elevator():
 	if current_quest_id == 4:
-		complete_requirement(4, 2)
+		complete_requirement(4, 2)  # Quest4: enter_elevator_maint
+	elif current_quest_id == 5:
+		complete_requirement(5, 1)  # Quest5: enter_elevator
+
+
+# ---------------------------
+# Quest4 specific functions
+# ---------------------------
+
 
 func player_arrived_floor_minus1():
 	if current_quest_id == 4:
@@ -138,6 +197,70 @@ func player_talked_maint_lead():
 func player_entered_hallway_1():
 	complete_requirement(QuestManager.current_quest_id, 4)  # 4 = Hallway-1
 
+
+# ---------------------------
+# Quest5 specific functions
+# ---------------------------
+
+func player_arrived_grid_floor():
+	if current_quest_id == 5:
+		complete_requirement(5, 2)  # 2 = arrive_grid_floor
+
+func player_entered_grid_room():
+	if current_quest_id == 5:
+		complete_requirement(5, 3)
+
+func player_talked_grid_navigator():
+	if current_quest_id == 5:
+		complete_requirement(5, 4)
+
+func player_returned_to_boss_grid():
+	if current_quest_id == 5:
+		complete_requirement(5, 5)
+
+
+
+# ---------------------------
+# Quest6 specific functions
+# ---------------------------
+
+
+# Step 1 – talk to HR for the first time
+func quest6_talked_to_hr():
+	if current_quest_id == 6:
+		complete_step("talk_to_hr")
+
+# Step 2 – hiring employees
+func quest6_employee_hired(role: String):
+	# role is "construction" or "hr"
+	if current_quest_id != 6:
+		return
+
+	if role == "construction":
+		hiring_progress["construction"] = true
+	elif role == "hr":
+		hiring_progress["hr"] = true
+
+	# check if both are hired
+	if hiring_progress["construction"] and hiring_progress["hr"]:
+		complete_step("hire_employees")
+
+# Step 3 – HR unlocks department button
+func quest6_unlocked_department():
+	if current_quest_id == 6:
+		complete_step("unlock_department")
+
+# Step 4 & 5 – assigning employees
+func quest6_employee_assigned(role: String):
+	if current_quest_id != 6:
+		return
+
+	if role == "hr" and not assignment_progress["hr"]:
+		assignment_progress["hr"] = true
+		complete_step("assign_hr")
+	elif role == "construction" and not assignment_progress["construction"]:
+		assignment_progress["construction"] = true
+		complete_step("assign_construction")
 
 # ---------------------------
 # Rewards

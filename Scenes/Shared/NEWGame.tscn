@@ -4,5 +4,6 @@
 
 [node name="NEWGame" type="Node2D"]
 script = ExtResource("1_lmlbf")
+debug_start_quest = 6
 
 [node name="SceneContainer" type="Node2D" parent="."]

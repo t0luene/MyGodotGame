@@ -6,8 +6,9 @@ extends Control
 
 # Floors list – make sure Floor-1 path is correct
 var floors = [
+	{"scene":"res://Scenes/Floors/Floor-2.tscn", "label":"Floor -2"},
 	{"scene":"res://Scenes/Floors/Floor-1.tscn", "label":"Floor -1"},
-	{"scene":"res://Scenes/Boss/Boss.tscn", "label":"Floor 0"},
+	{"scene":"res://Scenes/Floors/Floor0.tscn", "label":"Floor 0"},
 	{"scene":"res://Scenes/Floors/Floor1.tscn", "label":"Floor 1"},
 	{"scene":"res://Scenes/Floors/Floor2.tscn", "label":"Floor 2"},
 	{"scene":"res://Scenes/Floors/Floor3.tscn", "label":"Floor 3"},
@@ -19,7 +20,8 @@ func _ready():
 	_setup_floors()
 	go_button.pressed.connect(_on_go_pressed)
 	close_button.pressed.connect(_on_close_pressed)
-
+	Fade.fade_in(0.5)
+	
 func _setup_floors():
 	floor_dropdown.clear()
 
@@ -52,6 +54,9 @@ func _on_go_pressed():
 	# Quest step for arriving at Floor-1
 	if QuestManager.current_quest_id == 4 and target_scene == "res://Scenes/Floors/Floor-1.tscn":
 		QuestManager.player_arrived_floor_minus1()
+	# Quest step for arriving at Floor-2 (Quest5)
+	if QuestManager.current_quest_id == 5 and target_scene == "res://Scenes/Floors/Floor-2.tscn":
+		QuestManager.player_arrived_grid_floor()
 
 	# Fade and change scene
 	await get_tree().create_timer(0.5).timeout

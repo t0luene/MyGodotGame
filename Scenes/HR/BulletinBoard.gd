@@ -1,4 +1,4 @@
-extends Control
+extends Window
 
 @onready var comments_container = $ScrollContainer/CommentsContainer
 @onready var comment_item_scene = preload("res://CommentItem.tscn")
@@ -47,6 +47,8 @@ var comments_data = [
 
 
 func _ready():
+	close_requested.connect(_on_close_requested)
+	popup_centered_ratio(0.8)  # 60% of the screen
 	emoji_menu.clear()
 	emoji_menu.add_item("👍")
 	emoji_menu.add_item("👎")
@@ -55,6 +57,8 @@ func _ready():
 
 	_load_comments()
 
+func _on_close_requested():
+	queue_free()
 
 func _load_comments() -> void:
 	# Clear old comments
