@@ -197,11 +197,16 @@ func _on_interact_pressed():
 
 		# Unlock only Hiring image and highlight it
 		_set_interactable($HiringImage, true, true)
-		
-		# Keep all others locked and unhighlighted
+		selected["hiring"] = true
+
+		# Persist this state
+		Global.HR_state.locked_images["hiring"] = false
+
+		# Keep all others locked
 		_set_interactable($DepartmentImage, false)
 		_set_interactable($StaffImage, false)
 		_set_interactable($BulletinImage, false)
+
 		
 		# Update selection state
 		selected["hiring"] = true

@@ -14,14 +14,22 @@ func update_hud():
 var current_floor_instance: Node = null
 
 func _ready():
+	# Popup behavior
 	close_requested.connect(_on_close_requested)
-	popup_centered_ratio(0.8)  # 80% of the screen
+	popup_centered_ratio(0.8)
+
 	print("MainPage ready!")
-	# Default floor index
+
+	# Listen for money changes
 	Global.connect("money_changed", Callable(self, "_on_money_changed"))
-	# UI logic
+
+	# Initialize UI
 	update_ui()
 	update_hud()
+
+
+
+	
 func _on_close_requested():
 	queue_free()
 
@@ -83,9 +91,18 @@ func next_day():
 	print("next_day() called from:", get_stack())
 	Global.day += 1
 	print("📅 Day advanced to: ", Global.day)
+
+	# Update UI
 	update_ui()
+
+	# Quest7 progression: complete "new_day" requirement on Day 2
+	if Global.day == 2 and QuestManager.current_quest_id == 7:
+		QuestManager.quest7_new_day()
+
+	# Show daily report after Day 1
 	if Global.day > 1:
 		show_daily_report()
+
 
 func calculate_daily_income():
 	var income = 25  # Base income each day

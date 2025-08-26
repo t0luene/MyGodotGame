@@ -46,40 +46,59 @@ func _on_walk_trigger(body):
 		QuestManager.player_walked_to_trigger()
 		walk_trigger.queue_free()
 
+
+
+
+# Define dialogues once
+var quest_dialogues = {
+	2: {0: [
+			{"speaker": "Boss", "text": "Hello! I need you to walk to that point over there."},
+			{"speaker": "Player", "text": "Got it!"}
+		]},
+	4: {0: [
+			{"speaker": "Boss", "text": "Maintenance is acting up. Please go help them."},
+			{"speaker": "Player", "text": "On it!"}
+		]},
+	5: {0: [
+			{"speaker": "Boss", "text": "Great work so far! Now I want you to visit the Grid room in floor -2."},
+			{"speaker": "Boss", "text": "Talk to the Navigator there and learn everything you need."}
+		]},
+	6: {0: [
+			{"speaker": "Boss", "text": "Great work so far! Now I want you to visit the Grid room on floor -2."},
+			{"speaker": "Boss", "text": "Talk to the Navigator there and learn everything you need."}
+		]},
+	7: {
+		0: [
+			{"speaker": "Boss", "text": "Ah, it's time to start a new work day. Are you ready?"},
+			{"speaker": "Player", "text": "Yes, let's go!"}
+		],
+		1: [],  # no dialogue, step happens automatically
+		2: [
+			{"speaker": "Boss", "text": "It's a new day! Let's make it productive."},
+			{"speaker": "Player", "text": "On it!"}
+		]
+	}
+}
+
+
 func _on_interact_pressed():
 	print("Starting dialogue with Boss")
-	
-	# Complete the quest requirement
-	QuestManager.player_talked_to_boss()  
 
-	var dialogue_lines = []
+	var quest_id = QuestManager.current_quest_id
+	var req_index = QuestManager.get_current_requirement_index() # helper to get first incomplete requirement
 
-	match QuestManager.current_quest_id:
-		2: # Quest2
-			dialogue_lines = [
-				{"speaker": "Boss", "text": "Hello! I need you to walk to that point over there."},
-				{"speaker": "Player", "text": "Got it!"}
-			]
-		4: # Quest5
-			dialogue_lines = [
-				{"speaker": "Boss", "text": "Maintenance is acting up. Please go help them."},
-				{"speaker": "Player", "text": "On it!"}
-			]
-		5: # Quest6
-			dialogue_lines = [
-				{"speaker": "Boss", "text": "Great work so far! Now I want you to visit the Grid room in floor -2."},
-				{"speaker": "Boss", "text": "Talk to the Navigator there and learn everything you need."}
-			]
-		6: # Quest6
-			dialogue_lines = [
-				{"speaker": "Boss", "text": "Great work so far! Now I want you to visit the Grid room on floor -2."},
-				{"speaker": "Boss", "text": "Talk to the Navigator there and learn everything you need."}
-			]
-		_: 
-			dialogue_lines = [
-				{"speaker": "Boss", "text": "Hello, player!"}
-			]
+	# Handle Quest7 automatic step for new day
+	if quest_id == 7 and req_index == 1:
+		QuestManager.quest7_new_day()
+		return
 
-	# Show dialogue
-	var dialogue = HUD.get_node("CanvasLayer/Dialogue")
-	dialogue.start(dialogue_lines)
+	# Automatically complete "talk_to_boss" requirements if the current step is that type
+	var current_req = QuestManager.quests[quest_id]["requirements"][req_index]
+	if current_req["type"] == "talk_to_boss":
+		QuestManager.player_talked_to_boss()
+
+	# Fetch dialogue lines from our quest_dialogues map
+	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
+	if dialogue_lines.size() > 0:
+		var dialogue = HUD.get_node("CanvasLayer/Dialogue")
+		dialogue.start(dialogue_lines)

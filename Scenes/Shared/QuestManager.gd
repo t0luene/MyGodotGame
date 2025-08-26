@@ -76,6 +76,16 @@ var quests = {
 			{"type": "assign_construction", "completed": false}      # 5
 		],
 		"reward_claimed": false
+	},
+	7: {
+		"id": 7,
+		"name": "New Day",
+		"requirements": [
+			{"type": "talk_to_boss", "completed": false},          # 0
+			{"type": "new_day", "completed": false},          # 1
+			{"type": "talk_to_boss", "completed": false},          # 2
+		],
+		"reward_claimed": false
 	}
 }
 
@@ -132,6 +142,15 @@ func start_next_quest():
 # Scene helper functions
 # ---------------------------
 
+func get_current_requirement_index() -> int:
+	var reqs = quests[current_quest_id]["requirements"]
+	for i in range(reqs.size()):
+		if not reqs[i]["completed"]:
+			return i
+	return -1  # all complete
+
+
+
 func player_walked_to_trigger():
 	if current_quest_id == 0:
 		complete_requirement(0, 0)
@@ -145,7 +164,15 @@ func player_talked_to_boss():
 	elif current_quest_id == 5:
 		complete_requirement(5, 0)  # Quest5
 	elif current_quest_id == 6:
-		complete_requirement(6, 0)  # Quest6 (talk to boss)
+		complete_requirement(6, 0)  # Quest6
+	elif current_quest_id == 7:
+		# First talk = requirement 0
+		if not quests[7]["requirements"][0]["completed"]:
+			complete_requirement(7, 0)
+		# Second talk (after new day) = requirement 2
+		elif quests[7]["requirements"][1]["completed"] and not quests[7]["requirements"][2]["completed"]:
+			complete_requirement(7, 2)
+
 
 
 # Reuse existing function
@@ -224,7 +251,6 @@ func player_returned_to_boss_grid():
 # Quest6 specific functions
 # ---------------------------
 
-
 # Step 1 – talk to HR for the first time
 func quest6_talked_to_hr():
 	if current_quest_id == 6:
@@ -261,6 +287,15 @@ func quest6_employee_assigned(role: String):
 	elif role == "construction" and not assignment_progress["construction"]:
 		assignment_progress["construction"] = true
 		complete_step("assign_construction")
+
+
+# ---------------------------
+# Quest7 specific functions
+# ---------------------------
+func quest7_new_day():
+	if current_quest_id == 7:
+		complete_step("new_day")
+
 
 # ---------------------------
 # Rewards
