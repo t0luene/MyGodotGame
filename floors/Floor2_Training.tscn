@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://kv34a60mokl8"]
 
-[ext_resource type="PackedScene" uid="uid://bwo3kcv40y1rh" path="res://Employee.tscn" id="1_xll4e"]
+[ext_resource type="PackedScene" uid="uid://bwo3kcv40y1rh" path="res://NPCEmployee.tscn" id="1_xll4e"]
 [ext_resource type="PackedScene" uid="uid://m54sd6wypa3s" path="res://StaticEmployee.tscn" id="2_utj0s"]
 [ext_resource type="PackedScene" uid="uid://dhg8caguiut4g" path="res://EmployeeConversation.tscn" id="3_5yc0u"]
 

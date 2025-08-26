@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dlc3gunips78p" path="res://Scenes/HR/Hiring.gd" id="1_sbq3v"]
 
-[node name="HiringPage" type="Window"]
+[node name="Hiring" type="Window"]
 script = ExtResource("1_sbq3v")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]

@@ -22,7 +22,7 @@ offset_left = 125.0
 offset_top = 3.0
 offset_right = 172.0
 offset_bottom = 26.0
-text = "Name: Bob Meow"
+text = "Name: "
 
 [node name="RoleLabel" type="Label" parent="."]
 layout_mode = 0
@@ -30,7 +30,7 @@ offset_left = 125.0
 offset_top = 27.0
 offset_right = 172.0
 offset_bottom = 50.0
-text = "Role: Engineer"
+text = "Role: "
 
 [node name="ProficiencyLabel" type="Label" parent="."]
 layout_mode = 0
@@ -38,7 +38,7 @@ offset_left = 125.0
 offset_top = 48.0
 offset_right = 172.0
 offset_bottom = 71.0
-text = "Proficiency: B-"
+text = "Proficiency:"
 
 [node name="CostLabel" type="Label" parent="."]
 layout_mode = 0
@@ -46,4 +46,4 @@ offset_left = 125.0
 offset_top = 71.0
 offset_right = 172.0
 offset_bottom = 94.0
-text = "Cost: 🐟55"
+text = "Cost: 🐟"

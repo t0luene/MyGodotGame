@@ -1,0 +1,89 @@
+[gd_scene load_steps=2 format=3 uid="uid://4322hlalkkpu"]
+
+[ext_resource type="Script" uid="uid://borel8b50vikl" path="res://Scenes/Globals/NewDay.gd" id="1_80nbo"]
+
+[node name="NewDay" type="Window"]
+script = ExtResource("1_80nbo")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD"]
+offset_left = 448.0
+offset_top = 219.0
+offset_right = 613.0
+offset_bottom = 487.0
+
+[node name="MoneyLabel" type="Label" parent="HUD/VBoxContainer"]
+layout_mode = 2
+text = "Money: $0
+
+"
+
+[node name="TimeLabel" type="Label" parent="HUD/VBoxContainer"]
+layout_mode = 2
+text = "Time: Day 1
+
+"
+
+[node name="StatsLabel" type="Label" parent="HUD/VBoxContainer"]
+layout_mode = 2
+text = "Stats: Stress 0 / Rep 0
+
+"
+
+[node name="WorkButton" type="Button" parent="HUD/VBoxContainer"]
+layout_mode = 2
+text = "\"Work Day\""
+
+[node name="DayLabel" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -188.0
+offset_top = -17.0
+offset_bottom = 17.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "\"Day 1 Begins...\""
+
+[node name="DailyReport" type="Panel" parent="HUD"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/DailyReport"]
+layout_mode = 0
+offset_left = 374.0
+offset_top = 499.0
+offset_right = 583.0
+offset_bottom = 610.0
+
+[node name="TitleLabel" type="Label" parent="HUD/DailyReport/VBoxContainer"]
+layout_mode = 2
+text = "📝 Daily Report"
+
+[node name="BreakdownLabel" type="Label" parent="HUD/DailyReport/VBoxContainer"]
+layout_mode = 2
+text = "(We’ll fill this in using code)
+"
+
+[node name="CloseButton" type="Button" parent="HUD/DailyReport/VBoxContainer"]
+layout_mode = 2
+text = "Continue"
+
+[node name="MoneyLabel" type="Label" parent="HUD"]
+offset_left = 127.0
+offset_top = 39.0
+offset_right = 167.0
+offset_bottom = 62.0
+
+[connection signal="pressed" from="HUD/VBoxContainer/WorkButton" to="." method="_on_work_button_pressed"]
+[connection signal="pressed" from="HUD/DailyReport/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]

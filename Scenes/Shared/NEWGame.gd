@@ -8,6 +8,10 @@ var current_scene: Node = null
 func _ready():
 	print("NEWGame ready")
 
+	# --- Initialize floors first ---
+	if Global.building_floors.size() == 0:
+		Global.init_building_floors()
+
 	if not check_list_ui:
 		push_error("⚠️ ChecklistUI NOT FOUND in HUD!")
 	else:

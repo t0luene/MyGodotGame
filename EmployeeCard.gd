@@ -2,33 +2,29 @@ extends Button
 
 signal card_selected(emp_id: int)
 
-@onready var avatar = $Avatar
-@onready var name_label = $NameLabel
+@onready var avatar: TextureRect = $Avatar
+@onready var name_label: Label = $NameLabel
+@onready var role_label: Label = $RoleLabel
+@onready var proficiency_label: Label = $ProficiencyLabel
+@onready var cost_label: Label = $CostLabel
 
-var emp_id: int = -1
+var employee: Employee = null
 
-func _ready():
-	print("EmployeeCard _ready called for emp_id:", emp_id, "name_label:", name_label.text, "avatar.texture:", avatar.texture)
-
-
-func set_employee_data(data: Dictionary):
-	emp_id = data.get("id", -1)
-	print("Setting employee card for:", data.get("name", "Unknown"))
+func set_employee(emp: Employee) -> void:
+	employee = emp
+	if employee == null:
+		print("EmployeeCard: set_employee received null")
+		return
 	
-	if name_label:
-		name_label.text = data.get("name", "Unknown")
-		print("Name label updated to:", name_label.text)
-		
-	if avatar:
-		var tex = data.get("avatar", null)
-		if tex is Texture2D:
-			avatar.texture = tex
-			print("Avatar texture set to:", tex)
-			if avatar.texture:
-				print("[EmployeeCard] Avatar texture size:", avatar.texture.get_size())
-			else:
-				print("[EmployeeCard] Avatar texture is null!")
+	name_label.text = employee.name
+	role_label.text = employee.role
+	proficiency_label.text = str(employee.proficiency)
+	cost_label.text = str(employee.cost)
+	avatar.texture = employee.avatar
 
-func _pressed():
-	print("[EmployeeCard] Button pressed for emp_id:", emp_id)
-	card_selected.emit(emp_id)
+func _pressed() -> void:
+	if employee:
+		print("[EmployeeCard] Button pressed for emp_id:", employee.id)
+		card_selected.emit(employee.id)
+	else:
+		print("[EmployeeCard] Button pressed but employee is null")

@@ -1,10 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://cfh3twjip2qta"]
+[gd_scene load_steps=6 format=3 uid="uid://4322hlalkkpu"]
 
-[ext_resource type="Script" uid="uid://borel8b50vikl" path="res://Scenes/Globals/NewDay.gd" id="1_xas18"]
-[ext_resource type="PackedScene" uid="uid://0ius4e6ugvbw" path="res://Floors.tscn" id="2_pwavd"]
-[ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="3_veuyp"]
-[ext_resource type="PackedScene" uid="uid://dhg8caguiut4g" path="res://EmployeeConversation.tscn" id="4_d8q2g"]
-[ext_resource type="PackedScene" uid="uid://disq3lorsktng" path="res://ElevatorUI.tscn" id="5_qmusn"]
+[ext_resource type="Script" uid="uid://borel8b50vikl" path="res://Scenes/Globals/NewDay.gd" id="1_80nbo"]
+[ext_resource type="PackedScene" uid="uid://dhg8caguiut4g" path="res://EmployeeConversation.tscn" id="4_r0x5m"]
+[ext_resource type="PackedScene" uid="uid://disq3lorsktng" path="res://ElevatorUI.tscn" id="5_r0x5m"]
+[ext_resource type="PackedScene" uid="uid://0ius4e6ugvbw" path="res://Floors.tscn" id="5_t88pq"]
+[ext_resource type="Texture2D" uid="uid://f8tkyibvwaul" path="res://Assets/Basement.png" id="6_r0x5m"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -14,14 +14,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(1.01131, 1)
-script = ExtResource("1_xas18")
-floor_scene = ExtResource("2_pwavd")
+script = ExtResource("1_80nbo")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
-texture = ExtResource("3_veuyp")
+texture = ExtResource("6_r0x5m")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 10
@@ -156,7 +155,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="EmployeeConversation" parent="HUD" instance=ExtResource("4_d8q2g")]
+[node name="EmployeeConversation" parent="HUD" instance=ExtResource("4_r0x5m")]
 visible = false
 offset_left = 179.0
 offset_top = 157.0
@@ -204,17 +203,17 @@ anchors_preset = 0
 offset_right = 40.0001
 offset_bottom = 40.0
 
-[node name="Floor1" parent="FloorsContainer" instance=ExtResource("2_pwavd")]
+[node name="Floor1" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
 
-[node name="Floor2" parent="FloorsContainer" instance=ExtResource("2_pwavd")]
+[node name="Floor2" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
 
-[node name="Floor3" parent="FloorsContainer" instance=ExtResource("2_pwavd")]
+[node name="Floor3" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
 
-[node name="Floor4" parent="FloorsContainer" instance=ExtResource("2_pwavd")]
+[node name="Floor4" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
 
-[node name="Floor5" parent="FloorsContainer" instance=ExtResource("2_pwavd")]
+[node name="Floor5" parent="FloorsContainer" instance=ExtResource("5_t88pq")]
 
-[node name="ElevatorUI" parent="." instance=ExtResource("5_qmusn")]
+[node name="ElevatorUI" parent="." instance=ExtResource("5_r0x5m")]
 
 [node name="BossButton" type="Button" parent="."]
 layout_mode = 0

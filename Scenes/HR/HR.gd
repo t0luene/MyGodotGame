@@ -4,23 +4,15 @@ extends Node2D
 @onready var interact_button = $InteractButton
 @onready var spawn = $SpawnPoint
 var player: Node2D = null
+var interacted: bool = false  # local for convenience
 
 # Track locked/highlighted state
-var locked_images = {
-	"department": true,
-	"hiring": true,
-	"staff": true,
-	"bulletin": true
-}
-var selected = {
-	"department": false,
-	"hiring": false,
-	"staff": false,
-	"bulletin": false
-}
+var locked_images = Global.HR_state["locked_images"]
+var selected = Global.HR_state["selected"]
 
 func _ready():
 	# Connect interact button
+	interacted = Global.HR_state.interacted if "interacted" in Global.HR_state else false
 	interact_button.pressed.connect(_on_interact_pressed)
 
 	# Player spawn
@@ -38,12 +30,21 @@ func _ready():
 	$StaffImage.gui_input.connect(_on_staff_input)
 	$BulletinImage.gui_input.connect(_on_bulletin_input)
 
-	for node in [$DepartmentImage, $HiringImage, $StaffImage, $BulletinImage]:
-		node.mouse_entered.connect(func(): _set_hover(node, true))
-		node.mouse_exited.connect(func(): _set_hover(node, false))
-		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_highlight(node, false)
+	# Apply persistent HR states
+	for key in ["department", "hiring", "staff", "bulletin"]:
+		var node = get_node_for_key(key)
+		if node:
+			var unlocked = not Global.HR_state.locked_images.get(key, true)
+			var sel = Global.HR_state.selected.get(key, false)
+
+			_set_interactable(node, unlocked, sel)
+			_highlight(node, sel)
+
+			# Mouse hover
+			node.mouse_entered.connect(func(): _set_hover(node, true))
+			node.mouse_exited.connect(func(): _set_hover(node, false))
 	Fade.fade_in(0.5)
+
 
 # ---------- Helper functions ----------
 func _set_interactable(node: TextureRect, interactable: bool, highlight: bool=false):
@@ -57,7 +58,6 @@ func _highlight(node: TextureRect, enable: bool):
 func _set_hover(node: TextureRect, enable: bool):
 	if node.material:
 		node.material.set_shader_parameter("glow_enabled", enable)
-
 
 # ---------- Input handlers ----------
 func _on_department_input(event):
@@ -78,13 +78,19 @@ func _on_bulletin_input(event):
 
 
 # ---------- Core click logic ----------
-# ---------- Core click logic ----------
 func _handle_click(key: String, node: TextureRect, path: String):
+	# -----------------------------
+	# Require Interact first
+	# -----------------------------
+	if not Global.HR_state.has("interacted") or not Global.HR_state.interacted:
+		if key != "hiring":  # Only allow Hiring before Interact is pressed
+			print("Cannot click before interacting with HR")
+			return
+
 	# -----------------------------
 	# Quest6 restrictions
 	# -----------------------------
 	if QuestManager.current_quest_id == 6:
-		# Check if "hire_employees" requirement (index 2) is completed
 		var hire_done = QuestManager.quests[6]["requirements"][2]["completed"]
 
 		# Department only unlocks after Hiring
@@ -93,35 +99,38 @@ func _handle_click(key: String, node: TextureRect, path: String):
 			return
 
 		# Prevent other buttons until Hiring is done
-		if key != "hiring" and not selected["hiring"]:
+		if key != "hiring" and not Global.HR_state.selected["hiring"]:
 			return
 
 	# -----------------------------
 	# Handle clicks
 	# -----------------------------
+	if not Global.HR_state.selected[key]:
+		_highlight(node, true)
+		Global.HR_state.selected[key] = true
+		Global.HR_state.locked_images[key] = false
+
 	if key == "hiring":
-		if not selected[key]:
-			_highlight(node, true)
-			selected[key] = true
 		QuestManager.complete_requirement(6, 2)  # hire_employees done
 		print("Hiring requirement completed")
+
 		# Unlock Department now
 		unlock_department_step()
-		load_subpage(path)
 
 	elif key == "department":
-		_highlight(node, true)
-		selected[key] = true
 		QuestManager.complete_requirement(6, 3)  # unlock_department done
 		print("Department requirement completed")
-		load_subpage(path)
 
+	# Staff and Bulletin logic (if any) goes here
 	elif key == "staff":
-		# Add your Staff logic here
 		pass
 	elif key == "bulletin":
-		# Add your Bulletin logic here
 		pass
+
+	# -----------------------------
+	# Load the subpage if needed
+	# -----------------------------
+	load_subpage(path)
 
 
 func get_node_for_key(key: String) -> TextureRect:
@@ -156,7 +165,9 @@ func _on_exit_door(body):
 
 
 func _on_interact_pressed():
+	Global.HR_state.interacted = true
 	print("Interacting with HRLady")
+	interacted = true
 
 	# ------------------------------
 	# Quest4: Talk to HR

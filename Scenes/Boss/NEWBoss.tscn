@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://c33kevexabplb"]
 
-[ext_resource type="Script" uid="uid://cpd411xmejecs" path="res://Scenes/Boss/NEWBoss.gd" id="1_k1djp"]
-[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="2_iw8qn"]
-[ext_resource type="Texture2D" uid="uid://kimdcjiemq2s" path="res://Assets/Rooms/BossRoom.png" id="2_pcl21"]
+[ext_resource type="Script" uid="uid://cpd411xmejecs" path="res://Scenes/Boss/NEWBoss.gd" id="1_ldk1j"]
+[ext_resource type="Texture2D" uid="uid://kimdcjiemq2s" path="res://Assets/Rooms/BossRoom.png" id="2_bmof0"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_uvbyr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k1djp"]
 size = Vector2(102, 92)
@@ -11,13 +11,13 @@ size = Vector2(102, 92)
 radius = 73.3553
 
 [node name="Node2D" type="Node2D"]
-script = ExtResource("1_k1djp")
+script = ExtResource("1_ldk1j")
 
 [node name="BossSprite" type="TextureRect" parent="."]
 offset_right = 1945.0
 offset_bottom = 1025.0
 scale = Vector2(0.635, 0.635)
-texture = ExtResource("2_pcl21")
+texture = ExtResource("2_bmof0")
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(381, 579)
@@ -29,7 +29,7 @@ position = Vector2(16, 376)
 position = Vector2(41, 36)
 shape = SubResource("RectangleShape2D_k1djp")
 
-[node name="Player" parent="." instance=ExtResource("2_iw8qn")]
+[node name="Player" parent="." instance=ExtResource("3_uvbyr")]
 position = Vector2(449, 579)
 
 [node name="TriggerArea" type="Area2D" parent="."]
@@ -38,9 +38,22 @@ position = Vector2(621, 553)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
 shape = SubResource("CircleShape2D_pcl21")
 
+[node name="ContentContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
 [node name="InteractButton" type="Button" parent="."]
 offset_left = 441.0
 offset_top = 329.0
 offset_right = 525.0
 offset_bottom = 360.0
 text = "INTERACT"
+
+[node name="NewDayButton" type="Button" parent="."]
+offset_left = 973.0
+offset_top = 13.0
+offset_right = 1057.0
+offset_bottom = 44.0
+text = "NEW DAY"

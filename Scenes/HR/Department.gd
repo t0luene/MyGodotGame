@@ -1,142 +1,158 @@
-extends Node2D
+extends Window
 
-@onready var exit_to_hallway: Area2D = $ExitToHallway
-@onready var interact_button: Button = $InteractButton
+@export var max_capacity: int = 6
+@onready var floor_image: TextureRect = $Control/ManagePanel/LeftPanel/FloorVisual
+@onready var floor_name_label: Label = $Control/ManagePanel/LeftPanel/FloorInfo
 
-# Track selection state for each PNG
-var selected = {
-	"tower": false,
-	"tech": false,
-	"management": false,
-	"inspection": false
-}
+var EmployeeCard = preload("res://EmployeeCard.tscn")
+var EmployeeAvatar = preload("res://EmployeeAvatar.tscn")
+var selected_slot_index: int = -1
+
+# Local floors data (used only for UI info like images/role)
+var floors = [
+	{
+		"name": "Floor 0",
+		"image": preload("res://Assets/square-xxl.png"),
+		"required_role": "HR"
+	}
+]
 
 func _ready():
-	# Ensure exit trigger works
-	exit_to_hallway.monitoring = true
-	exit_to_hallway.visible = false
-	exit_to_hallway.body_entered.connect(_on_exit_door)
+	close_requested.connect(_on_close_requested)
+	popup_centered_ratio(0.8)
+	$Control/ScrollContainer.visible = false
+	connect_slot_buttons()
+	load_employee_slots()
 
-	# Print floor root for debugging
-	var floor_root = get_parent().get_parent()
-	print("Floor root:", floor_root)
+func _on_close_requested():
+	queue_free()
 
-	# Connect interact button
-	interact_button.pressed.connect(_on_interact_pressed)
+func get_slot_button(slot_index: int) -> Button:
+	return $Control/ManagePanel/RightPanel/EmployeeSlotsGrid.get_child(slot_index)
 
-	# Fade in
-	Fade.fade_in(0.5)
+func show_employee_list():
+	print("Showing employee list...")
+	var container = $Control/ScrollContainer/CardsContainer
+	$Control/ScrollContainer.visible = true
+	clear_children(container)
 
-	# Quest step
-	if QuestManager.current_quest_id == 4:
-		QuestManager.enter_maint_room()
+	var required_role = floors[0].get("required_role", null)
+	var assigned_hr = Global.building_floors["HR"]["assigned_employee_indices"]
 
-	# Connect clicks for subpages
-	$TowerImage.gui_input.connect(_on_tower_input)
-	$TechTreeImage.gui_input.connect(_on_tech_input)
-	$ManagementImage.gui_input.connect(_on_management_input)
-	$InspectionImage.gui_input.connect(_on_inspection_input)
+	for emp in Global.hired_employees:
+		# Skip if already assigned to HR
+		if emp.id in assigned_hr:
+			continue
 
-	# Connect hover glow
-	$TowerImage.mouse_entered.connect(func(): _set_hover($TowerImage, true))
-	$TowerImage.mouse_exited.connect(func(): _set_hover($TowerImage, false))
-	$TechTreeImage.mouse_entered.connect(func(): _set_hover($TechTreeImage, true))
-	$TechTreeImage.mouse_exited.connect(func(): _set_hover($TechTreeImage, false))
-	$ManagementImage.mouse_entered.connect(func(): _set_hover($ManagementImage, true))
-	$ManagementImage.mouse_exited.connect(func(): _set_hover($ManagementImage, false))
-	$InspectionImage.mouse_entered.connect(func(): _set_hover($InspectionImage, true))
-	$InspectionImage.mouse_exited.connect(func(): _set_hover($InspectionImage, false))
+		# Skip if assigned to any other floor
+		var assigned_elsewhere = false
+		for floor_name in Global.building_floors.keys():
+			if floor_name == "HR":
+				continue
+			if emp.id in Global.building_floors[floor_name]["assigned_employee_indices"]:
+				assigned_elsewhere = true
+				break
+		if assigned_elsewhere:
+			continue
 
-# ---------- Input handlers ----------
-func _on_tower_input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click("tower", $TowerImage, "res://Scenes/Maintenance/Tower.tscn")
+		var card = EmployeeCard.instantiate()
+		card.connect("pressed", Callable(self, "_on_employee_card_pressed").bind(emp.id, card))
 
-func _on_tech_input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click("tech", $TechTreeImage, "res://Scenes/Maintenance/TechTree.tscn")
+		# Fill UI
+		card.get_node("ProficiencyLabel").text = str(emp.get("proficiency", "N/A"))
+		card.get_node("CostLabel").text = str(emp.get("cost", 0))
+		card.get_node("Avatar").texture = emp.get("avatar")
+		card.get_node("NameLabel").text = emp.get("name", "Unknown")
+		card.get_node("RoleLabel").text = emp.get("role", "Unknown")
 
-func _on_management_input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click("management", $ManagementImage, "res://Scenes/Maintenance/Management.tscn")
-
-func _on_inspection_input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click("inspection", $InspectionImage, "res://Floor1Inspection.tscn")
-
-# ---------- Core click logic ----------
-func _handle_click(key: String, node: TextureRect, path: String):
-	if not selected[key]:
-		# Deselect all other nodes first
-		for other_key in selected.keys():
-			if other_key != key and selected[other_key]:
-				var other_node = get_node_for_key(other_key)
-				_highlight(other_node, false)
-				_set_hover(other_node, false)
-				selected[other_key] = false
-
-		# Highlight this node
-		_highlight(node, true)
-		selected[key] = true
-	else:
-		# Go to subpage on second click
-		_highlight(node, false)
-		_set_hover(node, false)
-		selected[key] = false
-		load_subpage(path)
-
-# ---------- Helpers ----------
-func _highlight(node: TextureRect, enable: bool):
-	if node.material:
-		node.material.set_shader_parameter("outline_enabled", enable)
-
-func _set_hover(node: TextureRect, enable: bool):
-	if node.material:
-		node.material.set_shader_parameter("glow_enabled", enable)
-
-func get_node_for_key(key: String) -> TextureRect:
-	match key:
-		"tower": return $TowerImage
-		"tech": return $TechTreeImage
-		"management": return $ManagementImage
-		"inspection": return $InspectionImage
-		_: return null
-
-func load_subpage(scene_path: String):
-	var scene = load(scene_path)
-	if scene:
-		var instance = scene.instantiate()
-		Global.clear_children($ContentContainer)
-		if instance is Window:
-			get_tree().current_scene.add_child(instance)
+		# ✅ Gray out if role doesn't match
+		if required_role == null or emp.role == required_role:
+			card.modulate = Color(1,1,1)
 		else:
-			$ContentContainer.add_child(instance)
+			card.modulate = Color(0.7,0.7,0.7)
 
-# ---------- Exit door ----------
-func _on_exit_door(body):
-	print("Something entered exit trigger:", body.name)
-	if body.name != "Player":
+		container.add_child(card)
+
+func _on_employee_card_pressed(emp_id: int, card: Node):
+	if selected_slot_index < 0 or selected_slot_index >= max_capacity:
+		print("⚠️ Invalid slot selected")
 		return
 
-	print("Exit Maintenance → Hallway-1 triggered")
+	var required_role = floors[0].get("required_role", null)
+	var emp = Global.hired_employees.filter(func(e): return e.id == emp_id)[0]
 
-	var floor_root = get_parent().get_parent()
-	if floor_root and floor_root.has_method("load_room"):
-		floor_root.load_room("res://Scenes/Rooms/Hallway-1.tscn")
-		print("Room loaded, current_room:", floor_root.current_room)
-		# Reset position and visibility
-		if floor_root.current_room:
-			floor_root.current_room.position = Vector2.ZERO
-			floor_root.current_room.visible = true
-	else:
-		push_error("Cannot find floor root to load Hallway-1")
+	# ✅ Prevent assigning wrong role
+	if required_role != null and emp.role != required_role:
+		print("⚠️ Employee role does not match requirement")
+		return
 
-# ---------- Interact ----------
-func _on_interact_pressed():
-	print("Quest5: Talked to MaintLead")
-	QuestManager.complete_requirement(4, 5)
+	$Control/ScrollContainer.visible = false
 
-	var dialogue_node = get_node("/root/HUD/CanvasLayer/Dialogue")
-	dialogue_node.start([
-		{"speaker": "MaintLead", "text": "All your paperwork is done!"}
-	])
+	var slot_btn = get_slot_button(selected_slot_index)
+	if slot_btn:
+		clear_children(slot_btn)
+		var avatar = TextureRect.new()
+		avatar.texture = card.get_node("Avatar").texture
+		avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		avatar.expand = true
+		avatar.set_anchors_preset(Control.PRESET_FULL_RECT)
+		slot_btn.add_child(avatar)
+		slot_btn.text = ""
+
+	Global.building_floors["HR"]["assigned_employee_indices"][selected_slot_index] = emp_id
+	load_employee_slots()
+			# ------------------------------
+	# ✅ Mark Maitenance assignment quest task complete
+	# ------------------------------
+	if QuestManager.current_quest_id == 6:  # example: Quest6
+		QuestManager.complete_requirement(6, 4)  # task index 0 = Assign HR
+		print("✅ HR task completed")
+
+func show_floor_info(floor_dict: Dictionary) -> void:
+	floor_name_label.text = floor_dict.get("name", "Unknown Floor")
+	floor_image.texture = floor_dict.get("image", null)
+
+func connect_slot_buttons():
+	var slots_grid = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
+	for i in range(slots_grid.get_child_count()):
+		var btn = slots_grid.get_child(i)
+		if btn.is_connected("pressed", Callable(self, "_on_slot_pressed")):
+			btn.disconnect("pressed", Callable(self, "_on_slot_pressed"))
+		btn.connect("pressed", Callable(self, "_on_slot_pressed").bind(i))
+
+func load_employee_slots():
+	if Global.building_floors.size() == 0:
+		print("⚠️ No floors initialized yet")
+		return
+
+	var assigned = Global.building_floors["HR"]["assigned_employee_indices"]
+	var slots_grid = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
+
+	for i in range(max_capacity):
+		if i >= assigned.size():
+			assigned.append(null)
+		var emp_id = assigned[i]
+		var btn = slots_grid.get_child(i)
+
+		if emp_id != null:
+			var emp = Global.hired_employees.filter(func(e): return e.id == emp_id)
+			if emp.size() > 0:
+				var emp_data = emp[0]
+				btn.icon = emp_data.avatar
+				btn.text = ""
+		else:
+			btn.icon = null
+			btn.text = "+"
+
+func _on_slot_pressed(slot_index: int) -> void:
+	selected_slot_index = slot_index
+	show_employee_list()
+
+func clear_children(node: Node) -> void:
+	for child in node.get_children():
+		child.queue_free()
+
+func check_floor_completion():
+	var assigned = Global.building_floors[0]["assigned_employee_indices"]
+	if assigned.all(func(id): return id != null):
+		print("✅ All slots assigned — floor is complete!")

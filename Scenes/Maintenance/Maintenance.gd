@@ -58,11 +58,11 @@ func _on_tech_input(event):
 
 func _on_management_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click("management", $ManagementImage, "res://Scenes/Maintenance/Management.tscn")
+		_handle_click("management", $ManagementImage, "res://Scenes/Maintenance/Department.tscn")
 
 func _on_inspection_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click("inspection", $InspectionImage, "res://Floor1Inspection.tscn")
+		_handle_click("inspection", $InspectionImage, "res://Scenes/Maintenance/Department.tscn")
 
 # ---------- Core click logic ----------
 func _handle_click(key: String, node: TextureRect, path: String):

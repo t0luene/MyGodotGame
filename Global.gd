@@ -1,57 +1,168 @@
 # Global.gd
 extends Node
 
+# ---------------------------
+# Signals
+# ---------------------------
 signal mission_status_changed(mission_name: String)
-signal employee_returned(employee_index)
+signal employee_returned(employee_id: int)
+signal money_changed(new_money: int)
 
-# Global player/business state
+# ---------------------------
+# Preloads
+# ---------------------------
+const Employee = preload("res://Scenes/Shared/Employee.gd")
+
+# ---------------------------
+# Employees
+# ---------------------------
+var hired_employees: Array = []
+var hire_candidates: Array = []
+var next_employee_id: int = 0
+const NUM_EMPLOYEES_TO_GENERATE = 3
+
+
+func generate_hire_candidates():
+	hire_candidates.clear()
+	
+	# Hardcoded HR and Maintenance
+	var alice = Employee.new()
+	alice.id = next_employee_id
+	alice.name = "Alice"
+	alice.role = "HR"
+	alice.avatar = preload("res://Assets/Avatars/emp1.png")
+	alice.proficiency = 80
+	alice.cost = 100
+	alice.bio = """Summary:
+A fast learner with a knack for organization.
+
+Skills:
+- HR coordination
+- Communication
+- Scheduling
+
+Experience:
+- HR Assistant at BrightFuture Inc. (2 years)
+
+Education:
+- B.A. in Business Administration
+
+Hobbies:
+- Reading
+- Hiking
+"""
+	next_employee_id += 1
+
+	var bob = Employee.new()
+	bob.id = next_employee_id
+	bob.name = "Bob"
+	bob.role = "Maintenance"
+	bob.avatar = preload("res://Assets/Avatars/emp2.png")
+	bob.proficiency = 65
+	bob.cost = 90
+	bob.bio = """Summary:
+Reliable worker who keeps things running.
+
+Skills:
+- Electrical repairs
+- Plumbing
+- Preventative maintenance
+
+Experience:
+- Maintenance Tech at ClearPath Ltd. (3 years)
+
+Education:
+- High School Diploma
+
+Hobbies:
+- Gardening
+- DIY
+"""
+	next_employee_id += 1
+
+	hire_candidates.append(alice)
+	hire_candidates.append(bob)
+
+	# Generic candidates
+	for i in range(NUM_EMPLOYEES_TO_GENERATE):
+		var candidate = Employee.new()
+		candidate.id = next_employee_id
+		candidate.name = "Candidate_" + str(next_employee_id)
+		candidate.role = "Role_" + str(next_employee_id)
+		candidate.cost = 100 + next_employee_id * 10
+		candidate.proficiency = 50 + next_employee_id * 5
+		candidate.is_busy = false
+		candidate.bio = "A generic candidate for testing purposes."
+		hire_candidates.append(candidate)
+		next_employee_id += 1
+
+
+func get_employee_by_id(emp_id: int) -> Employee:
+	for emp in hired_employees:
+		if emp.id == emp_id:
+			return emp
+	return null
+
+func get_employee_index_by_id(emp_id: int) -> int:
+	for i in range(hired_employees.size()):
+		if hired_employees[i].id == emp_id:
+			return i
+	return -1
+
+func is_employee_busy_by_id(emp_id: int) -> bool:
+	var emp = get_employee_by_id(emp_id)
+	if emp:
+		return emp.is_busy
+	return false
+
+func mark_employee_busy(emp_id: int):
+	var emp = get_employee_by_id(emp_id)
+	if emp:
+		emp.is_busy = true
+
+func mark_employee_free(emp_id: int):
+	var emp = get_employee_by_id(emp_id)
+	if emp:
+		emp.is_busy = false
+
+func is_employee_available(emp_id: int) -> bool:
+	for floor in building_floors:
+		if "assigned_employee_indices" in floor and emp_id in floor["assigned_employee_indices"]:
+			return false
+	return not is_employee_busy_by_id(emp_id)
+
+# ---------------------------
+# Player / business state
+# ---------------------------
 var money: int = 1000
 var stress: int = 0
 var reputation: int = 0
 var day: int = 1
-var current_floor_index: int = 0
-
-var employees = [
-	{"id": 1, "name": "Luigi"},
-	{"id": 2, "name": "Mario"},
-	# add more employees here...
-]
-var can_inspect := true  # whether the player can inspect floors today
-
-
-var hired_employees: Array = []
-var next_employee_id: int = 0
-const NUM_EMPLOYEES_TO_GENERATE = 3
-
-func generate_daily_employees():
-	for i in range(NUM_EMPLOYEES_TO_GENERATE):
-		var emp = {
-			"id": next_employee_id,
-			"name": "Employee_" + str(next_employee_id),
-			"role": "Role_" + str(next_employee_id),
-			"cost": 100 + next_employee_id * 10,
-			"boost": 5 + next_employee_id,
-			"is_busy": false,
-		}
-		hired_employees.append(emp)
-		next_employee_id += 1
-
+var can_inspect: bool = true
 var employee_capacity: int = 3
-var building_floors: Array = []  # Will hold floor info
-var hire_candidates: Array = []
+var grid_xp: int = 0
 
-# Constants
-const FLOOR_COST = 500
-const MAX_EMPLOYEE_CAPACITY = 20
-const BASE_OPERATIONS_COST = 100
+func set_money(value: int):
+	money = value
+	emit_signal("money_changed", money)
 
-var unlocked_floors: Array = []
+func add_grid_xp(amount: int):
+	grid_xp += amount
+	print("Grid XP is now:", grid_xp)
 
-var busy_employee_ids := []  # store indexes or unique IDs of busy employees
-var mission_start_buffer := 1 # seconds of delay before it can be marked complete
+# ---------------------------
+# Floors
+# ---------------------------
+var building_floors = {
+	"HR": {
+		"assigned_employee_indices": [null, null, null, null, null, null]
+	},
+	"Maintenance": {
+		"assigned_employee_indices": [null, null, null, null, null, null]
+	}
+}
 
-var should_reset_missions := false
-var mission_data: Array = []
+var current_floor_scene: String = ""
 
 const FloorState = {
 	"LOCKED": 0,
@@ -60,261 +171,34 @@ const FloorState = {
 	"ASSIGNED": 3
 }
 
-func ensure_floors_initialized(count: int = 5):
-	if building_floors.size() == 0:
-		for i in range(count):
-			var floor = {
-				"state": FloorState.AVAILABLE if i == 0 else FloorState.LOCKED,
-				"purpose": null,
-				"capacity": 3,
-				"assigned_employee_indices": []
-			}
-			building_floors.append(floor)
-
-
-
-func add_mission(employee_id: String, days: int):
-	mission_data.append({
-		"employee_id": employee_id,
-		"days_left": days,
-		"complete": false
-	})
-
-func is_employee_on_mission(employee_id: String) -> bool:
-	for mission in mission_data:
-		if mission.employee_id == employee_id and !mission.complete:
-			return true
-	return false
-
-
-func assign_employee_to_mission(index):
-	if not is_employee_busy(index):
-		busy_employee_ids.append(index)
-
-func free_employee_from_mission(index):
-	busy_employee_ids.erase(index)
-
-
-
-signal money_changed(new_money)
-
-
-func set_money(value):
-	money = value
-	emit_signal("money_changed", money)
-
-var mission_states = [
-	{
-		"mission_name": "Mission 1",
-		"status": "available",
-		"employee_index": -1,
-		"duration": 5,
-		"reward_money": 100,
-		"time_remaining": 0
-	},
-	{
-		"mission_name": "Mission 2",
-		"status": "available",
-		"employee_index": -1,
-		"duration": 3,
-		"reward_money": 80,
-		"time_remaining": 0
-	},
-	{
-		"mission_name": "Mission 3",
-		"status": "available",
-		"employee_index": -1,
-		"duration": 4,
-		"reward_money": 120,
-		"time_remaining": 0
-	}
-]
-func reset_all_missions():
-	for state in mission_states:
-		state["status"] = "available"
-		state["employee_index"] = -1
-		state["time_remaining"] = 0
-		state["active"] = false
-		state["completed"] = false
-		state["employee"] = null
-
-
-var active_missions: Array = [] # Stores mission dictionaries
-
-func assign_mission_to_employee(index: int, mission_data: Dictionary):
-	var data = {
-	"employee_index": index,
-	"start_time": Time.get_unix_time_from_system(),
-	"duration": mission_data["period_seconds"],
-	"mission_name": mission_data["mission_name"],
-	"mission_id": mission_data["mission_id"],
-	"reward_money": mission_data["reward_money"],
-	"reward_xp": mission_data["reward_xp"],
-	"status": "active"
-}
-
-	active_missions.append(data)
-	for i in range(mission_states.size()):
-		if mission_states[i].get("mission_name", "") == data["mission_name"]:
-			mission_states[i]["status"] = "active"
-			mission_states[i]["employee_index"] = index
-			mission_states[i]["time_remaining"] = data["duration"]
-			break
-
-	hired_employees[index]["is_busy"] = true
-
-
-
-func check_mission_statuses():
-	var now = Time.get_unix_time_from_system()
-	for mission in active_missions:
-		if mission.status == "active":
-			var elapsed = now - mission.start_time
-			if elapsed >= mission.duration:
-				mission.status = "completed"
-				emit_signal("mission_status_changed", mission.mission_name)
-				
-				Global.free_employee(mission.employee_index)
-				
-				# Emit a new signal for employee return
-				emit_signal("employee_returned", mission.employee_index)
-
-				# Update mission_states to completed
-				for i in range(mission_states.size()):
-					if mission_states[i].get("mission_name", "") == mission.mission_name:
-						mission_states[i]["status"] = "completed"
-						mission_states[i]["time_remaining"] = 0
-						break
-
-
-
-func is_employee_busy(index: int) -> bool:
-	if index < 0 or index >= hired_employees.size():
-		return false
-	return hired_employees[index].get("is_busy", false)
-
-	
-func free_employee(index: int):
-	hired_employees[index]["is_busy"] = false
-
-func _process(delta):
-	check_mission_statuses()
-
-var grid_xp := 0
-
-func add_grid_xp(amount: int):
-	grid_xp += amount
-	print("Grid XP is now:", grid_xp)
-
-# Example initial state (in Global.gd)
-
-
-func get_employee_by_id(id):
-	for emp in hired_employees:
-		if emp.get("id", -1) == id:
-			return emp
-	return null
-
-func get_employee_id_by_name(name):
-	for i in range(hired_employees.size()):
-		if hired_employees[i].get("name", "") == name:
-			return i
-	return -1  # not found
-
-
-func is_employee_available(id):
-	for floor in building_floors:
-		if floor.has("assigned_employee_indices") and id in floor["assigned_employee_indices"]:
-			return false
-	return not is_employee_busy_by_id(id)
-
-func is_employee_busy_by_id(emp_id: int) -> bool:
-	for i in range(hired_employees.size()):
-		if hired_employees[i].get("id") == emp_id:
-			return hired_employees[i].get("is_busy", false)
-	return false
-
-
-func mark_employee_busy(emp_id: int):
-	for emp in hired_employees:
-		if emp.get("id", -1) == emp_id:
-			emp["is_busy"] = true
-			return
-
-func mark_employee_free(emp_id: int):
-	for emp in hired_employees:
-		if emp.get("id", -1) == emp_id:
-			emp["is_busy"] = false
-			return
-
-func get_employee_index_by_id(emp_id: int) -> int:
-	for i in range(hired_employees.size()):
-		if hired_employees[i].get("id", -1) == emp_id:
-			return i
-	return -1
-
-func clear_children(node: Node):
-	for child in node.get_children():
-		child.queue_free()
-
-func generate_hire_candidates():
-	hire_candidates.clear()
-	for i in range(NUM_EMPLOYEES_TO_GENERATE):
-		var candidate = {
-			"id": next_employee_id,
-			"name": "Candidate_" + str(next_employee_id),
-			"role": "Role_" + str(next_employee_id),
-			"cost": 100 + next_employee_id * 10,
-			"boost": 5 + next_employee_id,
-			"is_busy": false,
-		}
-		hire_candidates.append(candidate)
-		next_employee_id += 1
-
-
-
-# NPC states
-var npc_states = {
-	"Boss": {"last_conversation_index": 0},
-	"HRLady": {"last_conversation_index": 0}
-}
-
-
-# ---------------------------
-# Floor tracking for Elevator & Quest5
-# ---------------------------
-
-# Floor tracking for Elevator & Quest5
-var current_floor_scene: String = ""
-
 func init_building_floors(count: int = 6):
 	if building_floors.size() > 0:
-		return  # already initialized
-
+		return
 	for i in range(count):
 		var scene_path = ""
 		var label_text = ""
 		var state_val = FloorState.LOCKED
-		if i == 0:
-			scene_path = "res://Scenes/Floors/Floor-1.tscn"
-			label_text = "Floor -1"
-			state_val = FloorState.AVAILABLE
-		elif i == 1:
-			scene_path = "res://Scenes/Boss/Boss.tscn"
-			label_text = "Floor 0"
-			state_val = FloorState.AVAILABLE
-		elif i == 2:
-			scene_path = "res://Scenes/Floors/Floor1.tscn"
-			label_text = "Floor 1"
-		elif i == 3:
-			scene_path = "res://Scenes/Floors/Floor2.tscn"
-			label_text = "Floor 2"
-		elif i == 4:
-			scene_path = "res://Scenes/Floors/Floor3.tscn"
-			label_text = "Floor 3"
-		elif i == 5:
-			scene_path = "res://Scenes/Floors/Floor4.tscn"
-			label_text = "Floor 4"
+		match i:
+			0:
+				scene_path = "res://Scenes/Floors/Floor-1.tscn"
+				label_text = "Floor -1"
+				state_val = FloorState.AVAILABLE
+			1:
+				scene_path = "res://Scenes/Floors/Floor0.tscn"
+				label_text = "Floor 0"
+				state_val = FloorState.AVAILABLE
+			2:
+				scene_path = "res://Scenes/Floors/Floor1.tscn"
+				label_text = "Floor 1"
+			3:
+				scene_path = "res://Scenes/Floors/Floor2.tscn"
+				label_text = "Floor 2"
+			4:
+				scene_path = "res://Scenes/Floors/Floor3.tscn"
+				label_text = "Floor 3"
+			5:
+				scene_path = "res://Scenes/Floors/Floor4.tscn"
+				label_text = "Floor 4"
 
 		var floor = {
 			"scene": scene_path,
@@ -324,9 +208,97 @@ func init_building_floors(count: int = 6):
 			"capacity": 3,
 			"assigned_employee_indices": []
 		}
+		
+		# Initialize assigned_employee_indices with nulls matching capacity
+		for j in range(floor["capacity"]):
+			floor["assigned_employee_indices"].append(null)
+		
 		building_floors.append(floor)
-
-
+		
 func set_floor(floor_name: String):
 	current_floor_scene = floor_name
 	print("Global: current floor set to ", floor_name)
+
+# ---------------------------
+# Missions
+# ---------------------------
+var mission_data: Array = []
+var active_missions: Array = []
+
+func assign_mission_to_employee(emp_id: int, mission_info: Dictionary):
+	var emp_index = get_employee_index_by_id(emp_id)
+	if emp_index == -1 or is_employee_busy_by_id(emp_id):
+		return
+
+	var data = {
+		"employee_id": emp_id,
+		"start_time": Time.get_unix_time_from_system(),
+		"duration": mission_info.get("period_seconds", 0),
+		"mission_name": mission_info.get("mission_name", ""),
+		"mission_id": mission_info.get("mission_id", ""),
+		"reward_money": mission_info.get("reward_money", 0),
+		"reward_xp": mission_info.get("reward_xp", 0),
+		"status": "active"
+	}
+	active_missions.append(data)
+	hired_employees[emp_index].is_busy = true
+
+func free_employee_from_mission(emp_id: int):
+	var emp_index = get_employee_index_by_id(emp_id)
+	if emp_index != -1:
+		hired_employees[emp_index].is_busy = false
+
+func check_mission_statuses():
+	var now = Time.get_unix_time_from_system()
+	for mission in active_missions:
+		if mission.status == "active":
+			var elapsed = now - mission.start_time
+			if elapsed >= mission.duration:
+				mission.status = "completed"
+				emit_signal("mission_status_changed", mission.mission_name)
+				free_employee_from_mission(mission.employee_id)
+				emit_signal("employee_returned", mission.employee_id)
+
+# ---------------------------
+# Misc
+# ---------------------------
+func clear_children(node: Node):
+	for child in node.get_children():
+		child.queue_free()
+
+
+
+# ---------------------------
+# HR
+# ---------------------------
+# At the top of Global.gd
+var HR_state := {
+	"locked_images": {
+		"department": true,
+		"hiring": true,
+		"staff": true,
+		"bulletin": true
+	},
+	"selected": {
+		"department": false,
+		"hiring": false,
+		"staff": false,
+		"bulletin": false
+	}
+}
+
+# ---------------------------
+# Maintenance
+# ---------------------------
+var Maintenance_state := {
+	"locked_images": {
+		"department": false,
+		"tower": false,
+		"techtree": false,
+	},
+	"selected": {
+		"department": false,
+		"tower": false,
+		"techtree": false,
+	}
+}

@@ -3,14 +3,27 @@ extends Node2D
 @onready var exit_to_hallway = $ExitToHallway
 @onready var walk_trigger = $TriggerArea  # Area2D for Quest1
 @onready var interact_button = $InteractButton
+@onready var new_day_button = $NewDayButton
+
 
 func _ready():
 	exit_to_hallway.body_entered.connect(_on_exit_door)
 	walk_trigger.body_entered.connect(_on_walk_trigger)
 	interact_button.pressed.connect(_on_interact_pressed)
+	new_day_button.pressed.connect(_on_new_day_pressed)
 	Fade.fade_in(0.5)
 	
+func _on_new_day_pressed():
+	load_subpage("res://Scenes/Globals/NewDay.tscn")
 		
+func load_subpage(scene_path: String):
+	var scene = load(scene_path)
+	if scene:
+		var instance = scene.instantiate()
+		Global.clear_children($ContentContainer)
+		$ContentContainer.add_child(instance)
+
+
 func _on_exit_door(body):
 	if body.name != "Player":
 		return
