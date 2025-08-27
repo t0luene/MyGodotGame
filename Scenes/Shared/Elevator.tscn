@@ -16,7 +16,7 @@ script = ExtResource("1_560oh")
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
-scale = Vector2(0.635, 0.635)
+scale = Vector2(0.42, 0.42)
 texture = ExtResource("2_ev6sc")
 
 [node name="FloorDropdown" type="OptionButton" parent="."]

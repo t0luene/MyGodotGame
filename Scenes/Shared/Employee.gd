@@ -10,6 +10,7 @@ class_name Employee
 @export var cost: int = 0
 @export var bio: String = ""
 @export var is_busy: bool = false
+@export var level: int = 1  # <-- add this
 
 func is_available() -> bool:
 	return not is_busy

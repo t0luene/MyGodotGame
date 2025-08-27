@@ -13,7 +13,8 @@ var selected_slot := -1
 func _ready():
 	close_requested.connect(_on_close_requested)
 	popup_centered_ratio(0.8)  # 60% of the screen
-	Global.ensure_floors_initialized(13)  # Now matches Floor1..Floor13
+
+	Global.init_building_floors(13)  # Use the existing Global function
 
 	$Tower/FloorOptionsPanel.visible = true
 	_disable_floor_option_buttons()
@@ -34,8 +35,8 @@ func _ready():
 	$Tower/FloorOptionsPanel/WorkButton.pressed.connect(_on_work_button_pressed)
 	$Tower/FloorOptionsPanel/InspectButton.pressed.connect(_on_inspection_button_pressed)
 	$Tower/FloorOptionsPanel/ManageButton.pressed.connect(_on_manage_button_pressed)
-
 	$Tower/FloorInspectionMode.visible = false
+
 
 func _on_close_requested():
 	queue_free()

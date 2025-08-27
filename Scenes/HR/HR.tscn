@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://b2c3xvmrm4xb7" path="res://Assets/Props/Management.png" id="7_i6ol2"]
 [ext_resource type="Texture2D" uid="uid://dy64faa4dm4jg" path="res://Assets/Props/TechTree.png" id="8_6b7cb"]
 [ext_resource type="Texture2D" uid="uid://2mdbhlwtnca1" path="res://Assets/Props/Inspect.png" id="9_y5fj3"]
-[ext_resource type="Texture2D" uid="uid://cvaluecwkcgy4" path="res://Assets/Props/Tower.png" id="10_1hxrl"]
+[ext_resource type="Texture2D" uid="uid://cvaluecwkcgy4" path="res://Assets/Props/Floorplan.png" id="10_1hxrl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bdolc"]
 size = Vector2(128, 172)

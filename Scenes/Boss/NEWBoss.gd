@@ -77,7 +77,11 @@ var quest_dialogues = {
 			{"speaker": "Boss", "text": "It's a new day! Let's make it productive."},
 			{"speaker": "Player", "text": "On it!"}
 		]
-	}
+	},
+	8: {0: [
+		{"speaker": "Boss", "text": "We need you to check on the Maintenance Lead. Go talk to them."},
+		{"speaker": "Player", "text": "Got it!"}
+	]}
 }
 
 

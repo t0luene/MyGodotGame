@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://cc6awakg6tvwj"]
 
-[ext_resource type="Script" uid="uid://dbqv8878duaf0" path="res://Scenes/Maintenance/Tower.gd" id="1_cvrs4"]
-[ext_resource type="Texture2D" uid="uid://djndrtbre5qli" path="res://Assets/Tower.png" id="2_bn6qc"]
+[ext_resource type="Script" uid="uid://dbqv8878duaf0" path="res://Scenes/Maintenance/Floorplan.gd" id="1_8kv2h"]
+[ext_resource type="Texture2D" uid="uid://djndrtbre5qli" path="res://Assets/Tower.png" id="2_3x5gf"]
 
 [node name="Window" type="Window"]
-script = ExtResource("1_cvrs4")
+script = ExtResource("1_8kv2h")
 
 [node name="Tower" type="Control" parent="."]
 layout_mode = 3
@@ -16,7 +16,7 @@ offset_bottom = 40.0
 layout_mode = 0
 offset_right = 309.0
 offset_bottom = 513.0
-texture = ExtResource("2_bn6qc")
+texture = ExtResource("2_3x5gf")
 
 [node name="FloorsContainer" type="VBoxContainer" parent="Tower"]
 layout_mode = 0

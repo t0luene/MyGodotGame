@@ -5,7 +5,7 @@ extends Node2D
 
 # Track selection state for each PNG
 var selected = {
-	"tower": false,
+	"floorplan": false,
 	"tech": false,
 	"management": false,
 	"inspection": false
@@ -13,6 +13,8 @@ var selected = {
 
 func _ready():
 	# Ensure exit trigger works
+	interact_button.pressed.connect(_on_interact_pressed)
+
 	exit_to_hallway.monitoring = true
 	exit_to_hallway.visible = false
 	exit_to_hallway.body_entered.connect(_on_exit_door)
@@ -32,14 +34,14 @@ func _ready():
 		QuestManager.enter_maint_room()
 
 	# Connect clicks for subpages
-	$TowerImage.gui_input.connect(_on_tower_input)
+	$FloorplanImage.gui_input.connect(_on_floorplan_input)
 	$TechTreeImage.gui_input.connect(_on_tech_input)
 	$ManagementImage.gui_input.connect(_on_management_input)
 	$InspectionImage.gui_input.connect(_on_inspection_input)
 
 	# Connect hover glow
-	$TowerImage.mouse_entered.connect(func(): _set_hover($TowerImage, true))
-	$TowerImage.mouse_exited.connect(func(): _set_hover($TowerImage, false))
+	$FloorplanImage.mouse_entered.connect(func(): _set_hover($FloorplanImage, true))
+	$FloorplanImage.mouse_exited.connect(func(): _set_hover($FloorplanImage, false))
 	$TechTreeImage.mouse_entered.connect(func(): _set_hover($TechTreeImage, true))
 	$TechTreeImage.mouse_exited.connect(func(): _set_hover($TechTreeImage, false))
 	$ManagementImage.mouse_entered.connect(func(): _set_hover($ManagementImage, true))
@@ -48,9 +50,9 @@ func _ready():
 	$InspectionImage.mouse_exited.connect(func(): _set_hover($InspectionImage, false))
 
 # ---------- Input handlers ----------
-func _on_tower_input(event):
+func _on_floorplan_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click("tower", $TowerImage, "res://Scenes/Maintenance/Tower.tscn")
+		_handle_click("floorplan", $FloorplanImage, "res://Scenes/Maintenance/Floorplan.tscn")
 
 func _on_tech_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -96,7 +98,7 @@ func _set_hover(node: TextureRect, enable: bool):
 
 func get_node_for_key(key: String) -> TextureRect:
 	match key:
-		"tower": return $TowerImage
+		"floorplan": return $FloorplanImage
 		"tech": return $TechTreeImage
 		"management": return $ManagementImage
 		"inspection": return $InspectionImage
@@ -133,10 +135,30 @@ func _on_exit_door(body):
 
 # ---------- Interact ----------
 func _on_interact_pressed():
-	print("Quest5: Talked to MaintLead")
-	QuestManager.complete_requirement(4, 5)
+	var quest_id = QuestManager.current_quest_id
+	var req_index = QuestManager.get_current_requirement_index() # first incomplete requirement
 
-	var dialogue_node = get_node("/root/HUD/CanvasLayer/Dialogue")
-	dialogue_node.start([
-		{"speaker": "MaintLead", "text": "All your paperwork is done!"}
-	])
+	# Automatically complete "talk_to_maint_lead" requirement
+	var current_req = QuestManager.quests[quest_id]["requirements"][req_index]
+	if current_req["type"] == "talk_maint_lead":
+		QuestManager.player_talked_maint_lead()
+
+	# Fetch dialogue from quest_dialogues map
+	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
+	if dialogue_lines.size() > 0:
+		var dialogue_node = get_node("/root/HUD/CanvasLayer/Dialogue")
+		dialogue_node.start(dialogue_lines)
+
+
+
+# Define dialogues once
+var quest_dialogues = {
+	4: {5: [
+			{"speaker": "MaintLead", "text": "All your paperwork is done!"},
+			{"speaker": "Player", "text": "Got it!"}
+		]},
+	8: {1: [
+			{"speaker": "MaintLead", "text": "So you wanna inspect floors eh?"},
+			{"speaker": "Player", "text": "yes!"}
+	]}
+}

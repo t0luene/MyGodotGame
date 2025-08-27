@@ -59,19 +59,20 @@ func show_employee_list():
 		card.connect("pressed", Callable(self, "_on_employee_card_pressed").bind(emp.id, card))
 
 		# Fill UI
-		card.get_node("ProficiencyLabel").text = str(emp.get("proficiency", "N/A"))
-		card.get_node("CostLabel").text = str(emp.get("cost", 0))
-		card.get_node("Avatar").texture = emp.get("avatar")
-		card.get_node("NameLabel").text = emp.get("name", "Unknown")
-		card.get_node("RoleLabel").text = emp.get("role", "Unknown")
+		card.get_node("ProficiencyLabel").text = str(emp.proficiency)
+		card.get_node("CostLabel").text = str(emp.cost)
+		card.get_node("Avatar").texture = emp.avatar
+		card.get_node("NameLabel").text = emp.name
+		card.get_node("RoleLabel").text = emp.role
 
-		# ✅ Gray out if role doesn't match
+		# Gray out if role doesn't match
 		if required_role == null or emp.role == required_role:
 			card.modulate = Color(1,1,1)
 		else:
 			card.modulate = Color(0.7,0.7,0.7)
 
 		container.add_child(card)
+
 
 func _on_employee_card_pressed(emp_id: int, card: Node):
 	if selected_slot_index < 0 or selected_slot_index >= max_capacity:

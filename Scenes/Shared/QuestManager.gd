@@ -86,6 +86,15 @@ var quests = {
 			{"type": "talk_to_boss", "completed": false},          # 2
 		],
 		"reward_claimed": false
+		},
+	8: {
+		"id": 8,
+		"name": "Floor Inspection & Repairs",
+		"requirements": [
+			{"type": "talk_to_boss", "completed": false},          # 0
+			{"type": "talk_maint_lead", "completed": false},          # 1
+		],
+		"reward_claimed": false
 	}
 }
 
@@ -172,16 +181,31 @@ func player_talked_to_boss():
 		# Second talk (after new day) = requirement 2
 		elif quests[7]["requirements"][1]["completed"] and not quests[7]["requirements"][2]["completed"]:
 			complete_requirement(7, 2)
+	elif current_quest_id == 8:
+		complete_requirement(8, 0)
 
 
+func player_talked_maint_lead():
+	if current_quest_id == 4:
+		complete_requirement(4, 5)
+	elif current_quest_id == 8:
+		complete_requirement(8, 1)
 
-# Reuse existing function
 func player_exited_boss():
 	if current_quest_id == 2:
 		complete_requirement(2, 0)  # Quest3
 	elif current_quest_id == 4:
 		complete_requirement(4, 1)  # Quest5: exit_boss_for_maint
 
+
+func player_entered_elevator():
+	if current_quest_id == 4:
+		complete_requirement(4, 2)  # Quest4: enter_elevator_maint
+	elif current_quest_id == 5:
+		complete_requirement(5, 1)  # Quest5: enter_elevator
+
+		
+		
 func player_entered_hr():
 	if current_quest_id == 2:
 		complete_requirement(2, 1)
@@ -195,15 +219,7 @@ func player_talked_boss_fulltime():
 		complete_requirement(3, 1)
 
 func enter_maint_room():
-	complete_requirement(4, 4)  # Quest 4, requirement index 4 ("enter_maint_room")
-
-func player_entered_elevator():
-	if current_quest_id == 4:
-		complete_requirement(4, 2)  # Quest4: enter_elevator_maint
-	elif current_quest_id == 5:
-		complete_requirement(5, 1)  # Quest5: enter_elevator
-
-
+	complete_requirement(4, 4)  # Quest 4, requirement index 4 ("enter_maint_room")		
 # ---------------------------
 # Quest4 specific functions
 # ---------------------------
@@ -217,9 +233,7 @@ func player_entered_maint_room():
 	if current_quest_id == 4:
 		complete_requirement(4, 4)
 
-func player_talked_maint_lead():
-	if current_quest_id == 4:
-		complete_requirement(4, 5)
+
 
 func player_entered_hallway_1():
 	complete_requirement(QuestManager.current_quest_id, 4)  # 4 = Hallway-1

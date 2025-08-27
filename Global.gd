@@ -12,91 +12,81 @@ signal money_changed(new_money: int)
 # Preloads
 # ---------------------------
 const Employee = preload("res://Scenes/Shared/Employee.gd")
+const EmployeeGenerator = preload("res://Scenes/Globals/EmployeeGenerator.gd")
 
 # ---------------------------
-# Employees
+# Employees 💪
 # ---------------------------
 var hired_employees: Array = []
 var hire_candidates: Array = []
 var next_employee_id: int = 0
-const NUM_EMPLOYEES_TO_GENERATE = 3
+var hire_candidates_day: int = -1
+
+const NUM_EMPLOYEES_TO_GENERATE = 2  # candidates per day (excluding Day 1 fixed)
+
+# ---------------------------
+# Candidate generation
+# ---------------------------
+func get_hire_candidates() -> Array:
+	# Only regenerate if day has changed
+	if hire_candidates.size() == 0 or hire_candidates_day != day:
+		generate_hire_candidates()
+		hire_candidates_day = day
+	return hire_candidates
 
 
 func generate_hire_candidates():
 	hire_candidates.clear()
+	var generator = EmployeeGenerator.new()
 	
-	# Hardcoded HR and Maintenance
-	var alice = Employee.new()
-	alice.id = next_employee_id
-	alice.name = "Alice"
-	alice.role = "HR"
-	alice.avatar = preload("res://Assets/Avatars/emp1.png")
-	alice.proficiency = 80
-	alice.cost = 100
-	alice.bio = """Summary:
-A fast learner with a knack for organization.
-
-Skills:
-- HR coordination
-- Communication
-- Scheduling
-
-Experience:
-- HR Assistant at BrightFuture Inc. (2 years)
-
-Education:
-- B.A. in Business Administration
-
-Hobbies:
-- Reading
-- Hiking
-"""
-	next_employee_id += 1
-
-	var bob = Employee.new()
-	bob.id = next_employee_id
-	bob.name = "Bob"
-	bob.role = "Maintenance"
-	bob.avatar = preload("res://Assets/Avatars/emp2.png")
-	bob.proficiency = 65
-	bob.cost = 90
-	bob.bio = """Summary:
-Reliable worker who keeps things running.
-
-Skills:
-- Electrical repairs
-- Plumbing
-- Preventative maintenance
-
-Experience:
-- Maintenance Tech at ClearPath Ltd. (3 years)
-
-Education:
-- High School Diploma
-
-Hobbies:
-- Gardening
-- DIY
-"""
-	next_employee_id += 1
-
-	hire_candidates.append(alice)
-	hire_candidates.append(bob)
-
-	# Generic candidates
-	for i in range(NUM_EMPLOYEES_TO_GENERATE):
-		var candidate = Employee.new()
-		candidate.id = next_employee_id
-		candidate.name = "Candidate_" + str(next_employee_id)
-		candidate.role = "Role_" + str(next_employee_id)
-		candidate.cost = 100 + next_employee_id * 10
-		candidate.proficiency = 50 + next_employee_id * 5
-		candidate.is_busy = false
-		candidate.bio = "A generic candidate for testing purposes."
-		hire_candidates.append(candidate)
+	if day == 1:
+		# Day 1 fixed employees
+		var alice = Employee.new()
+		alice.id = next_employee_id
+		alice.name = "Alice"
+		alice.role = "HR"
+		alice.avatar = preload("res://Assets/Avatars/emp1.png")
+		alice.proficiency = 3
+		alice.level = 1
+		alice.cost = 100
+		alice.bio = "Intro: A fast learner with high potential, eager to take on challenges."
 		next_employee_id += 1
 
+		var bob = Employee.new()
+		bob.id = next_employee_id
+		bob.name = "Bob"
+		bob.role = "Construction"
+		bob.avatar = preload("res://Assets/Avatars/emp2.png")
+		bob.proficiency = 2
+		bob.level = 1
+		bob.cost = 90
+		bob.bio = "Intro: Reliable worker who keeps things running."
+		next_employee_id += 1
 
+		hire_candidates.append(alice)
+		hire_candidates.append(bob)
+	else:
+		# Procedural candidates for Day > 1
+		var generated = 0
+		while generated < NUM_EMPLOYEES_TO_GENERATE:
+			var new_emp = generator.generate_employee(next_employee_id)
+			next_employee_id += 1
+
+			# Avoid duplicates: same name + role + bio
+			var duplicate = false
+			for emp in hired_employees:
+				if emp.name == new_emp.name and emp.role == new_emp.role and emp.bio == new_emp.bio:
+					duplicate = true
+					break
+			if duplicate:
+				continue
+
+			hire_candidates.append(new_emp)
+			generated += 1
+
+# ---------------------------
+# Employee utilities
+# ---------------------------
 func get_employee_by_id(emp_id: int) -> Employee:
 	for emp in hired_employees:
 		if emp.id == emp_id:
@@ -170,6 +160,8 @@ const FloorState = {
 	"READY": 2,
 	"ASSIGNED": 3
 }
+
+
 
 func init_building_floors(count: int = 6):
 	if building_floors.size() > 0:
