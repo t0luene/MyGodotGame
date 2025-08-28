@@ -15,17 +15,8 @@ func _ready():
 	close_requested.connect(_on_close_requested)
 	popup_centered_ratio(0.8)
 
-	Global.building_floors.clear()
-	for i in range(13):  # 0 to 12 → Floors 1 to 13
-		var floor = {
-			"state": Global.FloorState.LOCKED,
-			"purpose": "",
-			"assigned_employee_indices": [null, null, null, null]
-		}
-		if i == 0:
-			floor["state"] = Global.FloorState.AVAILABLE
-			floor["purpose"] = "Floor to Inspect"
-		Global.building_floors.append(floor)
+	Global.ensure_building_floors_initialized()
+
 
 	selected_floor_index = -1
 	current_manage_index = -1
@@ -137,8 +128,13 @@ func _on_training_button_pressed():
 	floor["purpose"] = "Training Floor"
 	Global.building_floors[selected_floor_index] = floor
 	update_floor_ui()
-	# Keep panel visible and floor selected with updated info
 	show_floor_assignment_options(floor, selected_floor_index)
+
+	# Quest10: mark requirement 1 complete if Floor1
+	if QuestManager.current_quest_id == 10 and selected_floor_index == 0:
+		if not QuestManager.quests[10]["requirements"][1]["completed"]:
+			QuestManager.complete_requirement(10, 1)
+
 
 func _on_work_button_pressed():
 	if selected_floor_index == -1:
@@ -147,8 +143,13 @@ func _on_work_button_pressed():
 	floor["purpose"] = "Work Floor"
 	Global.building_floors[selected_floor_index] = floor
 	update_floor_ui()
-	# Keep panel visible and floor selected with updated info
 	show_floor_assignment_options(floor, selected_floor_index)
+
+	# Quest10: mark requirement 1 complete if Floor1
+	if QuestManager.current_quest_id == 10 and selected_floor_index == 0:
+		if not QuestManager.quests[10]["requirements"][1]["completed"]:
+			QuestManager.complete_requirement(10, 1)
+
 
 func assign_floor_purpose(floor_index: int, purpose: String) -> void:
 	var floor = Global.building_floors[floor_index]
@@ -211,16 +212,17 @@ func enter_inspection_mode():
 
 
 func mark_floor_ready(floor_index: int):
+	print("🔹 mark_floor_ready called with index:", floor_index)
 	if floor_index < 0 or floor_index >= Global.building_floors.size():
 		push_error("❌ Invalid floor index passed to mark_floor_ready: %d" % floor_index)
 		return
 
 	var floor = Global.building_floors[floor_index]
+	print("🔹 Current state before marking READY:", floor["state"])
 	floor["state"] = Global.FloorState.READY
 	Global.building_floors[floor_index] = floor
 	print("✅ Floor %d marked READY!" % (floor_index + 1))
 
-	# Hide inspection mode and bring UI back
 	$Tower/FloorInspectionMode.visible = false
 	floors_container.visible = true
 	money_label.visible = true
@@ -229,9 +231,21 @@ func mark_floor_ready(floor_index: int):
 	update_floor_ui()
 
 
-
 func _on_manage_button_pressed():
-	get_tree().change_scene("res://BuildingManagement.tscn")
+	# Close this Floorplan window
+	queue_free()
+
+	# Load FloorManagement window
+	var scene = load("res://Scenes/Maintenance/FloorManagement.tscn")
+	if scene:
+		var instance = scene.instantiate()
+		# Add to the same container your other subpages live in
+		var container = get_parent()  # usually $ContentContainer
+		container.add_child(instance)
+		# Center it if you want
+		if instance is Window:
+			instance.popup_centered_ratio(0.8)
+
 
 func _on_floor_selected(floor_index):
 	selected_floor_index = floor_index

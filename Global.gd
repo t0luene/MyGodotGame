@@ -155,6 +155,10 @@ func set_floor_state(floor_index: int, new_state: int):
 	building_floors[floor_index]["state"] = new_state
 	emit_signal("floor_state_changed", floor_index)
 
+func ensure_building_floors_initialized():
+	if building_floors.size() == 0:
+		init_building_floors(13)
+
 
 
 var current_floor_scene: String = ""
@@ -165,7 +169,7 @@ var building_floors: Array = []
 
 
 func init_building_floors(count: int = 6):
-	if not building_floors.is_empty():
+	if building_floors.size() > 0:
 		return
 
 	for i in range(count):
@@ -175,25 +179,29 @@ func init_building_floors(count: int = 6):
 
 		match i:
 			0:
-				scene_path = "res://Scenes/Floors/Floor-1.tscn"
-				label_text = "Floor -1"
-				state_val = FloorState.AVAILABLE
-			1:
-				scene_path = "res://Scenes/Floors/Floor0.tscn"
-				label_text = "Floor 0"
-				state_val = FloorState.AVAILABLE
-			2:
 				scene_path = "res://Scenes/Floors/Floor1.tscn"
 				label_text = "Floor 1"
-			3:
+				state_val = FloorState.AVAILABLE  # Only Floor1 unlocked
+			1:
 				scene_path = "res://Scenes/Floors/Floor2.tscn"
 				label_text = "Floor 2"
-			4:
+				state_val = FloorState.LOCKED
+			2:
 				scene_path = "res://Scenes/Floors/Floor3.tscn"
 				label_text = "Floor 3"
-			5:
+				state_val = FloorState.LOCKED
+			3:
 				scene_path = "res://Scenes/Floors/Floor4.tscn"
 				label_text = "Floor 4"
+				state_val = FloorState.LOCKED
+			4:
+				scene_path = "res://Scenes/Floors/Floor5.tscn"
+				label_text = "Floor 5"
+				state_val = FloorState.LOCKED
+			5:
+				scene_path = "res://Scenes/Floors/Floor6.tscn"
+				label_text = "Floor 6"
+				state_val = FloorState.LOCKED
 
 		var floor := {
 			"scene": scene_path,
@@ -209,6 +217,7 @@ func init_building_floors(count: int = 6):
 			floor["assigned_employee_indices"].append(null)
 
 		building_floors.append(floor)
+
 
 
 func set_floor(floor_name: String):

@@ -1,11 +1,12 @@
 [gd_scene load_steps=4 format=3 uid="uid://bdnusifnstyiq"]
 
-[ext_resource type="Script" uid="uid://dd8dbghv8tlis" path="res://Scenes/Maintenance/Management.gd" id="1_svglq"]
-[ext_resource type="Texture2D" uid="uid://duyhq8lxps1ck" path="res://Assets/Floor_Zen.png" id="2_g8jmf"]
-[ext_resource type="Texture2D" uid="uid://dhdjq06j40ydj" path="res://Assets/square-xxs.png" id="2_gfkr4"]
+[ext_resource type="Script" uid="uid://dd8dbghv8tlis" path="res://Scenes/Maintenance/FloorManagement.gd" id="1_e26en"]
+[ext_resource type="Texture2D" uid="uid://duyhq8lxps1ck" path="res://Assets/Floor_Zen.png" id="2_f8pfu"]
+[ext_resource type="Texture2D" uid="uid://dhdjq06j40ydj" path="res://Assets/square-xxs.png" id="3_vxba2"]
 
 [node name="Window" type="Window"]
-script = ExtResource("1_svglq")
+position = Vector2i(0, 36)
+script = ExtResource("1_e26en")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -37,7 +38,7 @@ offset_top = 45.0
 offset_right = 576.0
 offset_bottom = 445.0
 scale = Vector2(0.6, 0.6)
-texture = ExtResource("2_g8jmf")
+texture = ExtResource("2_f8pfu")
 expand_mode = 2
 
 [node name="FloorInfo" type="Label" parent="Control/ManagePanel/LeftPanel"]
@@ -63,7 +64,7 @@ text = "Manage Floor X"
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 max_value = 6.0
-texture_progress = ExtResource("2_gfkr4")
+texture_progress = ExtResource("3_vxba2")
 
 [node name="EmployeeSlotsGrid" type="GridContainer" parent="Control/ManagePanel/RightPanel"]
 custom_minimum_size = Vector2(200, 200)

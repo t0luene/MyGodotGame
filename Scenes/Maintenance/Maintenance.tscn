@@ -59,7 +59,7 @@ shader_parameter/glow_color = Color(0.945, 0, 0.606, 0.5)
 shader_parameter/glow_strength = 0.2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3x475"]
-size = Vector2(131, 194)
+size = Vector2(115, 164)
 
 [node name="Control" type="Node2D"]
 script = ExtResource("1_nwku6")
@@ -131,7 +131,7 @@ position = Vector2(466, 392)
 position = Vector2(157, 430)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
-position = Vector2(-9, -5)
+position = Vector2(-47.5, -11)
 shape = SubResource("RectangleShape2D_3x475")
 
 [node name="MaintLead" parent="." instance=ExtResource("9_3x475")]
@@ -143,3 +143,10 @@ offset_top = 469.0
 offset_right = 532.0
 offset_bottom = 500.0
 text = "INTERACT"
+
+[node name="ExitButton" type="Button" parent="."]
+offset_left = 56.0
+offset_top = 385.0
+offset_right = 140.0
+offset_bottom = 416.0
+text = "Exit"

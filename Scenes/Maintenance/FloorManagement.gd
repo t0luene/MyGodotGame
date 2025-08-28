@@ -55,6 +55,14 @@ func _ready():
 	for btn in slots_grid.get_children():
 		print("Button:", btn.name, "visible:", btn.visible, "disabled:", btn.disabled, "mouse_filter:", btn.mouse_filter)
 
+
+		# Quest10: mark requirement 3 complete when FloorManagement opens
+	if QuestManager.current_quest_id == 10:
+		var req_index = 3  # floor_management task
+		if not QuestManager.quests[10]["requirements"][req_index]["completed"]:
+			QuestManager.complete_requirement(10, req_index)
+			print("✅ Quest10 Task #3 completed")
+
 	# Connect slot buttons signals so clicks call _on_slot_pressed
 	connect_slot_buttons()
 	load_employee_slots()

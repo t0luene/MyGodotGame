@@ -109,6 +109,18 @@ var quests = {
 			{"type": "talk_maint_lead", "completed": false},          # 6
 		],
 		"reward_claimed": false
+	},
+	10: {
+		"id": 10,
+		"name": "Floor assignments",
+		"requirements": [
+			{"type": "talk_maint_lead", "completed": false},          # 0
+			{"type": "floor1_assignment", "completed": false},        # 1
+			{"type": "talk_maint_lead", "completed": false},          # 2
+			{"type": "floor_management", "completed": false},         # 3
+			{"type": "talk_to_boss", "completed": false},       	  # 4
+		],
+		"reward_claimed": false
 	}
 }
 
@@ -197,19 +209,37 @@ func player_talked_to_boss():
 			complete_requirement(7, 2)
 	elif current_quest_id == 8:
 		complete_requirement(8, 0)
+		
 
 func player_talked_maint_lead():
-	if current_quest_id == 4:
-		complete_requirement(4, 5)
-	elif current_quest_id == 8:
-		complete_requirement(8, 1)
-	elif current_quest_id == 9:
-		# First talk = requirement 0
-		if not quests[9]["requirements"][0]["completed"]:
-			complete_requirement(9, 0)
-		# Second talk = requirement 6
-		elif quests[9]["requirements"][5]["completed"] and not quests[9]["requirements"][6]["completed"]:
-			complete_requirement(9, 6)
+	match current_quest_id:
+		# ----- Quest4 -----
+		4:
+			complete_requirement(4, 5)
+
+		# ----- Quest8 -----
+		8:
+			complete_requirement(8, 1)
+
+		# ----- Quest9 -----
+		9:
+			# First talk = requirement 0
+			if not quests[9]["requirements"][0]["completed"]:
+				complete_requirement(9, 0)
+			# Second talk = requirement 6
+			elif quests[9]["requirements"][5]["completed"] and not quests[9]["requirements"][6]["completed"]:
+				complete_requirement(9, 6)
+
+		# ----- Quest10 -----
+		10:
+			# First talk = requirement 0
+			if not quests[10]["requirements"][0]["completed"]:
+				complete_requirement(10, 0)
+			# Second talk = requirement 2 (after floor1 assignment is done)
+			elif quests[10]["requirements"][1]["completed"] and not quests[10]["requirements"][2]["completed"]:
+				complete_requirement(10, 2)
+
+
 
 
 func player_exited_boss():
@@ -332,7 +362,18 @@ func quest7_new_day():
 		complete_step("new_day")
 
 
+# ---------------------------
+# Quest10 specific functions
+# ---------------------------
 
+func assign_floor1_type(floor_type: String):
+	# Only do if Quest10 is active
+	if current_quest_id == 10:
+		# Set Floor1 type in your global building_floors
+		Global.building_floors[0]["type"] = floor_type
+		# Mark requirement complete
+		if not quests[10]["requirements"][1]["completed"]:
+			complete_requirement(10, 1)
 
 # ---------------------------
 # Rewards

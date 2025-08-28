@@ -10,7 +10,6 @@ func _ready():
 	# Load initial room
 	load_room("res://Scenes/Rooms/Hallway1.tscn")
 	
-	
 func load_room(path: String):
 	var room_scene = load(path)
 	if not room_scene:
@@ -20,7 +19,6 @@ func load_room(path: String):
 	# Remove previous room completely
 	if current_room:
 		current_room.queue_free()
-		current_room = null
 
 	# Instantiate and add the new room
 	current_room = room_scene.instantiate()

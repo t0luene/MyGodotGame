@@ -24,7 +24,6 @@ func load_room(path: String):
 	current_room = room_scene.instantiate()
 	scene_container.add_child(current_room)
 
-	# Reset transforms to avoid offscreen / invisible rooms
 	current_room.position = Vector2.ZERO
 	if current_room is Control:
 		current_room.rect_position = Vector2.ZERO

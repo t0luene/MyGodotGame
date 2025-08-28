@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var exit_to_hallway: Area2D = $ExitToHallway
 @onready var interact_button: Button = $InteractButton
+signal request_exit_to_hallway(target_room_path)
 
 # Track selection state for each PNG
 var selected = {
@@ -48,6 +49,12 @@ func _ready():
 	$ManagementImage.mouse_exited.connect(func(): _set_hover($ManagementImage, false))
 	$InspectionImage.mouse_entered.connect(func(): _set_hover($InspectionImage, true))
 	$InspectionImage.mouse_exited.connect(func(): _set_hover($InspectionImage, false))
+	print("Returned to Maintenance")
+	print("Exit trigger connected?",
+		exit_to_hallway.is_connected("body_entered", Callable(self, "_on_exit_door")))
+
+	print("Interact button connected?",
+		interact_button.is_connected("pressed", Callable(self, "_on_interact_pressed")))
 
 # ---------- Input handlers ----------
 func _on_floorplan_input(event):
@@ -64,7 +71,7 @@ func _on_management_input(event):
 
 func _on_inspection_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click("inspection", $InspectionImage, "res://Scenes/Maintenance/Department.tscn")
+		_handle_click("inspection", $InspectionImage, "res://Scenes/Maintenance/FloorManagement.tscn")
 
 # ---------- Core click logic ----------
 func _handle_click(key: String, node: TextureRect, path: String):
@@ -111,68 +118,89 @@ func get_node_for_key(key: String) -> TextureRect:
 		_: return null
 
 func load_subpage(scene_path: String):
+	print("Maintenance: loading subpage:", scene_path)
 	var scene = load(scene_path)
 	if scene:
 		var instance = scene.instantiate()
 		Global.clear_children($ContentContainer)
 		if instance is Window:
+			print("Adding Window instance to tree")
 			get_tree().current_scene.add_child(instance)
 		else:
+			print("Adding instance to ContentContainer")
 			$ContentContainer.add_child(instance)
+
 
 # ---------- Exit door ----------
 func _on_exit_door(body):
-	print("Something entered exit trigger:", body.name)
 	if body.name != "Player":
 		return
+	print("Maintenance: exit triggered, emitting signal")
+	emit_signal("request_exit_to_hallway", "res://Scenes/Rooms/Hallway-1.tscn")
 
-	print("Exit Maintenance → Hallway-1 triggered")
 
-	var floor_root = get_parent().get_parent()
-	if floor_root and floor_root.has_method("load_room"):
-		floor_root.load_room("res://Scenes/Rooms/Hallway-1.tscn")
-		print("Room loaded, current_room:", floor_root.current_room)
-		# Reset position and visibility
-		if floor_root.current_room:
-			floor_root.current_room.position = Vector2.ZERO
-			floor_root.current_room.visible = true
-	else:
-		push_error("Cannot find floor root to load Hallway-1")
 
 # ---------- Interact ----------
 func _on_interact_pressed():
 	var quest_id = QuestManager.current_quest_id
 	var req_index = QuestManager.get_current_requirement_index() # first incomplete requirement
-
 	var current_req = QuestManager.quests[quest_id]["requirements"][req_index]
 
 	if current_req["type"] == "talk_maint_lead":
-		if req_index == 6:
-			# Second time talking → mark Floor 1 READY
-			Global.set_floor_state(0, Global.FloorState.READY)
-		else:
-			# First time talking → normal quest logic
-			QuestManager.player_talked_maint_lead()
+		match quest_id:
+			# ----- Quest4 -----
+			4:
+				QuestManager.player_talked_maint_lead()
 
-	# Dialogue
+			# ----- Quest8 -----
+			8:
+				QuestManager.player_talked_maint_lead()
+
+			# ----- Quest9 -----
+			9:
+				# First talk = requirement 0
+				if not QuestManager.quests[9]["requirements"][0]["completed"]:
+					QuestManager.player_talked_maint_lead()
+				# Second talk = requirement 6
+				elif QuestManager.quests[9]["requirements"][5]["completed"] and not QuestManager.quests[9]["requirements"][6]["completed"]:
+					Global.set_floor_state(0, Global.FloorState.READY)
+					QuestManager.player_talked_maint_lead()
+
+			# ----- Quest10 -----
+			10:
+				# First talk = requirement 0
+				if not QuestManager.quests[10]["requirements"][0]["completed"]:
+					QuestManager.player_talked_maint_lead()
+					# Automatically open Floorplan so player can assign Floor1 type
+					_handle_click("floorplan", $FloorplanImage, "res://Scenes/Maintenance/Floorplan.tscn")
+				# Second talk = requirement 2 (after floor1 assignment is done)
+				elif QuestManager.quests[10]["requirements"][1]["completed"] and not QuestManager.quests[10]["requirements"][2]["completed"]:
+					QuestManager.player_talked_maint_lead()
+					# You can also add any dialogue or visual cue here for second talk if needed
+
+	# ----- Play dialogue -----
 	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
 	if dialogue_lines.size() > 0:
 		var dialogue_node = get_node("/root/HUD/CanvasLayer/Dialogue")
 		dialogue_node.start(dialogue_lines)
 
 
+
 # ------------------ Quest Dialogues ------------------
 var quest_dialogues = {
 	# Previous quests (example)
-	4: {5: [
+	4: {
+		5: [
 			{"speaker": "MaintLead", "text": "All your paperwork is done!"},
 			{"speaker": "Player", "text": "Got it!"}
-		]},
-	8: {1: [
+		]
+	},
+	8: {
+		1: [
 			{"speaker": "MaintLead", "text": "So you wanna inspect floors eh?"},
 			{"speaker": "Player", "text": "Yes!"}
-		]},
-	# Quest9 dialogues
+		]
+	},
 	9: {
 		0: [  # Task 1: Talk to Maintenance Lead
 			{"speaker": "MaintLead", "text": "So you wanna inspect Floor 1?"},
@@ -181,6 +209,16 @@ var quest_dialogues = {
 		6: [  # Task 7: Talk to Maintenance Lead again at the end
 			{"speaker": "MaintLead", "text": "Great job inspecting Floor 1!"},
 			{"speaker": "Player", "text": "All done!"}
+		]
+	},
+	10: {
+		0: [  # Task 0: First talk
+			{"speaker": "MaintLead", "text": "It's time for assignment"},
+			{"speaker": "Player", "text": "Yes!"}
+		],
+		2: [  # Task 2: Talk again after assignment
+			{"speaker": "MaintLead", "text": "You can now access floors and assign employees to them"},
+			{"speaker": "Player", "text": "Got it!"}
 		]
 	}
 }

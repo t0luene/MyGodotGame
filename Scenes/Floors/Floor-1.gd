@@ -7,8 +7,18 @@ func _ready():
 	# Set current floor
 	Global.set_floor("floor-1")
 
-	# Load initial room
+	# Load initial room: Hallway-1
 	load_room("res://Scenes/Rooms/Hallway-1.tscn")
+
+
+func _on_exit_request(room_path: String):
+	print("Floor-1: received exit request →", room_path)
+	load_room(room_path)
+	if current_room:
+		print("Loaded new room:", current_room.name)
+		current_room.position = Vector2.ZERO
+		current_room.visible = true
+
 
 func load_room(path: String):
 	var room_scene = load(path)
@@ -16,24 +26,32 @@ func load_room(path: String):
 		push_error("Failed to load room scene: " + path)
 		return
 
-	# Remove current room
-	if current_room:
-		current_room.queue_free()
+	# Clear container
+	for child in scene_container.get_children():
+		child.queue_free()
 
-	# Instantiate and add to container
+	# Instantiate
 	current_room = room_scene.instantiate()
 	scene_container.add_child(current_room)
 
-	# Reset transforms to avoid offscreen / invisible rooms
+	# Reset position
 	current_room.position = Vector2.ZERO
 	if current_room is Control:
 		current_room.rect_position = Vector2.ZERO
-
 	current_room.visible = true
+
+	# 🔹 Connect exit signal if room has it
+	if current_room.has_signal("request_exit_to_hallway"):
+		# Disconnect previous connection to avoid duplicates
+		if current_room.is_connected("request_exit_to_hallway", Callable(self, "_on_exit_request")):
+			current_room.disconnect("request_exit_to_hallway", Callable(self, "_on_exit_request"))
+		current_room.connect("request_exit_to_hallway", Callable(self, "_on_exit_request"))
+
+	print("Loaded room:", current_room.name)
 
 	# Mark rooms completed
 	match current_room.name:
 		"Hallway-1":
 			Global.mark_completed("floor-1", "hallway-1")
-		"Maintenance":  # make sure your Maintenance.tscn root node is named "Maintenance"
+		"Maintenance":
 			Global.mark_completed("floor-1", "maintenance_room")

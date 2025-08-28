@@ -6,7 +6,7 @@ extends Node2D
 @onready var hallway_trigger: Area2D = $HallwayTrigger
 @onready var crew_stairs_button = $UI/CrewStairsButton
 @onready var inspect_elevator_button = $UI/InspectElevatorButton
-
+signal inspection_complete(floor_index)
 
 func _ready():
 	# existing connections
@@ -96,9 +96,26 @@ func _on_entrance_entered(body, target_room: String) -> void:
 # Crew stairs button
 # -------------------------
 func _on_crew_stairs_pressed():
-	# Just transport player back to Maintenance scene
+	print("🔹 CrewStairsButton pressed")
+
+	# Ensure building floors exist
+	Global.ensure_building_floors_initialized()
+
+	# Mark Floor1 READY in Global
+	var floor = Global.building_floors[0]
+	floor["state"] = Global.FloorState.READY
+	Global.building_floors[0] = floor
+	print("✅ Floor1 marked READY via Global")
+
+	# Fade out if you have a fade system
+	if Fade.has_method("fade_out"):
+		Fade.fade_out(0.5)
+		await get_tree().create_timer(0.5).timeout
+
+	# Go back to Maintenance scene
 	var maintenance_scene = load("res://Scenes/Maintenance/Maintenance.tscn")
 	if maintenance_scene:
+		print("🔹 Changing scene to Maintenance")
 		get_tree().change_scene_to_packed(maintenance_scene)
 	else:
-		push_error("Failed to load Maintenance.tscn")
+		push_error("❌ Failed to load Maintenance.tscn")
