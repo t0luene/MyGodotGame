@@ -95,6 +95,20 @@ var quests = {
 			{"type": "talk_maint_lead", "completed": false},          # 1
 		],
 		"reward_claimed": false
+		},
+	9: {
+		"id": 9,
+		"name": "Floor1 Inspection",
+		"requirements": [
+			{"type": "talk_maint_lead", "completed": false},          # 0
+			{"type": "enter_floor1", "completed": false},        	  # 1
+			{"type": "inspect_hallway1", "completed": false},         # 2
+			{"type": "inspect_elevator", "completed": false},         # 3
+			{"type": "inspect_room1a", "completed": false},           # 4
+			{"type": "inspect_room1b", "completed": false},           # 5
+			{"type": "talk_maint_lead", "completed": false},          # 6
+		],
+		"reward_claimed": false
 	}
 }
 
@@ -184,12 +198,19 @@ func player_talked_to_boss():
 	elif current_quest_id == 8:
 		complete_requirement(8, 0)
 
-
 func player_talked_maint_lead():
 	if current_quest_id == 4:
 		complete_requirement(4, 5)
 	elif current_quest_id == 8:
 		complete_requirement(8, 1)
+	elif current_quest_id == 9:
+		# First talk = requirement 0
+		if not quests[9]["requirements"][0]["completed"]:
+			complete_requirement(9, 0)
+		# Second talk = requirement 6
+		elif quests[9]["requirements"][5]["completed"] and not quests[9]["requirements"][6]["completed"]:
+			complete_requirement(9, 6)
+
 
 func player_exited_boss():
 	if current_quest_id == 2:
@@ -309,6 +330,8 @@ func quest6_employee_assigned(role: String):
 func quest7_new_day():
 	if current_quest_id == 7:
 		complete_step("new_day")
+
+
 
 
 # ---------------------------

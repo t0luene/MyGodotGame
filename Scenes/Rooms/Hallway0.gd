@@ -9,6 +9,10 @@ extends Node2D
 var player: Node2D = null
 
 func _ready():
+	if QuestManager.current_quest_id == 2:
+		# Task 1 = enter_hr
+		QuestManager.complete_requirement(2, 0)
+		print("✅ Quest 2 Task 'enter_hr' complete")
 	hr_door.body_entered.connect(func(body):
 		_on_entrance_entered(body, "res://Scenes/HR/HR.tscn")
 	)

@@ -36,8 +36,9 @@ func show_employee_list():
 	$Control/ScrollContainer.visible = true
 	clear_children(container)
 
+	# HR is floor 0 (index 1 in building_floors)
 	var required_role = floors[0].get("required_role", null)
-	var assigned_hr = Global.building_floors["HR"]["assigned_employee_indices"]
+	var assigned_hr = Global.building_floors[1]["assigned_employee_indices"]
 
 	for emp in Global.hired_employees:
 		# Skip if already assigned to HR
@@ -46,10 +47,10 @@ func show_employee_list():
 
 		# Skip if assigned to any other floor
 		var assigned_elsewhere = false
-		for floor_name in Global.building_floors.keys():
-			if floor_name == "HR":
+		for i in range(Global.building_floors.size()):
+			if i == 1: # skip HR floor
 				continue
-			if emp.id in Global.building_floors[floor_name]["assigned_employee_indices"]:
+			if emp.id in Global.building_floors[i]["assigned_employee_indices"]:
 				assigned_elsewhere = true
 				break
 		if assigned_elsewhere:
@@ -72,6 +73,7 @@ func show_employee_list():
 			card.modulate = Color(0.7,0.7,0.7)
 
 		container.add_child(card)
+
 
 
 func _on_employee_card_pressed(emp_id: int, card: Node):
@@ -100,14 +102,17 @@ func _on_employee_card_pressed(emp_id: int, card: Node):
 		slot_btn.add_child(avatar)
 		slot_btn.text = ""
 
-	Global.building_floors["HR"]["assigned_employee_indices"][selected_slot_index] = emp_id
+	# ✅ HR is at index 1 in building_floors (Floor 0 in game)
+	Global.building_floors[1]["assigned_employee_indices"][selected_slot_index] = emp_id
 	load_employee_slots()
-			# ------------------------------
-	# ✅ Mark Maitenance assignment quest task complete
+
 	# ------------------------------
-	if QuestManager.current_quest_id == 6:  # example: Quest6
-		QuestManager.complete_requirement(6, 4)  # task index 0 = Assign HR
+	# ✅ Mark HR assignment quest task complete
+	# ------------------------------
+	if QuestManager.current_quest_id == 6:  # Quest6
+		QuestManager.complete_requirement(6, 4)  # requirement index 4 = "Assign HR"
 		print("✅ HR task completed")
+
 
 func show_floor_info(floor_dict: Dictionary) -> void:
 	floor_name_label.text = floor_dict.get("name", "Unknown Floor")
@@ -126,12 +131,14 @@ func load_employee_slots():
 		print("⚠️ No floors initialized yet")
 		return
 
-	var assigned = Global.building_floors["HR"]["assigned_employee_indices"]
+	# ✅ HR is floor index 1 (Floor0 in game)
+	var assigned = Global.building_floors[1]["assigned_employee_indices"]
 	var slots_grid = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
 
 	for i in range(max_capacity):
 		if i >= assigned.size():
 			assigned.append(null)
+
 		var emp_id = assigned[i]
 		var btn = slots_grid.get_child(i)
 
@@ -144,6 +151,7 @@ func load_employee_slots():
 		else:
 			btn.icon = null
 			btn.text = "+"
+
 
 func _on_slot_pressed(slot_index: int) -> void:
 	selected_slot_index = slot_index

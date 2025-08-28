@@ -79,13 +79,34 @@ func _process(_delta: float) -> void:
 	update_fog()
 
 func initialize_fog():
+	if fog_opaque == null or fog_faded == null:
+		print("⚠ Fog layers not present in this scene, skipping fog setup")
+		return
+
 	# Initialize all fog tiles as unexplored and clear faded fog tiles
 	fog_states.clear()
 	for cell in fog_opaque.get_used_cells(0):
 		fog_states[cell] = 0
 		fog_faded.set_cell(0, cell, -1)
 
+func reveal_area(world_position: Vector2, radius: int = 3):
+	if fog_opaque == null or fog_faded == null:
+		return  # no fog on this map, nothing to do
+
+	var center = fog_opaque.local_to_map(world_position)
+	for x in range(-radius, radius + 1):
+		for y in range(-radius, radius + 1):
+			var cell = center + Vector2i(x, y)
+			if fog_states.has(cell) and fog_states[cell] == 0:
+				fog_states[cell] = 1
+				fog_opaque.set_cell(0, cell, -1)  # clear opaque fog
+				fog_faded.set_cell(0, cell, 0)   # faded fog tile
+
+
 func update_fog():
+	if fog_opaque == null or fog_faded == null:
+		return  # No fog layers on this map, skip
+
 	var player_tile = fog_opaque.local_to_map(player.global_position)
 
 	for tile_pos in fog_states.keys():
@@ -112,6 +133,7 @@ func update_fog():
 	if not 0 in fog_states.values():
 		print("✅ All fog explored!")
 		emit_signal("inspection_complete", 0)
+
 
 func tile_opaque_tile_id() -> int:
 	# Change if your opaque fog tile ID is different

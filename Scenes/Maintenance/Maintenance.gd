@@ -87,6 +87,12 @@ func _handle_click(key: String, node: TextureRect, path: String):
 		selected[key] = false
 		load_subpage(path)
 
+		# --- Quest9 Task 2 ---
+		if QuestManager.current_quest_id == 9:
+			QuestManager.complete_step("enter_floor1")
+
+
+
 # ---------- Helpers ----------
 func _highlight(node: TextureRect, enable: bool):
 	if node.material:
@@ -138,27 +144,43 @@ func _on_interact_pressed():
 	var quest_id = QuestManager.current_quest_id
 	var req_index = QuestManager.get_current_requirement_index() # first incomplete requirement
 
-	# Automatically complete "talk_to_maint_lead" requirement
 	var current_req = QuestManager.quests[quest_id]["requirements"][req_index]
-	if current_req["type"] == "talk_maint_lead":
-		QuestManager.player_talked_maint_lead()
 
-	# Fetch dialogue from quest_dialogues map
+	if current_req["type"] == "talk_maint_lead":
+		if req_index == 6:
+			# Second time talking → mark Floor 1 READY
+			Global.set_floor_state(0, Global.FloorState.READY)
+		else:
+			# First time talking → normal quest logic
+			QuestManager.player_talked_maint_lead()
+
+	# Dialogue
 	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
 	if dialogue_lines.size() > 0:
 		var dialogue_node = get_node("/root/HUD/CanvasLayer/Dialogue")
 		dialogue_node.start(dialogue_lines)
 
 
-
-# Define dialogues once
+# ------------------ Quest Dialogues ------------------
 var quest_dialogues = {
+	# Previous quests (example)
 	4: {5: [
 			{"speaker": "MaintLead", "text": "All your paperwork is done!"},
 			{"speaker": "Player", "text": "Got it!"}
 		]},
 	8: {1: [
 			{"speaker": "MaintLead", "text": "So you wanna inspect floors eh?"},
-			{"speaker": "Player", "text": "yes!"}
-	]}
+			{"speaker": "Player", "text": "Yes!"}
+		]},
+	# Quest9 dialogues
+	9: {
+		0: [  # Task 1: Talk to Maintenance Lead
+			{"speaker": "MaintLead", "text": "So you wanna inspect Floor 1?"},
+			{"speaker": "Player", "text": "Yes, I’m ready!"}
+		],
+		6: [  # Task 7: Talk to Maintenance Lead again at the end
+			{"speaker": "MaintLead", "text": "Great job inspecting Floor 1!"},
+			{"speaker": "Player", "text": "All done!"}
+		]
+	}
 }

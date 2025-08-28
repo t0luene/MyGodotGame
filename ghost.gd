@@ -9,8 +9,8 @@ extends CharacterBody2D
 @export var spook_distance := 100.0
 
 @onready var player = get_tree().get_current_scene().get_node("Player")
-@onready var black_fade = get_tree().get_current_scene().get_node("Camera2D/UI/BlackFade") # Adjust to your scene path
-@onready var spooked_text = get_tree().get_current_scene().get_node("Camera2D/UI/SpookedText") # Adjust to your scene path
+@onready var black_fade = get_tree().get_current_scene().get_node_or_null("Camera2D/UI/BlackFade")
+@onready var spooked_text = get_tree().get_current_scene().get_node_or_null("Camera2D/UI/SpookedText")
 
 var is_spooked := false
 var time_accum = 0.0
@@ -26,8 +26,10 @@ func _ready():
 	$AnimatedSprite2D.play("idle")
 
 	# Hide fade and text at start
-	black_fade.visible = false
-	spooked_text.visible = false
+	if black_fade:
+		black_fade.visible = false
+	if spooked_text:
+		spooked_text.visible = false
 
 func _process(delta):
 	_update_opacity()
@@ -93,16 +95,21 @@ func _trigger_spook():
 	emit_signal("player_spooked")
 
 func _show_spook_message():
-	black_fade.visible = true
-	black_fade.modulate.a = 0.0
-	spooked_text.text = "!!You are spooked!!\nYou cannot inspect floors on this day anymore"
-	spooked_text.visible = true
-	spooked_text.modulate.a = 1.0
+	if black_fade:
+		black_fade.visible = true
+		black_fade.modulate.a = 0.0
 
-	var tween = create_tween()
-	tween.tween_property(black_fade, "modulate:a", 1.0, 0.5)  # Fade black in 0.5s
-	tween.tween_interval(2.0)                               # Hold black + text 2 seconds
-	tween.tween_callback(Callable(self, "_return_to_building"))  # Then change scene
+	if spooked_text:
+		spooked_text.text = "!!You are spooked!!\nYou cannot inspect floors on this day anymore"
+		spooked_text.visible = true
+		spooked_text.modulate.a = 1.0
+
+	if black_fade:
+		var tween = create_tween()
+		tween.tween_property(black_fade, "modulate:a", 1.0, 0.5)
+		tween.tween_interval(2.0)
+		tween.tween_callback(Callable(self, "_return_to_building"))
+
 
 
 func _return_to_building():

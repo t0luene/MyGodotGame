@@ -11,7 +11,11 @@ var locked_images = Global.HR_state["locked_images"]
 var selected = Global.HR_state["selected"]
 
 func _ready():
-	# Connect interact button
+	if QuestManager.current_quest_id == 2:
+		# Task 1 = enter_hr
+		QuestManager.complete_requirement(2, 1)
+		print("✅ Quest 2 Task 'enter_hr' complete")
+		
 	interacted = Global.HR_state.interacted if "interacted" in Global.HR_state else false
 	interact_button.pressed.connect(_on_interact_pressed)
 

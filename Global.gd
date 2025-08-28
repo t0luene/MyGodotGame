@@ -7,6 +7,8 @@ extends Node
 signal mission_status_changed(mission_name: String)
 signal employee_returned(employee_id: int)
 signal money_changed(new_money: int)
+signal floor_state_changed(floor_index: int)
+
 
 # ---------------------------
 # Preloads
@@ -143,33 +145,34 @@ func add_grid_xp(amount: int):
 # ---------------------------
 # Floors
 # ---------------------------
-var building_floors = {
-	"HR": {
-		"assigned_employee_indices": [null, null, null, null, null, null]
-	},
-	"Maintenance": {
-		"assigned_employee_indices": [null, null, null, null, null, null]
-	}
-}
+
+
+
+func set_floor_state(floor_index: int, new_state: int):
+	if floor_index < 0 or floor_index >= building_floors.size():
+		push_error("Invalid floor index in set_floor_state: %d" % floor_index)
+		return
+	building_floors[floor_index]["state"] = new_state
+	emit_signal("floor_state_changed", floor_index)
+
+
 
 var current_floor_scene: String = ""
 
-const FloorState = {
-	"LOCKED": 0,
-	"AVAILABLE": 1,
-	"READY": 2,
-	"ASSIGNED": 3
-}
+enum FloorState { LOCKED, AVAILABLE, READY, ASSIGNED }
 
+var building_floors: Array = []
 
 
 func init_building_floors(count: int = 6):
-	if building_floors.size() > 0:
+	if not building_floors.is_empty():
 		return
+
 	for i in range(count):
-		var scene_path = ""
-		var label_text = ""
-		var state_val = FloorState.LOCKED
+		var scene_path := ""
+		var label_text := ""
+		var state_val := FloorState.LOCKED
+
 		match i:
 			0:
 				scene_path = "res://Scenes/Floors/Floor-1.tscn"
@@ -192,24 +195,26 @@ func init_building_floors(count: int = 6):
 				scene_path = "res://Scenes/Floors/Floor4.tscn"
 				label_text = "Floor 4"
 
-		var floor = {
+		var floor := {
 			"scene": scene_path,
 			"label": label_text,
 			"state": state_val,
-			"purpose": null,
+			"purpose": "",
 			"capacity": 3,
 			"assigned_employee_indices": []
 		}
-		
-		# Initialize assigned_employee_indices with nulls matching capacity
+
+		# Pre-fill slots with nulls based on capacity
 		for j in range(floor["capacity"]):
 			floor["assigned_employee_indices"].append(null)
-		
+
 		building_floors.append(floor)
-		
+
+
 func set_floor(floor_name: String):
 	current_floor_scene = floor_name
 	print("Global: current floor set to ", floor_name)
+
 
 # ---------------------------
 # Missions

@@ -1,35 +1,43 @@
 extends Window
 
 const FLOOR_COST = 300
+
 @export var inspected_floor_index: int = -1
-var selected_floor_index = -1  # no floor selected initially
 @onready var floors_container = $Tower/FloorsContainer
 @onready var money_label = $Tower/MoneyLabel
-var current_manage_index: int = -1
 @export var max_capacity := 4
 
+var selected_floor_index = -1  # no floor selected initially
+var current_manage_index: int = -1
 var selected_slot := -1
 
 func _ready():
 	close_requested.connect(_on_close_requested)
-	popup_centered_ratio(0.8)  # 60% of the screen
+	popup_centered_ratio(0.8)
 
-	Global.init_building_floors(13)  # Use the existing Global function
+	Global.building_floors.clear()
+	for i in range(13):  # 0 to 12 → Floors 1 to 13
+		var floor = {
+			"state": Global.FloorState.LOCKED,
+			"purpose": "",
+			"assigned_employee_indices": [null, null, null, null]
+		}
+		if i == 0:
+			floor["state"] = Global.FloorState.AVAILABLE
+			floor["purpose"] = "Floor to Inspect"
+		Global.building_floors.append(floor)
+
+	selected_floor_index = -1
+	current_manage_index = -1
+	selected_slot = -1
+	inspected_floor_index = Global.current_inspection_floor if "current_inspection_floor" in Global else -1
 
 	$Tower/FloorOptionsPanel.visible = true
 	_disable_floor_option_buttons()
 	$Tower/FloorOptionsPanel/FloorInfoLabel.text = "Select a floor"
 
-	if Global.building_floors.size() > 0:
-		var floor = Global.building_floors[0]
-		floor["state"] = Global.FloorState.READY
-		floor["purpose"] = "Work Floor"
-		Global.building_floors[0] = floor
-
 	update_money_label()
 	update_floor_ui()
-
-	inspected_floor_index = Global.current_inspection_floor if "current_inspection_floor" in Global else -1
 
 	$Tower/FloorOptionsPanel/TrainingButton.pressed.connect(_on_training_button_pressed)
 	$Tower/FloorOptionsPanel/WorkButton.pressed.connect(_on_work_button_pressed)
@@ -37,20 +45,16 @@ func _ready():
 	$Tower/FloorOptionsPanel/ManageButton.pressed.connect(_on_manage_button_pressed)
 	$Tower/FloorInspectionMode.visible = false
 
-
 func _on_close_requested():
 	queue_free()
 	
-	
 func update_money_label():
 	money_label.text = "Money: $" + str(Global.money)
-
 
 func clear_children(container: Node) -> void:
 	if container == null:
 		print("❌ Tried to clear null container!")
 		return
-
 	for child in container.get_children():
 		container.remove_child(child)
 		child.queue_free()
@@ -75,9 +79,11 @@ func update_floor_ui():
 			Global.FloorState.ASSIGNED:
 				btn.text = "Floor %d – %s Floor" % [i + 1, floor.get("purpose", "Unknown")]
 
-		# Avoid multiple connections
+		# Connect pressed signal safely
 		if not btn.pressed.is_connected(_on_floor_button_pressed.bind(i)):
 			btn.pressed.connect(_on_floor_button_pressed.bind(i))
+
+
 
 func _on_floor_button_pressed(index):
 	selected_floor_index = index
@@ -111,27 +117,17 @@ func _disable_floor_option_buttons():
 func show_floor_options(floor: Dictionary, index: int) -> void:
 	$Tower/FloorOptionsPanel.visible = true
 	$Tower/FloorOptionsPanel/FloorInfoLabel.text = "Floor %d - Current type: %s" % [index + 1, floor.get("purpose", "Empty")]
-
-	# AVAILABLE floors can only inspect, no assignment or manage yet
 	$Tower/FloorOptionsPanel/TrainingButton.disabled = true
 	$Tower/FloorOptionsPanel/WorkButton.disabled = true
 	$Tower/FloorOptionsPanel/ManageButton.disabled = true
-
-	# Enable Inspect button only if floor is AVAILABLE
 	$Tower/FloorOptionsPanel/InspectButton.disabled = (floor["state"] != Global.FloorState.AVAILABLE)
 
 func show_floor_assignment_options(floor: Dictionary, index: int) -> void:
 	$Tower/FloorOptionsPanel.visible = true
 	$Tower/FloorOptionsPanel/FloorInfoLabel.text = "Floor %d - Current type: %s" % [index + 1, floor.get("purpose", "Empty")]
-
-	# Enable assignment buttons
 	$Tower/FloorOptionsPanel/TrainingButton.disabled = false
 	$Tower/FloorOptionsPanel/WorkButton.disabled = false
-
-	# Manage button enabled only if floor has a purpose assigned
 	$Tower/FloorOptionsPanel/ManageButton.disabled = floor.get("purpose", "") == ""
-
-	# Disable Inspect button here — can't inspect assigned floors
 	$Tower/FloorOptionsPanel/InspectButton.disabled = true
 
 func _on_training_button_pressed():
@@ -173,48 +169,65 @@ func _on_inspection_button_pressed():
 	if floor["state"] != Global.FloorState.AVAILABLE:
 		print("Floor not inspectable right now.")
 		return
-	enter_inspection_mode()
 
-func enter_inspection_mode():
-	var scene_path = "res://Floor1Inspection.tscn"
+	# Replace the current scene instead of adding child
+	var scene_path = "res://Scenes/Floors/Floor%d.tscn" % (selected_floor_index + 1)
+	print("🔍 Loading floor scene:", scene_path)
+	
 	var floor_scene = load(scene_path)
 	if floor_scene == null:
-		print("❌ Failed to load inspection scene:", scene_path)
+		push_error("Failed to load floor scene: %s" % scene_path)
+		return
+	get_tree().change_scene_to_packed(floor_scene)
+
+
+
+
+func enter_inspection_mode():
+	var scene_path = "res://Scenes/Floors/Floor%d.tscn" % (selected_floor_index + 1)
+	print("Loading floor inspection:", scene_path)
+
+	var floor_scene = load(scene_path)
+	if floor_scene == null:
+		push_error("Failed to load inspection scene: %s" % scene_path)
 		return
 
 	var instance = floor_scene.instantiate()
-	instance.inspected_floor_index = selected_floor_index
 
+	# Pass the floor index if your floor scene expects it
+	if instance.has_method("set_inspected_floor_index"):
+		instance.set_inspected_floor_index(selected_floor_index)
+
+	# Connect signal
 	if instance.has_signal("inspection_complete"):
 		instance.inspection_complete.connect(mark_floor_ready)
 
-	var container = $Tower/FloorInspectionMode
-	clear_children(container)
-	container.add_child(instance)
+	# Add to scene tree
+	get_tree().current_scene.add_child(instance)
 	instance.position = Vector2.ZERO
-	container.visible = true
 
-	$Tower/FloorOptionsPanel.visible = false
-	floors_container.visible = false      # Hide floor buttons container
-	money_label.visible = false           # Hide money display
-	# Also hide other UI elements if needed, e.g.:
-	# $SomeOtherUIPanel.visible = false
+
+
 
 
 func mark_floor_ready(floor_index: int):
+	if floor_index < 0 or floor_index >= Global.building_floors.size():
+		push_error("❌ Invalid floor index passed to mark_floor_ready: %d" % floor_index)
+		return
+
 	var floor = Global.building_floors[floor_index]
 	floor["state"] = Global.FloorState.READY
 	Global.building_floors[floor_index] = floor
 	print("✅ Floor %d marked READY!" % (floor_index + 1))
 
+	# Hide inspection mode and bring UI back
 	$Tower/FloorInspectionMode.visible = false
-
-	# Show UI parts back again
 	floors_container.visible = true
 	money_label.visible = true
-	$Tower/FloorOptionsPanel.visible = true  # Show options panel again if desired
+	$Tower/FloorOptionsPanel.visible = true
 
 	update_floor_ui()
+
 
 
 func _on_manage_button_pressed():

@@ -17,8 +17,8 @@ var floors = [
 	}
 ]
 
-# This tells us which floor index in Global to use
-const FLOOR_INDEX := 1   # ⚡ adjust depending on how you set up Global.building_floors
+# ✅ Maintenance = floor index 0
+const FLOOR_INDEX := 0
 
 func _ready():
 	close_requested.connect(_on_close_requested)
@@ -40,13 +40,14 @@ func show_employee_list():
 	$Control/ScrollContainer.visible = true
 	clear_children(container)
 
-	var required_role = floors[0].get("required_role", null)
-	var assigned_indices = Global.building_floors["Maintenance"]["assigned_employee_indices"]
+	# Maintenance is floor -1
+	var required_role = floors[-1].get("required_role", null)
+	var assigned_indices = Global.building_floors[FLOOR_INDEX]["assigned_employee_indices"]
 
 	for emp in Global.hired_employees:
 		# Skip if employee is already assigned to **any floor**
 		var is_assigned = false
-		for floor_dict in Global.building_floors.values():
+		for floor_dict in Global.building_floors:
 			if emp.id in floor_dict["assigned_employee_indices"]:
 				is_assigned = true
 				break
@@ -57,11 +58,11 @@ func show_employee_list():
 		card.connect("pressed", Callable(self, "_on_employee_card_pressed").bind(emp.id, card))
 
 		# Fill UI
-		card.get_node("ProficiencyLabel").text = str(emp.get("proficiency", "N/A"))
-		card.get_node("CostLabel").text = str(emp.get("cost", 0))
-		card.get_node("Avatar").texture = emp.get("avatar")
-		card.get_node("NameLabel").text = emp.get("name", "Unknown")
-		card.get_node("RoleLabel").text = emp.get("role", "Unknown")
+		card.get_node("ProficiencyLabel").text = str(emp.proficiency)
+		card.get_node("CostLabel").text = str(emp.cost)
+		card.get_node("Avatar").texture = emp.avatar
+		card.get_node("NameLabel").text = emp.name
+		card.get_node("RoleLabel").text = emp.role
 
 		# Gray out if role doesn't match
 		if required_role != null and emp.role == required_role:
@@ -70,7 +71,6 @@ func show_employee_list():
 			card.modulate = Color(0.7,0.7,0.7)
 
 		container.add_child(card)
-
 
 func _on_employee_card_pressed(emp_id: int, card: Node):
 	if selected_slot_index < 0 or selected_slot_index >= max_capacity:
@@ -90,14 +90,16 @@ func _on_employee_card_pressed(emp_id: int, card: Node):
 		slot_btn.add_child(avatar)
 		slot_btn.text = ""
 
-	Global.building_floors["Maintenance"]["assigned_employee_indices"][selected_slot_index] = emp_id
+	# ✅ Assign employee to Maintenance floor (index 0)
+	Global.building_floors[FLOOR_INDEX]["assigned_employee_indices"][selected_slot_index] = emp_id
 	load_employee_slots()
-			# ------------------------------
-	# ✅ Mark HR assignment quest task complete
+
+	# ------------------------------
+	# ✅ Mark Maintenance assignment quest task complete
 	# ------------------------------
 	if QuestManager.current_quest_id == 6:  # example: Quest6
-		QuestManager.complete_requirement(6, 5)  # task index 0 = Assign HR
-		print("✅ Maitenance task completed")
+		QuestManager.complete_requirement(6, 5)  
+		print("✅ Maintenance task completed")
 
 func show_floor_info(floor_dict: Dictionary) -> void:
 	floor_name_label.text = floor_dict.get("name", "Unknown Floor")
@@ -116,7 +118,7 @@ func load_employee_slots():
 		print("⚠️ No floor at index ", FLOOR_INDEX)
 		return
 
-	var assigned = Global.building_floors["Maintenance"]["assigned_employee_indices"]
+	var assigned = Global.building_floors[FLOOR_INDEX]["assigned_employee_indices"]
 	var slots_grid = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
 
 	for i in range(max_capacity):
@@ -144,6 +146,6 @@ func clear_children(node: Node) -> void:
 		child.queue_free()
 
 func check_floor_completion():
-	var assigned = Global.building_floors["Maintenance"]["assigned_employee_indices"]
+	var assigned = Global.building_floors[FLOOR_INDEX]["assigned_employee_indices"]
 	if assigned.all(func(id): return id != null):
 		print("✅ All slots assigned — floor is complete!")

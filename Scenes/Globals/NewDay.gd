@@ -26,9 +26,6 @@ func _ready():
 	# Initialize UI
 	update_ui()
 	update_hud()
-
-
-
 	
 func _on_close_requested():
 	queue_free()

@@ -1,9 +1,10 @@
 [gd_scene load_steps=2 format=3 uid="uid://4322hlalkkpu"]
 
-[ext_resource type="Script" uid="uid://borel8b50vikl" path="res://Scenes/Globals/NewDay.gd" id="1_80nbo"]
+[ext_resource type="Script" uid="uid://borel8b50vikl" path="res://Scenes/Globals/NewDay.gd" id="1_3lyt7"]
 
 [node name="NewDay" type="Window"]
-script = ExtResource("1_80nbo")
+position = Vector2i(0, 36)
+script = ExtResource("1_3lyt7")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 10
@@ -43,8 +44,9 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -188.0
+offset_left = -158.0
 offset_top = -17.0
+offset_right = 30.0
 offset_bottom = 17.0
 grow_horizontal = 0
 grow_vertical = 2
@@ -61,10 +63,10 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HUD/DailyReport"]
 layout_mode = 0
-offset_left = 374.0
-offset_top = 499.0
-offset_right = 583.0
-offset_bottom = 610.0
+offset_left = 390.0
+offset_top = 369.0
+offset_right = 599.0
+offset_bottom = 480.0
 
 [node name="TitleLabel" type="Label" parent="HUD/DailyReport/VBoxContainer"]
 layout_mode = 2

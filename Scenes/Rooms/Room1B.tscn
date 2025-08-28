@@ -1,0 +1,120 @@
+[gd_scene load_steps=12 format=3 uid="uid://b8vtlrfj0j3i4"]
+
+[ext_resource type="Script" uid="uid://bb5gl2bs2clxg" path="res://Scenes/Rooms/Room1B.gd" id="1_4t68y"]
+[ext_resource type="Texture2D" uid="uid://cxbxp7o4356wt" path="res://Assets/Floors/Room1.png" id="2_26ivs"]
+[ext_resource type="Script" uid="uid://d2wd6qefausdd" path="res://Box.gd" id="3_jad6x"]
+[ext_resource type="Shader" uid="uid://dr8onwec0vema" path="res://PropOutline.gdshader" id="4_gqfdk"]
+[ext_resource type="Texture2D" uid="uid://b6v8yugqos73n" path="res://Assets/Props/Box1.png" id="5_a3j6i"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="6_muhwr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x8amc"]
+shader = ExtResource("4_gqfdk")
+shader_parameter/outline_enabled = false
+shader_parameter/outline_size = 2.0
+shader_parameter/outline_color = Color(0, 0.946931, 0.911298, 1)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/min_opacity = 0.4
+shader_parameter/size_pulse_strength = 0.3
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rfh7t"]
+size = Vector2(208, 192)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x8amc"]
+size = Vector2(160, 160)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d2g07"]
+shader = ExtResource("4_gqfdk")
+shader_parameter/outline_enabled = false
+shader_parameter/outline_size = 2.0
+shader_parameter/outline_color = Color(0, 0.946931, 0.911298, 1)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/min_opacity = 0.4
+shader_parameter/size_pulse_strength = 0.3
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8i6ag"]
+size = Vector2(104, 158)
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_4t68y")
+
+[node name="FloorSprite" type="Sprite2D" parent="."]
+position = Vector2(600, 344)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_26ivs")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="FloorSprite"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="FloorSprite/StaticBody2D"]
+polygon = PackedVector2Array(-768, 0, -768, 688, 768, 688, 768, -688, -768, -688, -768, 0, -640, -48, -640, -272, -416, -368, -384, -352, -384, -112, -336, -80, -336, -64, -224, 0, -96, 0, -48, -64, 16, -96, 80, -208, 496, 16, 768, 32, 752, 64, -112, 496, -752, 128)
+
+[node name="Box" type="Node2D" parent="."]
+position = Vector2(552, 544)
+scale = Vector2(0.5, 0.5)
+script = ExtResource("3_jad6x")
+
+[node name="Sprite2D" type="Sprite2D" parent="Box"]
+material = SubResource("ShaderMaterial_x8amc")
+texture = ExtResource("5_a3j6i")
+
+[node name="Area2D" type="Area2D" parent="Box"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box/Area2D"]
+position = Vector2(-8, 0)
+shape = SubResource("RectangleShape2D_rfh7t")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Box"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box/StaticBody2D"]
+shape = SubResource("RectangleShape2D_x8amc")
+
+[node name="InspectButton" type="Button" parent="Box"]
+visible = false
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Inspect"
+
+[node name="Box2" type="Node2D" parent="."]
+position = Vector2(456, 488)
+scale = Vector2(0.5, 0.5)
+script = ExtResource("3_jad6x")
+
+[node name="Sprite2D" type="Sprite2D" parent="Box2"]
+material = SubResource("ShaderMaterial_d2g07")
+texture = ExtResource("5_a3j6i")
+
+[node name="Area2D" type="Area2D" parent="Box2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box2/Area2D"]
+position = Vector2(-8, 0)
+shape = SubResource("RectangleShape2D_rfh7t")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Box2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box2/StaticBody2D"]
+shape = SubResource("RectangleShape2D_x8amc")
+
+[node name="InspectButton" type="Button" parent="Box2"]
+visible = false
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Inspect"
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("6_muhwr")]
+z_index = 20
+position = Vector2(344, 280)
+
+[node name="ExitToHallway" type="Area2D" parent="."]
+position = Vector2(448, 112)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitToHallway"]
+position = Vector2(-20, 17)
+shape = SubResource("RectangleShape2D_8i6ag")
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(344, 288)
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1088.0
+offset_right = 1143.0
+offset_bottom = 23.0
+text = "Room3"
