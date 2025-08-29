@@ -4,11 +4,15 @@ extends Node2D
 var current_room: Node = null
 
 func _ready():
-	# Set current floor
 	Global.set_floor("floor-1")
 
-	# Load initial room: Hallway-1
-	load_room("res://Scenes/Rooms/Hallway-1.tscn")
+	# If there’s a pending room to load (like returning from inspection)
+	if "next_room_to_load" in Global and Global.next_room_to_load != "":
+		load_room(Global.next_room_to_load)
+		Global.next_room_to_load = ""
+	else:
+		# Load default room
+		load_room("res://Scenes/Rooms/Hallway-1.tscn")
 
 
 func _on_exit_request(room_path: String):

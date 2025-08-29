@@ -195,7 +195,11 @@ func player_talked_to_boss():
 	if current_quest_id == 1:
 		complete_requirement(1, 0)  # Quest2
 	elif current_quest_id == 4:
-		complete_requirement(4, 0)  # Quest4
+		# Task 0 is already handled
+		complete_requirement(4, 0)  # Quest4 first task
+		# ✅ New: also check task 4 (requirement index 3)
+		if not quests[4]["requirements"][3]["completed"]:
+			complete_requirement(4, 3)  # Quest4 task 4
 	elif current_quest_id == 5:
 		complete_requirement(5, 0)  # Quest5
 	elif current_quest_id == 6:
@@ -209,6 +213,7 @@ func player_talked_to_boss():
 			complete_requirement(7, 2)
 	elif current_quest_id == 8:
 		complete_requirement(8, 0)
+
 		
 
 func player_talked_maint_lead():

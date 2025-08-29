@@ -146,6 +146,7 @@ func add_grid_xp(amount: int):
 # Floors
 # ---------------------------
 
+var next_room_to_load: String = ""
 
 
 func set_floor_state(floor_index: int, new_state: int):

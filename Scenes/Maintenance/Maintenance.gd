@@ -146,43 +146,44 @@ func _on_interact_pressed():
 	var req_index = QuestManager.get_current_requirement_index() # first incomplete requirement
 	var current_req = QuestManager.quests[quest_id]["requirements"][req_index]
 
+	var dialogue_lines: Array = []
+
+	# ---------- Quest-specific interactions ----------
 	if current_req["type"] == "talk_maint_lead":
 		match quest_id:
 			# ----- Quest4 -----
-			4:
+			4, 8:
 				QuestManager.player_talked_maint_lead()
-
-			# ----- Quest8 -----
-			8:
-				QuestManager.player_talked_maint_lead()
-
 			# ----- Quest9 -----
 			9:
-				# First talk = requirement 0
 				if not QuestManager.quests[9]["requirements"][0]["completed"]:
 					QuestManager.player_talked_maint_lead()
-				# Second talk = requirement 6
 				elif QuestManager.quests[9]["requirements"][5]["completed"] and not QuestManager.quests[9]["requirements"][6]["completed"]:
 					Global.set_floor_state(0, Global.FloorState.READY)
 					QuestManager.player_talked_maint_lead()
-
 			# ----- Quest10 -----
 			10:
-				# First talk = requirement 0
 				if not QuestManager.quests[10]["requirements"][0]["completed"]:
 					QuestManager.player_talked_maint_lead()
-					# Automatically open Floorplan so player can assign Floor1 type
 					_handle_click("floorplan", $FloorplanImage, "res://Scenes/Maintenance/Floorplan.tscn")
-				# Second talk = requirement 2 (after floor1 assignment is done)
 				elif QuestManager.quests[10]["requirements"][1]["completed"] and not QuestManager.quests[10]["requirements"][2]["completed"]:
 					QuestManager.player_talked_maint_lead()
-					# You can also add any dialogue or visual cue here for second talk if needed
 
-	# ----- Play dialogue -----
-	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
+		# Fetch dialogue for quest
+		dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
+
+	else:
+		# ---------- Default dialogue for non-maint quests ----------
+		dialogue_lines = [{"speaker": "MaintLead", "text": "I am busy at the moment."}]
+
+	# ---------- Play dialogue ----------
 	if dialogue_lines.size() > 0:
-		var dialogue_node = get_node("/root/HUD/CanvasLayer/Dialogue")
-		dialogue_node.start(dialogue_lines)
+		var dialogue_node = get_node_or_null("/root/HUD/CanvasLayer/Dialogue")
+		if dialogue_node:
+			dialogue_node.start(dialogue_lines)
+		else:
+			push_error("Dialogue node not found!")
+
 
 
 

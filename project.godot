@@ -23,6 +23,7 @@ Fade="*res://Fade.tscn"
 Pickup="*res://Pickup.tscn"
 QuestManager="*res://Scenes/Shared/QuestManager.gd"
 HUD="*res://Scenes/Shared/HUD.tscn"
+MusicPlayer="*res://Scenes/Globals/MusicPlayer.tscn"
 
 [display]
 

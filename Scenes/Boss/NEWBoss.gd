@@ -49,7 +49,6 @@ func _on_walk_trigger(body):
 
 
 
-# Define dialogues once
 var quest_dialogues = {
 	2: {0: [
 			{"speaker": "Boss", "text": "Hello! I need you to walk to that point over there."},
@@ -79,17 +78,25 @@ var quest_dialogues = {
 		]
 	},
 	8: {0: [
-		{"speaker": "Boss", "text": "We need you to check on the Maintenance Lead. Go talk to them."},
-		{"speaker": "Player", "text": "Got it!"}
-	]}
+			{"speaker": "Boss", "text": "We need you to check on the Maintenance Lead. Go talk to them."},
+			{"speaker": "Player", "text": "Got it!"}
+		]},
+	10: {
+		4: [  # Task 4 dialogue
+			{"speaker": "Boss", "text": "Great! Now that you learned everything, you can now inspect floors, hire employees, assign employees and help our business grow!"},
+			{"speaker": "Player", "text": "Yes sir..."},
+			{"speaker": "Boss", "text": "Well, what are you waiting for? Whenever you are ready, start the next business day!"}
+		]
+	}
 }
+
 
 
 func _on_interact_pressed():
 	print("Starting dialogue with Boss")
 
 	var quest_id = QuestManager.current_quest_id
-	var req_index = QuestManager.get_current_requirement_index() # helper to get first incomplete requirement
+	var req_index = QuestManager.get_current_requirement_index() # first incomplete requirement
 
 	# Handle Quest7 automatic step for new day
 	if quest_id == 7 and req_index == 1:
@@ -100,6 +107,10 @@ func _on_interact_pressed():
 	var current_req = QuestManager.quests[quest_id]["requirements"][req_index]
 	if current_req["type"] == "talk_to_boss":
 		QuestManager.player_talked_to_boss()
+
+		# ✅ New: For Quest10, also complete task 4 (requirement index 4)
+		if quest_id == 10 and not QuestManager.quests[10]["requirements"][4]["completed"]:
+			QuestManager.complete_requirement(10, 4)
 
 	# Fetch dialogue lines from our quest_dialogues map
 	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
