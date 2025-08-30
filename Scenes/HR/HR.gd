@@ -44,9 +44,10 @@ func _ready():
 	$HiringImage.gui_input.connect(_on_hiring_input)
 	$StaffImage.gui_input.connect(_on_staff_input)
 	$BulletinImage.gui_input.connect(_on_bulletin_input)
+	$TTImage.gui_input.connect(_on_tt_input)
 
 	# Apply persistent HR states and hover effects
-	for key in ["department", "hiring", "staff", "bulletin"]:
+	for key in ["department", "hiring", "staff", "bulletin", "tt"]:
 		var node = get_node_for_key(key)
 		if node:
 			var unlocked = not Global.HR_state.locked_images.get(key, true)
@@ -90,6 +91,7 @@ func get_node_for_key(key: String) -> TextureRect:
 		"hiring": return $HiringImage
 		"staff": return $StaffImage
 		"bulletin": return $BulletinImage
+		"tt": return $TTImage
 		_: return null
 
 func load_subpage(scene_path: String):
@@ -118,14 +120,21 @@ func _on_staff_input(event):
 func _on_bulletin_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_handle_click("bulletin", $BulletinImage, "res://Scenes/HR/BulletinBoard.tscn")
+		
+func _on_tt_input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_handle_click("tt", $TTImage, "res://Scenes/Maintenance/TechTree.tscn")		
 
 # ---------- Core click logic ----------
 func _handle_click(key: String, node: TextureRect, path: String):
 	# Must talk to HR first unless clicking Hiring
-	if not Global.HR_state.has("interacted") or not Global.HR_state.interacted:
-		if key != "hiring":
-			print("Cannot click before interacting with HR")
-			return
+	# Must talk to HR first, but only before Quest6 is complete
+	if not _is_quest_completed(6):
+		if not Global.HR_state.has("interacted") or not Global.HR_state.interacted:
+			if key != "hiring":
+				print("Cannot click before interacting with HR")
+				return
+
 
 	# Quest6 restrictions before completion: Hiring -> Department
 	if QuestManager.current_quest_id == 6 and not _is_quest_completed(6):
@@ -163,7 +172,7 @@ func unlock_department_step():
 
 func unlock_all_images():
 	print("Unlocking ALL HR images after Quest6 complete")
-	for key in ["department", "hiring", "staff", "bulletin"]:
+	for key in ["department", "hiring", "staff", "bulletin", "tt"]:
 		var node = get_node_for_key(key)
 		if node:
 			_set_interactable(node, true, true)
@@ -226,6 +235,7 @@ func _on_interact_pressed():
 		_set_interactable($DepartmentImage, false)
 		_set_interactable($StaffImage, false)
 		_set_interactable($BulletinImage, false)
+		_set_interactable($TTImage, false)
 
 		# If Quest6 already complete when talking (edge case), unlock all
 		if _is_quest_completed(6):

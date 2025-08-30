@@ -1,6 +1,5 @@
 # EmployeeGenerator.gd
 extends Node
-
 const Employee = preload("res://Scenes/Shared/Employee.gd")
 
 # Avatars
@@ -63,6 +62,9 @@ var hobbies: Array = [
 # Keep track of used combinations to avoid duplicates
 var used_combinations: Array[Dictionary] = []
 
+# ----------------------------
+# Non-static functions now
+# ----------------------------
 func generate_employee(next_employee_id: int) -> Employee:
 	var emp = Employee.new()
 	emp.id = next_employee_id
@@ -116,8 +118,9 @@ func generate_employee(next_employee_id: int) -> Employee:
 
 	return emp
 
+
 func is_duplicate(emp: Employee) -> bool:
 	for comb in used_combinations:
-		if comb.name == emp.name and comb.role == emp.role and comb.bio.find(comb.bio_intro) != -1:
+		if comb["name"] == emp.name and comb["role"] == emp.role and emp.bio.find(comb["bio_intro"]) != -1:
 			return true
 	return false

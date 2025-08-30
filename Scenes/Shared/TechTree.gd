@@ -3,6 +3,7 @@ extends Window
 @export var node_scene: PackedScene = preload("res://Scenes/Shared/Node.tscn")
 @export var horizontal_spacing: int = 200
 @export var vertical_spacing: int = 120
+const EmployeeGenerator = preload("res://Scenes/Globals/EmployeeGenerator.gd")
 
 var btp := 5  # tech points
 
@@ -16,11 +17,10 @@ var tree_data = {
 	"node4b": { "children": [], "prerequisites": ["node3"], "description": "Branch 4b" },
 }
 
-# Track unlocked nodes
-var unlocked_nodes = {}
 
 # Store button instances by node name
 var node_buttons = {}
+
 
 func _ready():
 	close_requested.connect(_on_close_requested)
@@ -86,27 +86,58 @@ func layout_tree():
 
 func _on_node_pressed(node_name: String) -> void:
 	if can_unlock(node_name):
-		unlocked_nodes[node_name] = true
-		btp -= 1
+		Global.unlocked_nodes[node_name] = true
+		Global.btp -= 1
+
+		# ✅ Apply node effects here
+		apply_node_effect(node_name)
+
 		update_ui()
-		print("Unlocked %s! Remaining BTP: %d" % [node_name, btp])
+		print("Unlocked %s! Remaining BTP: %d" % [node_name, Global.btp])
 	else:
 		print("Cannot unlock %s yet." % node_name)
 
+
+
+func apply_node_effect(node_name: String) -> void:
+	match node_name:
+		"node2a", "node2b":
+			Global.extra_hiring_capacity += 2
+			print("📈 Hiring capacity increased by 2. Total capacity:", Global.get_hiring_capacity())
+
+			# Add more candidates for Hiring window
+			var additional_candidates = 2  # 2 new employees per node
+			for i in range(additional_candidates):
+				var generator = EmployeeGenerator.new()
+				var new_emp = generator.generate_employee(Global.next_employee_id)
+				Global.next_employee_id += 1
+				Global.hire_candidates.append(new_emp)
+
+			# Refresh Hiring window if open
+			if Global.hiring_window != null:
+				Global.hiring_window.hire_candidates = Global.get_hire_candidates()
+				Global.hiring_window.spawn_cards()
+		_:
+			pass
+
+
+
+
 func can_unlock(node_name: String) -> bool:
-	if unlocked_nodes.has(node_name):
+	if Global.unlocked_nodes.has(node_name):
 		return false
-	if btp <= 0:
+	if Global.btp <= 0:
 		return false
 	for prereq in tree_data[node_name]["prerequisites"]:
-		if not unlocked_nodes.has(prereq):
+		if not Global.unlocked_nodes.has(prereq):
 			return false
 	return true
+
 
 func update_ui():
 	for node_name in node_buttons.keys():
 		var btn = node_buttons[node_name].get_node("Button")
-		if unlocked_nodes.has(node_name):
+		if Global.unlocked_nodes.has(node_name):
 			btn.text = "%s\n(Active)" % node_name.capitalize()
 			btn.disabled = true
 			btn.modulate = Color(0, 1, 0)  # green
@@ -122,9 +153,10 @@ func update_ui():
 	update_btp_label()
 	update_connections()
 
+
 func update_btp_label():
 	if has_node("BTPLabel"):
-		$BTPLabel.text = "Tech Points: %d" % btp
+		$BTPLabel.text = "Tech Points: %d" % Global.btp
 
 func update_connections():
 	# Remove old lines
@@ -148,7 +180,7 @@ func update_connections():
 			line.width = 3
 
 			# Check if connection is active (both nodes unlocked)
-			if unlocked_nodes.has(node_name) and unlocked_nodes.has(child_name):
+			if Global.unlocked_nodes.has(node_name) and Global.unlocked_nodes.has(child_name):
 				line.default_color = Color(0, 1, 0, 0.8)  # green with some transparency
 			else:
 				line.default_color = Color(1, 1, 1, 0.7)  # default white with transparency

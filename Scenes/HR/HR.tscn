@@ -133,3 +133,12 @@ offset_right = 853.0
 offset_bottom = 783.0
 scale = Vector2(0.635, 0.635)
 texture = ExtResource("10_1hxrl")
+
+[node name="TTImage" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_7ykln")
+offset_left = 538.0
+offset_top = 485.0
+offset_right = 1234.0
+offset_bottom = 883.0
+scale = Vector2(0.635, 0.635)
+texture = ExtResource("10_1hxrl")

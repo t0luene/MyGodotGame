@@ -1,46 +1,98 @@
 # Global.gd
 extends Node
 
-# ---------------------------
-# Signals
-# ---------------------------
+# --------------------------- Signals ⚡ ---------------------------
 signal mission_status_changed(mission_name: String)
 signal employee_returned(employee_id: int)
 signal money_changed(new_money: int)
 signal floor_state_changed(floor_index: int)
 
-
-# ---------------------------
-# Preloads
-# ---------------------------
+# --------------------------- Preloads 📦 ---------------------------
 const Employee = preload("res://Scenes/Shared/Employee.gd")
 const EmployeeGenerator = preload("res://Scenes/Globals/EmployeeGenerator.gd")
 
-# ---------------------------
-# Employees 💪
-# ---------------------------
+# --------------------------- Player / Business State 💰🪫 ---------------------------
+var money: int = 10
+var energy: int = 5
+var stress: int = 0
+var reputation: int = 0
+var day: int = 1
+var employee_capacity: int = 3
+var grid_xp: int = 0
+var can_inspect: bool = true
+
+func set_money(value: int):
+	money = value
+	emit_signal("money_changed", money)
+
+func add_energy(amount: int):
+	energy += amount
+
+func spend_energy(amount: int) -> bool:
+	if energy >= amount:
+		energy -= amount
+		return true
+	return false
+
+func add_grid_xp(amount: int):
+	grid_xp += amount
+	print("Grid XP is now:", grid_xp)
+
+# --------------------------- Employees 💪 ---------------------------
 var hired_employees: Array = []
 var hire_candidates: Array = []
 var next_employee_id: int = 0
 var hire_candidates_day: int = -1
-
 const NUM_EMPLOYEES_TO_GENERATE = 2  # candidates per day (excluding Day 1 fixed)
 
-# ---------------------------
-# Candidate generation
-# ---------------------------
-func get_hire_candidates() -> Array:
-	# Only regenerate if day has changed
-	if hire_candidates.size() == 0 or hire_candidates_day != day:
+# ---- Candidate Generation 🧑‍💼 ----
+func get_hire_candidates(force_new: bool = false) -> Array:
+	if hire_candidates.is_empty() or hire_candidates_day != day or force_new:
 		generate_hire_candidates()
 		hire_candidates_day = day
 	return hire_candidates
 
+func refresh_hire_candidates() -> Array:
+	print("=== Refresh called ===")
+	hire_candidates.clear()
+	var capacity = get_hiring_capacity()
+	var new_list: Array = []
+
+	var generator = EmployeeGenerator.new()
+	generator.used_combinations.clear()
+
+	for i in range(capacity):
+		var emp = generator.generate_employee(next_employee_id)
+		next_employee_id += 1
+		new_list.append(emp)
+
+	hire_candidates = new_list
+	hire_candidates_day = day
+	print("=== Refresh finished ===")
+	return hire_candidates
+
+func refresh_hire_candidates_by_role(role: String) -> Array:
+	hire_candidates.clear()
+	var capacity = get_hiring_capacity()
+	var new_list: Array = []
+
+	var generator = EmployeeGenerator.new()
+	generator.used_combinations.clear()
+
+	for i in range(capacity):
+		var emp = generator.generate_employee(next_employee_id)
+		next_employee_id += 1
+		emp.role = role
+		new_list.append(emp)
+
+	hire_candidates = new_list
+	hire_candidates_day = day
+	return hire_candidates
 
 func generate_hire_candidates():
 	hire_candidates.clear()
 	var generator = EmployeeGenerator.new()
-	
+
 	if day == 1:
 		# Day 1 fixed employees
 		var alice = Employee.new()
@@ -68,16 +120,15 @@ func generate_hire_candidates():
 		hire_candidates.append(alice)
 		hire_candidates.append(bob)
 	else:
-		# Procedural candidates for Day > 1
+		var total_slots = get_hiring_capacity()
 		var generated = 0
-		while generated < NUM_EMPLOYEES_TO_GENERATE:
+		while generated < total_slots:
 			var new_emp = generator.generate_employee(next_employee_id)
 			next_employee_id += 1
 
-			# Avoid duplicates: same name + role + bio
 			var duplicate = false
 			for emp in hired_employees:
-				if emp.name == new_emp.name and emp.role == new_emp.role and emp.bio == new_emp.bio:
+				if emp.name == new_emp.name and emp.role == new_emp.role and new_emp.bio.find(emp.bio.split("\n")[0]) != -1:
 					duplicate = true
 					break
 			if duplicate:
@@ -86,9 +137,7 @@ func generate_hire_candidates():
 			hire_candidates.append(new_emp)
 			generated += 1
 
-# ---------------------------
-# Employee utilities
-# ---------------------------
+# ---- Employee Utilities 🔧 ----
 func get_employee_by_id(emp_id: int) -> Employee:
 	for emp in hired_employees:
 		if emp.id == emp_id:
@@ -123,31 +172,11 @@ func is_employee_available(emp_id: int) -> bool:
 			return false
 	return not is_employee_busy_by_id(emp_id)
 
-# ---------------------------
-# Player / business state
-# ---------------------------
-var money: int = 1000
-var stress: int = 0
-var reputation: int = 0
-var day: int = 1
-var can_inspect: bool = true
-var employee_capacity: int = 3
-var grid_xp: int = 0
-
-func set_money(value: int):
-	money = value
-	emit_signal("money_changed", money)
-
-func add_grid_xp(amount: int):
-	grid_xp += amount
-	print("Grid XP is now:", grid_xp)
-
-# ---------------------------
-# Floors
-# ---------------------------
-
+# --------------------------- Floors 🏢 ---------------------------
+var current_floor_scene: String = ""
+var building_floors: Array = []
+enum FloorState { LOCKED, AVAILABLE, READY, ASSIGNED }
 var next_room_to_load: String = ""
-
 
 func set_floor_state(floor_index: int, new_state: int):
 	if floor_index < 0 or floor_index >= building_floors.size():
@@ -160,14 +189,9 @@ func ensure_building_floors_initialized():
 	if building_floors.size() == 0:
 		init_building_floors(13)
 
-
-
-var current_floor_scene: String = ""
-
-enum FloorState { LOCKED, AVAILABLE, READY, ASSIGNED }
-
-var building_floors: Array = []
-
+func set_floor(floor_name: String):
+	current_floor_scene = floor_name
+	print("Global: current floor set to ", floor_name)
 
 func init_building_floors(count: int = 6):
 	if building_floors.size() > 0:
@@ -182,27 +206,13 @@ func init_building_floors(count: int = 6):
 			0:
 				scene_path = "res://Scenes/Floors/Floor1.tscn"
 				label_text = "Floor 1"
-				state_val = FloorState.AVAILABLE  # Only Floor1 unlocked
+				state_val = FloorState.AVAILABLE
 			1:
 				scene_path = "res://Scenes/Floors/Floor2.tscn"
 				label_text = "Floor 2"
-				state_val = FloorState.LOCKED
-			2:
-				scene_path = "res://Scenes/Floors/Floor3.tscn"
-				label_text = "Floor 3"
-				state_val = FloorState.LOCKED
-			3:
-				scene_path = "res://Scenes/Floors/Floor4.tscn"
-				label_text = "Floor 4"
-				state_val = FloorState.LOCKED
-			4:
-				scene_path = "res://Scenes/Floors/Floor5.tscn"
-				label_text = "Floor 5"
-				state_val = FloorState.LOCKED
-			5:
-				scene_path = "res://Scenes/Floors/Floor6.tscn"
-				label_text = "Floor 6"
-				state_val = FloorState.LOCKED
+			_:
+				scene_path = "res://Scenes/Floors/Floor%d.tscn" % (i + 1)
+				label_text = "Floor %d" % (i + 1)
 
 		var floor := {
 			"scene": scene_path,
@@ -212,23 +222,33 @@ func init_building_floors(count: int = 6):
 			"capacity": 3,
 			"assigned_employee_indices": []
 		}
-
-		# Pre-fill slots with nulls based on capacity
 		for j in range(floor["capacity"]):
 			floor["assigned_employee_indices"].append(null)
 
 		building_floors.append(floor)
 
+# --------------------------- Hiring Capacity 🧾 ---------------------------
+var hiring_window: Window = null
+var base_hiring_capacity: int = 2
+var extra_hiring_capacity: int = 0
 
+func get_hiring_capacity() -> int:
+	return base_hiring_capacity + extra_hiring_capacity
 
-func set_floor(floor_name: String):
-	current_floor_scene = floor_name
-	print("Global: current floor set to ", floor_name)
+func get_hired_count() -> int:
+	return hired_employees.size()
 
+func can_hire_more() -> bool:
+	return get_hired_count() < get_hiring_capacity()
 
-# ---------------------------
-# Missions
-# ---------------------------
+# --------------------------- Tech Tree 🌳 ---------------------------
+var unlocked_nodes: Dictionary = {}
+var btp: int = 5  # tech points
+
+func is_node_unlocked(node_name: String) -> bool:
+	return unlocked_nodes.has(node_name)
+
+# --------------------------- Missions 🎯 ---------------------------
 var mission_data: Array = []
 var active_missions: Array = []
 
@@ -266,19 +286,12 @@ func check_mission_statuses():
 				free_employee_from_mission(mission.employee_id)
 				emit_signal("employee_returned", mission.employee_id)
 
-# ---------------------------
-# Misc
-# ---------------------------
+# --------------------------- Miscellaneous 🔧 ---------------------------
 func clear_children(node: Node):
 	for child in node.get_children():
 		child.queue_free()
 
-
-
-# ---------------------------
-# HR
-# ---------------------------
-# At the top of Global.gd
+# --------------------------- HR 🏢 ---------------------------
 var HR_state := {
 	"locked_images": {
 		"department": true,
@@ -294,9 +307,7 @@ var HR_state := {
 	}
 }
 
-# ---------------------------
-# Maintenance
-# ---------------------------
+# --------------------------- Maintenance 🛠️ ---------------------------
 var Maintenance_state := {
 	"locked_images": {
 		"department": false,

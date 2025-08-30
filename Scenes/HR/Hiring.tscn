@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dlc3gunips78p" path="res://Scenes/HR/Hiring.gd" id="1_sbq3v"]
 
 [node name="Hiring" type="Window"]
+position = Vector2i(0, 36)
 script = ExtResource("1_sbq3v")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
@@ -49,3 +50,28 @@ offset_left = 72.0
 offset_right = 165.0
 offset_bottom = 31.0
 text = "INTERVIEW"
+
+[node name="RefreshButton" type="Button" parent="."]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Refresh"
+
+[node name="SourcingButton" type="Button" parent="."]
+offset_left = 84.0
+offset_right = 219.0
+offset_bottom = 31.0
+text = "Boosted Refresh
+"
+
+[node name="Money" type="Label" parent="."]
+offset_left = 472.0
+offset_right = 512.0
+offset_bottom = 23.0
+text = "Money"
+
+[node name="Energy" type="Label" parent="."]
+offset_left = 472.0
+offset_top = 33.0
+offset_right = 512.0
+offset_bottom = 56.0
+text = "Energy"
