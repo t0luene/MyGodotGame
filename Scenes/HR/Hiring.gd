@@ -4,8 +4,6 @@ extends Window
 @onready var description_panel = $DescriptionPanel
 @onready var desc_name_label = $DescriptionPanel/NameLabel
 @onready var desc_bio_label = $DescriptionPanel/BioLabel
-@onready var money_label = $Money
-@onready var energy_label = $Energy
 @onready var hire_button = $DescriptionPanel/HireButton
 @onready var interview_button = $DescriptionPanel/InterviewButton
 @onready var sourcing_button = $SourcingButton
@@ -165,10 +163,6 @@ func _on_role_selected(role: String):
 # Helper: Update currency labels 💵🪫
 # ---------------------------
 func _update_currency_labels():
-	# Update labels
-	money_label.text = "Money: %d" % Global.money
-	energy_label.text = "Energy: %d" % Global.energy
-
 	# Update hire button
 	if selected_emp:
 		hire_button.disabled = not (Global.can_hire_more() and Global.money >= HIRE_COST_MONEY)

@@ -5,6 +5,7 @@ extends Node
 signal mission_status_changed(mission_name: String)
 signal employee_returned(employee_id: int)
 signal money_changed(new_money: int)
+signal energy_changed(new_energy: int) 
 signal floor_state_changed(floor_index: int)
 
 # --------------------------- Preloads 📦 ---------------------------
@@ -12,7 +13,7 @@ const Employee = preload("res://Scenes/Shared/Employee.gd")
 const EmployeeGenerator = preload("res://Scenes/Globals/EmployeeGenerator.gd")
 
 # --------------------------- Player / Business State 💰🪫 ---------------------------
-var money: int = 10
+var money: int = 20
 var energy: int = 5
 var stress: int = 0
 var reputation: int = 0
@@ -27,10 +28,12 @@ func set_money(value: int):
 
 func add_energy(amount: int):
 	energy += amount
+	emit_signal("energy_changed", energy)
 
 func spend_energy(amount: int) -> bool:
 	if energy >= amount:
 		energy -= amount
+		emit_signal("energy_changed", energy)
 		return true
 	return false
 
@@ -193,7 +196,7 @@ func set_floor(floor_name: String):
 	current_floor_scene = floor_name
 	print("Global: current floor set to ", floor_name)
 
-func init_building_floors(count: int = 6):
+func init_building_floors(count: int = 13):
 	if building_floors.size() > 0:
 		return
 

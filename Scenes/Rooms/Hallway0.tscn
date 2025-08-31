@@ -31,7 +31,7 @@ position = Vector2(114, -68)
 polygon = PackedVector2Array(-350, -104, -426, -142, -592, -254, -788, -314, -1184, -198, -1194, 18, 420, 822, 676, 826, 1062, 648, 752, 424, 1098, 550, 1090, 860, -1200, 866, -1196, -426, -169.587, -388.699, 400, -368, 944, 112, 736, 416, 512, 304, 512, 160, 384, 96, 384, 240, -52, 38, -52, -60, -212, -146, -208, -42)
 
 [node name="Entrance1" type="Area2D" parent="."]
-position = Vector2(830, 331)
+position = Vector2(845, 320)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance1"]
 position = Vector2(-20, -38)
@@ -75,4 +75,4 @@ position = Vector2(28, 102)
 shape = SubResource("CircleShape2D_dvb7u")
 
 [node name="Player" parent="." instance=ExtResource("3_dvb7u")]
-position = Vector2(699, 484)
+position = Vector2(769, 507)

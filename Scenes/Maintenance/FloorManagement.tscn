@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://duyhq8lxps1ck" path="res://Assets/Floor_Zen.png" id="2_f8pfu"]
 [ext_resource type="Texture2D" uid="uid://dhdjq06j40ydj" path="res://Assets/square-xxs.png" id="3_vxba2"]
 
-[node name="Window" type="Window"]
+[node name="FloorManagement" type="Window"]
 position = Vector2i(0, 36)
 script = ExtResource("1_e26en")
 
@@ -52,8 +52,8 @@ autowrap_mode = 3
 
 [node name="RightPanel" type="VBoxContainer" parent="Control/ManagePanel"]
 layout_mode = 2
-offset_left = 659.0
-offset_right = 1059.0
+offset_left = 484.0
+offset_right = 884.0
 offset_bottom = 500.0
 
 [node name="Label" type="Label" parent="Control/ManagePanel/RightPanel"]

@@ -82,6 +82,13 @@ offset_right = 853.0
 offset_bottom = 586.0
 text = "Elevator- Exit"
 
+[node name="CrewStairsButton" type="Button" parent="UI"]
+offset_left = 124.0
+offset_top = 120.0
+offset_right = 234.0
+offset_bottom = 151.0
+text = "Crew Stairs"
+
 [node name="Label" type="Label" parent="."]
 offset_left = 1056.0
 offset_right = 1127.0

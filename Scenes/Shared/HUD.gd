@@ -3,6 +3,8 @@ extends Control
 @onready var checklist = $CanvasLayer/ChecklistUI
 @onready var dialogue = $CanvasLayer/Dialogue
 @onready var reward_window = $CanvasLayer/RewardWindow
+@onready var money_label = $CanvasLayer/Money
+@onready var energy_label = $CanvasLayer/Energy
 
 var last_quest_id: int = -1  # track which quest was last displayed
 
@@ -15,8 +17,23 @@ func _ready():
 	QuestManager.quest_completed.connect(_on_quest_completed)
 	QuestManager.quest_updated.connect(_on_quest_updated)
 
-	# Connect dialogue finished signal
 	dialogue.dialogue_finished.connect(_on_dialogue_finished)
+
+	# ✅ Connect to Global signals
+	Global.money_changed.connect(_on_money_changed)
+	Global.energy_changed.connect(_on_energy_changed)
+
+	# ✅ Initialize once at startup
+	_on_money_changed(Global.money)
+	_on_energy_changed(Global.energy)
+
+# --- Currency update handlers ---
+func _on_money_changed(new_money: int):
+	money_label.text = "Money: %d" % new_money
+
+func _on_energy_changed(new_energy: int):
+	energy_label.text = "Energy: %d" % new_energy
+
 
 func _on_requirement_completed(quest_id, req_id):
 	checklist.update_requirement(quest_id, req_id)

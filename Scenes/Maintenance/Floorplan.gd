@@ -1,6 +1,7 @@
 extends Window
 
-const FLOOR_COST = 300
+const FLOOR_UNLOCK_COST = 5      # Cheap unlock (just access)
+const FLOOR_ASSIGN_COST = 300    # Expensive setup (when assigning purpose)
 
 @export var inspected_floor_index: int = -1
 @onready var floors_container = $Tower/FloorsContainer
@@ -62,7 +63,8 @@ func update_floor_ui():
 
 		match floor["state"]:
 			Global.FloorState.LOCKED:
-				btn.text = "🔒 Floor %d – Unlock $%d" % [i + 1, FLOOR_COST]
+				btn.text = "🔒 Floor %d – Unlock $%d" % [i + 1, FLOOR_UNLOCK_COST]
+
 			Global.FloorState.AVAILABLE:
 				btn.text = "Floor %d – Available to Inspect" % (i + 1)
 			Global.FloorState.READY:
@@ -75,28 +77,29 @@ func update_floor_ui():
 			btn.pressed.connect(_on_floor_button_pressed.bind(i))
 
 
-
 func _on_floor_button_pressed(index):
 	selected_floor_index = index
 	var floor = Global.building_floors[index]
 
 	match floor["state"]:
 		Global.FloorState.LOCKED:
-			if Global.money >= FLOOR_COST:
-				Global.money -= FLOOR_COST
+			if Global.money >= FLOOR_UNLOCK_COST:
+				Global.set_money(Global.money - FLOOR_UNLOCK_COST)
 				floor["state"] = Global.FloorState.AVAILABLE
 				Global.building_floors[index] = floor
-				update_money_label()
 				update_floor_ui()
 				_disable_floor_option_buttons()
+				print("✅ Floor %d unlocked for $%d" % [index + 1, FLOOR_UNLOCK_COST])
 			else:
-				print("Not enough money")
+				print("❌ Not enough money to unlock floor %d" % (index + 1))
 		Global.FloorState.AVAILABLE:
 			show_floor_options(floor, index)
 		Global.FloorState.READY:
 			show_floor_assignment_options(floor, index)
 		Global.FloorState.ASSIGNED:
 			show_floor_assignment_options(floor, index)
+
+
 
 func _disable_floor_option_buttons():
 	$Tower/FloorOptionsPanel/TrainingButton.disabled = true
@@ -217,10 +220,7 @@ func mark_floor_ready(floor_index: int):
 		push_error("❌ Invalid floor index passed to mark_floor_ready: %d" % floor_index)
 		return
 
-	var floor = Global.building_floors[floor_index]
-	print("🔹 Current state before marking READY:", floor["state"])
-	floor["state"] = Global.FloorState.READY
-	Global.building_floors[floor_index] = floor
+	Global.set_floor_state(floor_index, Global.FloorState.READY)
 	print("✅ Floor %d marked READY!" % (floor_index + 1))
 
 	$Tower/FloorInspectionMode.visible = false
@@ -229,6 +229,7 @@ func mark_floor_ready(floor_index: int):
 	$Tower/FloorOptionsPanel.visible = true
 
 	update_floor_ui()
+
 
 
 func _on_manage_button_pressed():

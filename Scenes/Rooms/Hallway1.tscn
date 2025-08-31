@@ -87,10 +87,10 @@ offset_bottom = 628.0
 text = "Inspect Elevator"
 
 [node name="CrewStairsButton" type="Button" parent="UI"]
-offset_left = -12.0
-offset_top = 106.0
-offset_right = 98.0
-offset_bottom = 137.0
+offset_left = 124.0
+offset_top = 120.0
+offset_right = 234.0
+offset_bottom = 151.0
 text = "Crew Stairs"
 
 [node name="Label" type="Label" parent="."]

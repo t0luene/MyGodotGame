@@ -1,104 +1,134 @@
+# NEW SIMPLE JUST FLOOR LOGIC WORKING
 extends Window
 
 @export var max_capacity: int = 6
 @onready var floor_dropdown: OptionButton = $Control/ManagePanel/LeftPanel/FloorDropdown
-@onready var floor_image: TextureRect = $Control/ManagePanel/LeftPanel/FloorImage
-@onready var floor_name_label: Label = $Control/ManagePanel/LeftPanel/FloorNameLabel
-@onready var power_bar: TextureProgressBar = $Control/ManagePanel/RightPanel/PowerBar
-
-var EmployeeCard = preload("res://EmployeeCard.tscn")
-var EmployeeAvatar = preload("res://EmployeeAvatar.tscn")
+@onready var slots_grid: GridContainer = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
 
 var current_floor_index: int = -1
 var selected_slot_index: int = -1
 
-# Simple local floors data
-var floors = [
-	{
-		"name": "Floor 1",
-		"image": preload("res://Assets/square-xxl.png"),
-		"assigned_employee_indices": [null, null, null, null, null, null]
-	},
-	{
-		"name": "Floor 2",
-		"image": preload("res://Assets/square-xxl.png"),
-		"assigned_employee_indices": [null, null, null, null, null, null]
-	}
-]
+var EmployeeCard = preload("res://EmployeeCard.tscn")
+var EmployeeAvatar = preload("res://EmployeeAvatar.tscn")
 
-
-# Simple local employees data
-var employees = [
-	{"id": 1, "name": "Captain Whiskers", "avatar": preload("res://Assets/Avatars/emp1.png")},
-	{"id": 2, "name": "Sir Purrsalot", "avatar": preload("res://Assets/Avatars/emp2.png")},
-	{"id": 3, "name": "Whiskerstein", "avatar": preload("res://Assets/Avatars/emp3.png")},
-	{"id": 4, "name": "Paws McGraw", "avatar": preload("res://Assets/Avatars/emp4.png")}
-]
 
 func _ready():
 	close_requested.connect(_on_close_requested)
-	popup_centered_ratio(0.8)  # 60% of the screen
-	print("Script attached to node: ", self.name)
-	print("Children of current node: ", get_children().map(func(c): c.name))
+	popup_centered_ratio(0.8)
 	populate_floor_dropdown()
 	floor_dropdown.item_selected.connect(_on_floor_dropdown_selected)
-	if floor_dropdown.get_item_count() > 0:
-		floor_dropdown.select(0)
-		_on_floor_dropdown_selected(0)
-
-	$Control/ScrollContainer.visible = false
-	
-
-	# Debug: print slot buttons info
-	var slots_grid = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
-	print("Number of slot buttons:", slots_grid.get_child_count())
-	for btn in slots_grid.get_children():
-		print("Button:", btn.name, "visible:", btn.visible, "disabled:", btn.disabled, "mouse_filter:", btn.mouse_filter)
-
-
-		# Quest10: mark requirement 3 complete when FloorManagement opens
-	if QuestManager.current_quest_id == 10:
-		var req_index = 3  # floor_management task
-		if not QuestManager.quests[10]["requirements"][req_index]["completed"]:
-			QuestManager.complete_requirement(10, req_index)
-			print("✅ Quest10 Task #3 completed")
-
-	# Connect slot buttons signals so clicks call _on_slot_pressed
 	connect_slot_buttons()
 	load_employee_slots()
 
 func _on_close_requested():
 	queue_free()
 	
-func update_power_bar():
-	if current_floor_index == -1:
-		power_bar.value = 0
-		power_bar.max_value = max_capacity
-		return
-
-	var assigned = floors[current_floor_index]["assigned_employee_indices"]
-	var assigned_count = 0
-	for emp_id in assigned:
-		if emp_id != null:
-			assigned_count += 1
-
-	power_bar.max_value = max_capacity
-	power_bar.value = assigned_count
-
-
 func populate_floor_dropdown():
 	floor_dropdown.clear()
-	for i in range(floors.size()):
-		floor_dropdown.add_item(floors[i]["name"], i)  # pass i as metadata
 
-func _on_floor_dropdown_selected(index: int) -> void:
-	var metadata = floor_dropdown.get_item_metadata(index)
-	if metadata == null:
-		print("⚠️ Warning: No metadata for dropdown item ", index)
-		return
-	current_floor_index = metadata
-	show_floor_info(floors[current_floor_index])
+	Global.ensure_building_floors_initialized()
+
+	for i in range(Global.building_floors.size()):
+		var floor_dict = Global.building_floors[i]
+		floor_dropdown.add_item(floor_dict["label"])
+		floor_dropdown.set_item_metadata(floor_dropdown.get_item_count() - 1, i)
+		var is_ready = floor_dict.get("state", Global.FloorState.LOCKED) == Global.FloorState.READY
+		floor_dropdown.set_item_disabled(floor_dropdown.get_item_count() - 1, not is_ready)
+		print("Added floor:", floor_dict["label"], "dropdown index:", floor_dropdown.get_item_count() - 1, "READY?", is_ready)
+
+	# Auto-select first READY floor
+	for i in range(floor_dropdown.get_item_count()):
+		if not floor_dropdown.is_item_disabled(i):
+			floor_dropdown.select(i)
+			_on_floor_dropdown_selected(i)
+			break
+
+func _on_floor_dropdown_selected(index: int):
+	var meta = floor_dropdown.get_item_metadata(index)
+	if meta == null:
+		current_floor_index = -1
+		print("⚠️ No floor selected, dropdown index:", index, "metadata:", meta)
+	else:
+		current_floor_index = int(meta)
+		print("🔹 Dropdown selection triggered, index:", index, "metadata:", meta)
 	load_employee_slots()
+
+
+func connect_slot_buttons():
+	var slots_grid = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
+	for i in range(slots_grid.get_child_count()):
+		var btn = slots_grid.get_child(i)
+		if btn.is_connected("pressed", Callable(self, "_on_slot_pressed")):
+			btn.disconnect("pressed", Callable(self, "_on_slot_pressed"))
+		btn.connect("pressed", Callable(self, "_on_slot_pressed").bind(i))
+
+func load_employee_slots():
+	for i in range(slots_grid.get_child_count()):
+		var btn = slots_grid.get_child(i)
+		btn.icon = null
+		btn.text = "+"
+
+	if current_floor_index == -1:
+		print("⚠️ Cannot load slots: no floor selected")
+		return
+
+	var assigned = Global.building_floors[current_floor_index]["assigned_employee_indices"]
+
+	# Expand list if smaller than capacity
+	while assigned.size() < max_capacity:
+		assigned.append(null)
+
+	for i in range(max_capacity):
+		var emp_id = assigned[i]
+		var btn = slots_grid.get_child(i)
+
+		if emp_id != null:
+			var emp = Global.hired_employees.filter(func(e): return e.id == emp_id)
+			if emp.size() > 0:
+				btn.icon = emp[0].avatar
+				btn.text = ""
+			print("Loaded slot", i, "with employee id:", emp_id)
+		else:
+			print("Loaded slot", i, "empty")
+
+	print("Finished loading slots for floor", current_floor_index)
+
+
+
+func _on_employee_card_pressed(emp_id: int, card: Node):
+	if selected_slot_index < 0 or selected_slot_index >= max_capacity:
+		print("⚠️ Invalid slot selected")
+		return
+	if current_floor_index == -1:
+		print("⚠️ No floor selected")
+		return
+
+	$Control/ScrollContainer.visible = false
+
+	var slot_btn = get_slot_button(selected_slot_index)
+	if slot_btn:
+		clear_children(slot_btn)
+		var avatar = TextureRect.new()
+		avatar.texture = card.get_node("Avatar").texture
+		avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		avatar.expand = true
+		avatar.set_anchors_preset(Control.PRESET_FULL_RECT)
+		slot_btn.add_child(avatar)
+		slot_btn.text = ""
+
+	# ✅ Assign employee to the **currently selected floor**
+	var assigned = Global.building_floors[current_floor_index]["assigned_employee_indices"]
+	if selected_slot_index >= assigned.size():
+		# pad the array if it's smaller than max_capacity
+		while assigned.size() <= selected_slot_index:
+			assigned.append(null)
+	assigned[selected_slot_index] = emp_id
+
+	print("Assigned employee id:", emp_id, "to floor:", current_floor_index, "slot:", selected_slot_index)
+
+	# Reload to refresh UI properly
+	load_employee_slots()
+
 
 func get_slot_button(slot_index: int) -> Button:
 	return $Control/ManagePanel/RightPanel/EmployeeSlotsGrid.get_child(slot_index)
@@ -109,95 +139,38 @@ func show_employee_list():
 	$Control/ScrollContainer.visible = true
 	clear_children(container)
 
-	for emp in employees:
+
+	var assigned_indices = Global.building_floors[current_floor_index]["assigned_employee_indices"]
+
+
+	for emp in Global.hired_employees:
+		# Skip if employee is already assigned to **any floor**
+		var is_assigned = false
+		for floor_dict in Global.building_floors:
+			if emp.id in floor_dict["assigned_employee_indices"]:
+				is_assigned = true
+				break
+		if is_assigned:
+			continue
+
 		var card = EmployeeCard.instantiate()
+		card.connect("pressed", Callable(self, "_on_employee_card_pressed").bind(emp.id, card))
 
-		# card is the root Button, so connect signal directly on it
-		card.connect("pressed", Callable(self, "_on_employee_card_pressed").bind(emp["id"], card))
+		# Fill UI
+		card.get_node("ProficiencyLabel").text = str(emp.proficiency)
+		card.get_node("CostLabel").text = str(emp.cost)
+		card.get_node("Avatar").texture = emp.avatar
+		card.get_node("NameLabel").text = emp.name
+		card.get_node("RoleLabel").text = emp.role
 
-		var avatar_node = card.get_node("Avatar")
-		if avatar_node and avatar_node is TextureRect:
-			avatar_node.texture = emp["avatar"]
 
-		var name_label = card.get_node_or_null("NameLabel")
-		if name_label:
-			name_label.text = emp["name"]
 
 		container.add_child(card)
 
-
-func _on_employee_card_pressed(emp_id: int, card: Node):
-	$Control/ScrollContainer.visible = false
-
-	var slot_btn = get_slot_button(selected_slot_index)
-	if slot_btn:
-		clear_children(slot_btn)
-
-		var avatar = TextureRect.new()
-		avatar.texture = card.get_node("Avatar").texture
-		avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		avatar.expand = true
-		avatar.set_anchors_preset(Control.PRESET_FULL_RECT)
-		slot_btn.add_child(avatar)
-		slot_btn.text = ""
-
-	floors[current_floor_index]["assigned_employee_indices"][selected_slot_index] = emp_id
-	print("Updated floor assignments: ", floors[current_floor_index]["assigned_employee_indices"])
-
-	load_employee_slots()
-
-
-func show_floor_info(floor_dict: Dictionary) -> void:
-	floor_name_label.text = floor_dict.get("name", "Unknown Floor")
-	var img = floor_dict.get("image", null)
-	if img:
-		floor_image.texture = img
-	else:
-		floor_image.texture = null
-		
-func connect_slot_buttons():
-	var slots_grid = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
-	for i in range(slots_grid.get_child_count()):
-		var btn = slots_grid.get_child(i)
-		if btn.is_connected("pressed", Callable(self, "_on_slot_pressed")):
-			btn.disconnect("pressed", Callable(self, "_on_slot_pressed"))
-		btn.connect("pressed", Callable(self, "_on_slot_pressed").bind(i))
-		print("Connected slot button ", btn.name, " at index ", i)
-
-
-func load_employee_slots():
-	var assigned = floors[current_floor_index]["assigned_employee_indices"]
-	print("Loading employee slots with assignments: ", assigned)
-	var slots_grid = $Control/ManagePanel/RightPanel/EmployeeSlotsGrid
-	var assigned_count = 0
-	for i in range(max_capacity):
-		var btn = slots_grid.get_child(i)
-		var emp_id = assigned[i]
-		print("Slot", i, "assigned employee id:", emp_id)
-		if emp_id != null:
-			assigned_count += 1
-			var emp_index = employees.find(func(e): return e["id"] == emp_id)
-			if emp_index != -1:
-				var emp_data = employees[emp_index]
-				print("Setting icon for slot", i, "to employee", emp_data["name"])
-				btn.icon = emp_data["avatar"]
-				btn.text = ""
-		else:
-			print("Clearing slot", i)
-			btn.icon = null
-			btn.text = "+"
-	
-	# Update the power bar here
-	$Control/ManagePanel/RightPanel/PowerBar.value = assigned_count
-
-
 func _on_slot_pressed(slot_index: int) -> void:
-	print("Slot button pressed: ", slot_index)
 	selected_slot_index = slot_index
 	show_employee_list()
 
-
 func clear_children(node: Node) -> void:
 	for child in node.get_children():
-		node.remove_child(child)
 		child.queue_free()
