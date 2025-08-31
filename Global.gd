@@ -37,6 +37,13 @@ func spend_energy(amount: int) -> bool:
 		return true
 	return false
 
+func add_daily_money():
+	set_money(money + 10)
+
+func refresh_energy():
+	energy = 5  # or Global.max_energy if you define it
+	emit_signal("energy_changed", energy)
+
 func add_grid_xp(amount: int):
 	grid_xp += amount
 	print("Grid XP is now:", grid_xp)

@@ -86,19 +86,29 @@ func show_daily_newspaper() -> void:
 
 func next_day():
 	print("next_day() called from:", get_stack())
+	
+	# Advance the day
 	Global.day += 1
 	print("📅 Day advanced to: ", Global.day)
-
+	
+	# Step 1: Give 10 money
+	Global.set_money(Global.money + 10)  # uses your set_money() so signal fires
+	
+	# Step 2: Refresh energy
+	Global.energy = 5  # or set a max_energy variable if you want
+	Global.emit_signal("energy_changed", Global.energy)
+	
 	# Update UI
 	update_ui()
-
+	
 	# Quest7 progression: complete "new_day" requirement on Day 2
 	if Global.day == 2 and QuestManager.current_quest_id == 7:
 		QuestManager.quest7_new_day()
-
+	
 	# Show daily report after Day 1
 	if Global.day > 1:
 		show_daily_report()
+
 
 
 func calculate_daily_income():
