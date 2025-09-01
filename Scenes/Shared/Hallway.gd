@@ -4,13 +4,13 @@ extends Node2D
 @onready var door_container: Node2D = $DoorContainer
 @onready var crew_stairs_button = $UI/CrewStairsButton
 @onready var elevator_button = $UI/ElevatorButton
+@export var floor_index: int = -1  # must be set when you spawn the hallway
 
 signal entrance_pressed(target_room_path: String)
 signal crew_stairs_pressed()
 signal elevator_pressed()
 
 var connected_rooms: Array[String] = []
-@export var floor_index: int = -1  # must be set when you spawn the hallway
 
 
 func set_floor_index(idx: int) -> void:
@@ -47,7 +47,6 @@ func _ready():
 	setup_hallway([
 		"res://Scenes/Rooms/RoomA.tscn",
 	])
-
 
 # -------------------------
 # Setup hallway with a list of rooms
@@ -99,19 +98,44 @@ func _generate_doors():
 func _on_door_pressed(room_path: String):
 	print("🚪 _on_door_pressed called with:", room_path)
 
-	# Transition effect
-	Fade.fade_out(0.5)
-	await get_tree().create_timer(0.5).timeout
-
-	# Load the target room scene
-	var room_scene = load(room_path)
+	var room_scene: PackedScene = load(room_path)
 	if not room_scene:
 		push_error("❌ Failed to load room: %s" % room_path)
 		return
 
-	print("🚀 Changing scene to:", room_path)
-	get_tree().change_scene_to_packed(room_scene)
+	var room_instance = room_scene.instantiate()
 
+	var floor_data = Global.building_floors[floor_index]
+
+	if not floor_data.has("floor_id"):
+		floor_data["floor_id"] = "floor_%d" % floor_index
+
+	if not floor_data.has("rooms"):
+		floor_data["rooms"] = []
+
+	if not floor_data.has("room_ids"):
+		floor_data["room_ids"] = []
+
+	var room_index = floor_data["rooms"].find(room_path)
+	if room_index == -1:
+		floor_data["rooms"].append(room_path)
+
+		if room_index >= floor_data["room_ids"].size():
+			floor_data["room_ids"].append("%s_room_%d" % [floor_data["floor_id"], room_index + 1])
+
+	Global.building_floors[floor_index] = floor_data
+
+	room_instance.room_id = floor_data["room_ids"][room_index]
+	print("🚀 Room instance ID:", room_instance.room_id)
+
+	call_deferred("_switch_to_room", room_instance)
+
+func _switch_to_room(room_instance: Node2D):
+	var current = get_tree().current_scene
+	if current:
+		current.queue_free()
+	get_tree().root.add_child(room_instance)
+	get_tree().current_scene = room_instance
 
 # -------------------------
 # Crew stairs button

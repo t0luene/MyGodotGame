@@ -188,6 +188,62 @@ var building_floors: Array = []
 enum FloorState { LOCKED, AVAILABLE, READY, ASSIGNED }
 var next_room_to_load: String = ""
 var current_inspection_floor: int = -1
+var persistent_hallways: Dictionary = {}  # floor_index -> Hallway instance
+var persistent_rooms: Dictionary = {}     # room_id -> Room instance
+
+func initialize_floor_ids():
+	while building_floors.size() < 13:
+		building_floors.append({})
+
+	for floor_index in range(0, 13):
+		var floor = building_floors[floor_index]
+
+		if not floor.has("floor_id"):
+			floor["floor_id"] = "floor_%d" % floor_index
+
+		if not floor.has("room_ids"):
+			floor["room_ids"] = []
+			for room_slot in range(7):
+				floor["room_ids"].append("%s_room_%d" % [floor["floor_id"], room_slot + 1])
+
+		if not floor.has("rooms"):
+			floor["rooms"] = []
+
+		if floor["rooms"].empty():
+			floor["rooms"].append("res://Scenes/Rooms/RoomA.tscn")
+
+		building_floors[floor_index] = floor
+
+
+		
+	
+func _unlock_floor(floor_index: int) -> void:
+	if floor_index < 0 or floor_index >= building_floors.size():
+		push_error("Invalid floor index: %s" % floor_index)
+		return
+	
+	var floor = building_floors[floor_index]
+	if floor.get("unlocked", false):
+		print("⚠️ Floor %s already unlocked" % floor_index)
+		return
+	
+	# Mark floor unlocked
+	floor["unlocked"] = true
+	floor["type"] = "inspection"
+	
+	# Ensure floor has at least one room
+	if not floor.has("rooms") or floor["rooms"].is_empty():
+		var room_id = "floor%s_room1" % floor_index
+		floor["rooms"] = [
+			{"id": room_id, "scene": "res://Scenes/Rooms/RoomA.tscn"}
+		]
+		print("🆕 Added default room %s to floor %s" % [room_id, floor_index])
+	
+	# Save back to building_floors
+	building_floors[floor_index] = floor
+	
+	print("✅ Floor %s unlocked" % floor_index)
+
 
 func set_floor_state(floor_index: int, new_state: int):
 	if floor_index < 0 or floor_index >= building_floors.size():

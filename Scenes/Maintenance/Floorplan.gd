@@ -9,6 +9,7 @@ const FLOOR_ASSIGN_COST = 300    # Expensive setup (when assigning purpose)
 @export var max_capacity := 4
 @onready var building_container = $Tower/BuildingContainer
 @export var room_scene: PackedScene = preload("res://Scenes/Shared/RoomSquare.tscn")
+@onready var travel_button = $Tower/FloorOptionsPanel/TravelButton
 
 
 var selected_floor_index = -1  # no floor selected initially
@@ -21,8 +22,13 @@ var current_floor: String = ""
 func _ready():
 	close_requested.connect(_on_close_requested)
 	popup_centered_ratio(0.8)
-
 	Global.ensure_building_floors_initialized()
+
+	travel_button.pressed.connect(_on_travel_button_pressed)
+
+	# Make TravelButton always visible and enabled
+	travel_button.visible = true
+	travel_button.disabled = false
 
 
 	selected_floor_index = -1
@@ -43,6 +49,36 @@ func _ready():
 	$Tower/FloorOptionsPanel/ManageButton.pressed.connect(_on_manage_button_pressed)
 	$Tower/FloorInspectionMode.visible = false
 	
+#-----TRAVEL-----
+
+func _on_travel_button_pressed() -> void:
+	if selected_floor_index < 0 or selected_floor_index >= Global.building_floors.size():
+		print("Travel button pressed -> invalid floor_index:", selected_floor_index)
+		return
+
+	var floor = Global.building_floors[selected_floor_index]
+
+	if floor["state"] != Global.FloorState.READY and floor["state"] != Global.FloorState.ASSIGNED:
+		print("Travel button pressed -> floor not ready:", selected_floor_index)
+		return
+
+
+	print("Travel button pressed -> traveling to floor_index:", selected_floor_index)
+
+	# Use your existing hallway system
+	var scene_path = "res://Scenes/Shared/Hallway.tscn"
+	var hallway_scene = load(scene_path)
+	if hallway_scene == null:
+		push_error("❌ Failed to load hallway scene for travel: %s" % scene_path)
+		return
+
+	# Store the floor index globally so the hallway knows which floor to display
+	Global.current_inspection_floor = selected_floor_index
+
+	# Replace current scene
+	get_tree().change_scene_to_packed(hallway_scene)
+
+
 
 
 # -------------------------------
@@ -280,11 +316,22 @@ func mark_floor_ready(floor_index: int):
 
 	# Initialize rooms array if it doesn't exist
 	if not floor.has("rooms"):
-		floor["rooms"] = []  # stores {row, col} for placed rooms
+		floor["rooms"] = []  # stores room scene paths for this floor
+
+	# Assign persistent unique IDs for this floor and its rooms
+	if not floor.has("floor_id"):
+		floor["floor_id"] = "floor_%d" % floor_index
+
+	if not floor.has("room_ids"):
+		floor["room_ids"] = []
+		for room_path in floor["rooms"]:
+			var unique_id = "%s_%s" % [floor["floor_id"], room_path.get_file().get_basename()]
+			floor["room_ids"].append(unique_id)
 
 	Global.building_floors[floor_index] = floor
 
-	print("✅ Floor %d marked READY!" % (floor_index + 1))
+	print("✅ Floor %d marked READY with floor_id: %s and room_ids: %s" %
+		  [floor_index + 1, floor["floor_id"], floor["room_ids"]])
 
 	# Hide inspection mode UI
 	$Tower/FloorInspectionMode.visible = false
@@ -294,7 +341,7 @@ func mark_floor_ready(floor_index: int):
 
 	# Update UI buttons and labels
 	update_floor_ui()
-	show_floor_assignment_options(Global.building_floors[floor_index], floor_index)
+	show_floor_assignment_options(floor, floor_index)
 
 
 

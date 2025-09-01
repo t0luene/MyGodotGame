@@ -131,6 +131,13 @@ offset_right = 74.0
 offset_bottom = 188.0
 text = "Manage"
 
+[node name="TravelButton" type="Button" parent="Tower/FloorOptionsPanel"]
+layout_mode = 0
+offset_top = 206.5
+offset_right = 66.0
+offset_bottom = 237.5
+text = "TRAVEL"
+
 [node name="FloorInspectionMode" type="Node2D" parent="Tower"]
 visible = false
 
