@@ -7,10 +7,16 @@ const FLOOR_ASSIGN_COST = 300    # Expensive setup (when assigning purpose)
 @onready var floors_container = $Tower/FloorsContainer
 @onready var money_label = $Tower/MoneyLabel
 @export var max_capacity := 4
+@onready var building_container = $Tower/BuildingContainer
+@export var room_scene: PackedScene = preload("res://Scenes/Shared/RoomSquare.tscn")
+
 
 var selected_floor_index = -1  # no floor selected initially
 var current_manage_index: int = -1
 var selected_slot := -1
+var current_floor: String = ""
+
+
 
 func _ready():
 	close_requested.connect(_on_close_requested)
@@ -36,6 +42,31 @@ func _ready():
 	$Tower/FloorOptionsPanel/InspectButton.pressed.connect(_on_inspection_button_pressed)
 	$Tower/FloorOptionsPanel/ManageButton.pressed.connect(_on_manage_button_pressed)
 	$Tower/FloorInspectionMode.visible = false
+
+
+
+# -------------------------------
+# STEP 1: Populate building
+# -------------------------------
+func show_floor_editor(floor_index: int):
+	var floor = Global.building_floors[floor_index]
+	if floor["state"] != Global.FloorState.READY:
+		print("Floor not ready for editing!")
+		return
+
+	# Clear previous editor
+	clear_children($FloorPlanContainer)
+
+	# Instance FloorPlanEditor
+	var editor = preload("res://Scenes/Shared/FloorPlanEditor.tscn").instantiate()
+	$FloorPlanContainer.add_child(editor)
+	$FloorPlanContainer.visible = true
+
+	# Setup editor with floor data and room_scene
+	editor.setup(floor_index, floor)
+	editor.room_scene = room_scene  # optional, if you need to instance rooms later
+
+#-------------------------------------------
 
 func _on_close_requested():
 	queue_free()
@@ -121,8 +152,15 @@ func show_floor_assignment_options(floor: Dictionary, index: int) -> void:
 	$Tower/FloorOptionsPanel/FloorInfoLabel.text = "Floor %d - Current type: %s" % [index + 1, floor.get("purpose", "Empty")]
 	$Tower/FloorOptionsPanel/TrainingButton.disabled = false
 	$Tower/FloorOptionsPanel/WorkButton.disabled = false
-	$Tower/FloorOptionsPanel/ManageButton.disabled = floor.get("purpose", "") == ""
+
+	# Enable Manage only for READY floors
+	if floor["state"] == Global.FloorState.READY or floor["state"] == Global.FloorState.ASSIGNED:
+		$Tower/FloorOptionsPanel/ManageButton.disabled = false
+	else:
+		$Tower/FloorOptionsPanel/ManageButton.disabled = true
+
 	$Tower/FloorOptionsPanel/InspectButton.disabled = true
+
 
 func _on_training_button_pressed():
 	if selected_floor_index == -1:
@@ -174,14 +212,25 @@ func _on_inspection_button_pressed():
 		print("Floor not inspectable right now.")
 		return
 
-	# Replace the current scene instead of adding child
-	var scene_path = "res://Scenes/Floors/Floor%d.tscn" % (selected_floor_index + 1)
+	var scene_path: String
+
+	# -------------------------
+	# Tutorial floor logic
+	# -------------------------
+	if selected_floor_index == 0:  # Floor1 tutorial
+		scene_path = "res://Scenes/Floors/Floor1.tscn"  # custom tutorial hallway
+		Global.current_floor_scene = "floor1_tutorial"
+	else:  # Floor2 onward → dynamic system
+		scene_path = "res://Scenes/Shared/Hallway.tscn"
+		Global.current_floor_scene = "floor%d" % (selected_floor_index + 1)
+
+
 	print("🔍 Loading floor scene:", scene_path)
-	
 	var floor_scene = load(scene_path)
 	if floor_scene == null:
-		push_error("Failed to load floor scene: %s" % scene_path)
+		push_error("❌ Failed to load floor scene: %s" % scene_path)
 		return
+
 	get_tree().change_scene_to_packed(floor_scene)
 
 
@@ -220,32 +269,36 @@ func mark_floor_ready(floor_index: int):
 		push_error("❌ Invalid floor index passed to mark_floor_ready: %d" % floor_index)
 		return
 
+	var floor = Global.building_floors[floor_index]
+
+	# Set floor state to READY
 	Global.set_floor_state(floor_index, Global.FloorState.READY)
+
+	# Initialize rooms array if it doesn't exist
+	if not floor.has("rooms"):
+		floor["rooms"] = []  # stores {row, col} for placed rooms
+
+	Global.building_floors[floor_index] = floor
+
 	print("✅ Floor %d marked READY!" % (floor_index + 1))
 
+	# Hide inspection mode UI
 	$Tower/FloorInspectionMode.visible = false
 	floors_container.visible = true
 	money_label.visible = true
 	$Tower/FloorOptionsPanel.visible = true
 
+	# Update UI buttons and labels
 	update_floor_ui()
+	show_floor_assignment_options(Global.building_floors[floor_index], floor_index)
 
 
 
 func _on_manage_button_pressed():
-	# Close this Floorplan window
-	queue_free()
+	if selected_floor_index == -1:
+		return
+	show_floor_editor(selected_floor_index)
 
-	# Load FloorManagement window
-	var scene = load("res://Scenes/Maintenance/FloorManagement.tscn")
-	if scene:
-		var instance = scene.instantiate()
-		# Add to the same container your other subpages live in
-		var container = get_parent()  # usually $ContentContainer
-		container.add_child(instance)
-		# Center it if you want
-		if instance is Window:
-			instance.popup_centered_ratio(0.8)
 
 
 func _on_floor_selected(floor_index):

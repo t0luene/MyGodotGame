@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://beugvc1sa3mxp"]
+
+[node name="RoomSquare" type="Button"]
+custom_minimum_size = Vector2(60, 60)
+offset_right = 32.0
+offset_bottom = 32.0
+text = "+"
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 32.0
+offset_bottom = 32.0
+mouse_filter = 2
+color = Color(0.713, 0, 0.405, 0.231)

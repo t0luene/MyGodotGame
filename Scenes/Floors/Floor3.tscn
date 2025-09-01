@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://1iosqejex64k"]
+[gd_scene load_steps=3 format=3 uid="uid://1iosqejex64k"]
 
 [ext_resource type="Script" uid="uid://dnncfjpvpng4o" path="res://Scenes/Floors/Floor3.gd" id="1_gdb7r"]
 [ext_resource type="Texture2D" uid="uid://lvog4n1225g8" path="res://Assets/vignette.png" id="2_jubuv"]
-[ext_resource type="PackedScene" uid="uid://b8vp0njl5yov7" path="res://ChecklistUI.tscn" id="3_edab3"]
 
 [node name="Floor3" type="Node2D"]
 script = ExtResource("1_gdb7r")
@@ -25,6 +24,3 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("2_jubuv")
-
-[node name="ChecklistUI" parent="CanvasLayer" instance=ExtResource("3_edab3")]
-mouse_filter = 2

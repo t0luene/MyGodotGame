@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://jqahb1l10ind"]
+
+[ext_resource type="Script" uid="uid://co1qom7okcbih" path="res://Scenes/Shared/Floor.gd" id="1_j1nxk"]
+[ext_resource type="Texture2D" uid="uid://lvog4n1225g8" path="res://Assets/vignette.png" id="2_xsnb5"]
+
+[node name="Floor" type="Node2D"]
+script = ExtResource("1_j1nxk")
+
+[node name="SceneContainer" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -576.0
+offset_top = -324.0
+offset_right = 576.0
+offset_bottom = 324.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_xsnb5")

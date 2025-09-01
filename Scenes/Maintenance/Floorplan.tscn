@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://cc6awakg6tvwj"]
+[gd_scene load_steps=4 format=3 uid="uid://cc6awakg6tvwj"]
 
 [ext_resource type="Script" uid="uid://dbqv8878duaf0" path="res://Scenes/Maintenance/Floorplan.gd" id="1_8kv2h"]
 [ext_resource type="Texture2D" uid="uid://djndrtbre5qli" path="res://Assets/Tower.png" id="2_3x5gf"]
+[ext_resource type="PackedScene" uid="uid://c5dsfyg20elyc" path="res://Scenes/Shared/FloorPlanEditor.tscn" id="3_3x5gf"]
 
 [node name="Window" type="Window"]
+position = Vector2i(0, 36)
 script = ExtResource("1_8kv2h")
 
 [node name="Tower" type="Control" parent="."]
@@ -130,6 +132,17 @@ text = "Manage"
 
 [node name="FloorInspectionMode" type="Node2D" parent="Tower"]
 visible = false
+
+[node name="FloorPlanContainer" type="Control" parent="."]
+visible = false
+custom_minimum_size = Vector2(200, 600)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="FloorPlanEditor" parent="FloorPlanContainer" instance=ExtResource("3_3x5gf")]
+layout_mode = 1
 
 [connection signal="pressed" from="Tower/FloorOptionsPanel/TrainingButton" to="." method="_on_training_button_pressed"]
 [connection signal="pressed" from="Tower/FloorOptionsPanel/WorkButton" to="." method="_on_work_button_pressed"]

@@ -1,0 +1,76 @@
+[gd_scene load_steps=4 format=3 uid="uid://bi1v1ap66ydn1"]
+
+[ext_resource type="Script" uid="uid://clnvhnhiy3po6" path="res://Scenes/Shared/Hallway.gd" id="1_5wng4"]
+[ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Rooms/Hallway2.png" id="2_m0ahj"]
+[ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_k78d8"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_5wng4")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(544, 248)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_m0ahj")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Background"]
+position = Vector2(114, -68)
+
+[node name="DoorContainer" type="Node2D" parent="."]
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(551, 397)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="InspectElevatorButton" type="Button" parent="UI"]
+offset_left = 909.0
+offset_top = 597.0
+offset_right = 1041.0
+offset_bottom = 628.0
+text = "Inspect Elevator"
+
+[node name="ElevatorButton" type="Button" parent="UI"]
+offset_left = 909.0
+offset_top = 597.0
+offset_right = 1041.0
+offset_bottom = 628.0
+text = "Inspect Elevator"
+
+[node name="CrewStairsButton" type="Button" parent="UI"]
+offset_left = 124.0
+offset_top = 120.0
+offset_right = 234.0
+offset_bottom = 151.0
+text = "Crew Stairs"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1056.0
+offset_right = 1127.0
+offset_bottom = 23.0
+text = "Hallway"
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource("3_k78d8")]
+z_index = 20
+position = Vector2(466, 392)
+
+[node name="DoorPositions" type="Node2D" parent="."]
+
+[node name="Room1Pos" type="Marker2D" parent="DoorPositions"]
+position = Vector2(816, 353)
+
+[node name="Room2Pos" type="Marker2D" parent="DoorPositions"]
+position = Vector2(532, 219)
+
+[node name="Room3Pos" type="Marker2D" parent="DoorPositions"]
+position = Vector2(336, 117)
+
+[node name="Room4Pos" type="Marker2D" parent="DoorPositions"]
+position = Vector2(647, 546)
+
+[node name="Room5Pos" type="Marker2D" parent="DoorPositions"]
+position = Vector2(399, 408)
+
+[node name="Room6Pos" type="Marker2D" parent="DoorPositions"]
+position = Vector2(98, 275)
+
+[node name="Room7Pos" type="Marker2D" parent="DoorPositions"]

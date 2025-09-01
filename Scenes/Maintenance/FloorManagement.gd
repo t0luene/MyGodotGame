@@ -1,5 +1,5 @@
 # NEW SIMPLE JUST FLOOR LOGIC WORKING
-extends Window
+extends Popup
 
 @export var max_capacity: int = 6
 @onready var floor_dropdown: OptionButton = $Control/ManagePanel/LeftPanel/FloorDropdown

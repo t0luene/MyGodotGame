@@ -35,14 +35,15 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 
 [node name="Money" type="Label" parent="CanvasLayer"]
-offset_left = 1036.0
-offset_right = 1089.0
-offset_bottom = 23.0
+offset_left = 989.0
+offset_top = 66.0
+offset_right = 1042.0
+offset_bottom = 89.0
 text = "Money"
 
 [node name="Energy" type="Label" parent="CanvasLayer"]
-offset_left = 1036.0
-offset_top = 23.0
-offset_right = 1089.0
-offset_bottom = 46.0
+offset_left = 989.0
+offset_top = 89.0
+offset_right = 1042.0
+offset_bottom = 112.0
 text = "Energy"

@@ -2,7 +2,6 @@ extends Node2D
 
 @onready var player: CharacterBody2D = $Player
 @onready var entrance1: Area2D = $Entrance1  # leads to Room2A
-@onready var checklist_trigger: Area2D = $ChecklistTrigger
 @onready var crew_stairs_button = $UI/CrewStairsButton
 @onready var elevator_trigger: Area2D = $ElevatorTrigger  # proximity trigger for elevator
 
@@ -14,8 +13,6 @@ func _ready():
 		_on_entrance_entered(body, "res://Scenes/Rooms/Room2A.tscn")
 	)
 
-	# Checklist trigger
-	checklist_trigger.body_entered.connect(_on_checklist_trigger)
 
 	# Elevator trigger
 	elevator_trigger.body_entered.connect(_on_elevator_triggered)
@@ -43,16 +40,6 @@ func _on_entrance_entered(body, target_room: String) -> void:
 	# Load the room into the current floor
 	get_parent().get_parent().load_room(target_room)
 
-
-# -------------------------
-# Checklist trigger
-# -------------------------
-func _on_checklist_trigger(body):
-	if body.name != "Player":
-		return
-
-	# Mark hallway inspection done for Floor2
-	Global.mark_completed("floor2", "hallway2")
 
 
 # -------------------------

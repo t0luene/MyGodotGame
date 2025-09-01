@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5dsfyg20elyc"]
+
+[ext_resource type="Script" uid="uid://d1agbyim68re4" path="res://Scenes/Shared/FloorPlanEditor.gd" id="1_qklaw"]
+
+[node name="FloorPlanEditor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qklaw")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 7
+
+[node name="AddRoomButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 468.0
+offset_top = 190.0
+offset_right = 565.0
+offset_bottom = 221.0
+text = "ADD ROOM"
