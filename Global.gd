@@ -187,6 +187,7 @@ var current_floor_scene: String = ""
 var building_floors: Array = []
 enum FloorState { LOCKED, AVAILABLE, READY, ASSIGNED }
 var next_room_to_load: String = ""
+var current_inspection_floor: int = -1
 
 func set_floor_state(floor_index: int, new_state: int):
 	if floor_index < 0 or floor_index >= building_floors.size():

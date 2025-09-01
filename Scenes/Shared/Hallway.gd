@@ -10,27 +10,44 @@ signal crew_stairs_pressed()
 signal elevator_pressed()
 
 var connected_rooms: Array[String] = []
+@export var floor_index: int = -1  # must be set when you spawn the hallway
+
+
+func set_floor_index(idx: int) -> void:
+	floor_index = idx
+	print("🔹 Hallway floor_index set to:", floor_index)
 
 func _ready():
 	print("✅ Hallway ready")
+	floor_index = Global.current_inspection_floor if "current_inspection_floor" in Global else -1
+	print("Hallway ready with floor_index:", floor_index)
 
-	# Connect buttons
+	# Debug floor_index
+	print("🔹 Hallway floor_index:", floor_index)
+	if floor_index == -1:
+		push_warning("⚠ floor_index is -1! Crew button won't mark floor READY.")
+
+	# Connect crew button safely
 	if crew_stairs_button:
-		crew_stairs_button.pressed.connect(_on_crew_stairs_pressed)
+		crew_stairs_button.pressed.connect(Callable(self, "_on_crew_stairs_pressed"))
 	else:
 		push_error("❌ CrewStairsButton not found!")
 
+	# Connect elevator button safely
 	if elevator_button:
-		elevator_button.pressed.connect(_on_elevator_pressed)
+		elevator_button.pressed.connect(Callable(self, "_on_elevator_pressed"))
 	else:
 		push_error("❌ ElevatorButton not found!")
 
-	Fade.fade_in(0.5)
+	# Fade in
+	if Fade.has_method("fade_in"):
+		Fade.fade_in(0.5)
 
 	# Setup test doors
 	setup_hallway([
 		"res://Scenes/Rooms/RoomA.tscn",
 	])
+
 
 # -------------------------
 # Setup hallway with a list of rooms
@@ -99,22 +116,28 @@ func _on_door_pressed(room_path: String):
 # -------------------------
 # Crew stairs button
 # -------------------------
-func _on_crew_stairs_pressed():
-	print("🔹 CrewStairsButton pressed")
+# HallwayDynamic.gd
 
-	# Mark Floor1 READY in Global
-	Global.ensure_building_floors_initialized()
-	var floor = Global.building_floors[0]
-	floor["state"] = Global.FloorState.READY
-	Global.building_floors[0] = floor
-	print("✅ Floor1 marked READY via Global")
+func _on_crew_stairs_pressed():
+	print("🔹 CrewStairsButton pressed for floor_index:", floor_index)
+
+	# Safety check
+	if floor_index < 0 or floor_index >= Global.building_floors.size():
+		push_error("❌ Invalid floor_index! Cannot mark floor READY.")
+		return
+
+	# Mark floor READY
+	Global.set_floor_state(floor_index, Global.FloorState.READY)
+	print("✅ Floor %d marked READY via Global" % (floor_index + 1))
 
 	# Fade out
 	if Fade.has_method("fade_out"):
+		print("🎨 Starting fade out")
 		Fade.fade_out(0.5)
 		await get_tree().create_timer(0.5).timeout
+		print("🎨 Fade out complete")
 
-	# Go straight back to Maintenance
+	# Return to Maintenance
 	var maintenance_scene = load("res://Scenes/Maintenance/Maintenance.tscn")
 	if not maintenance_scene:
 		push_error("❌ Failed to load Maintenance.tscn")

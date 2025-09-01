@@ -42,7 +42,7 @@ func _ready():
 	$Tower/FloorOptionsPanel/InspectButton.pressed.connect(_on_inspection_button_pressed)
 	$Tower/FloorOptionsPanel/ManageButton.pressed.connect(_on_manage_button_pressed)
 	$Tower/FloorInspectionMode.visible = false
-
+	
 
 
 # -------------------------------
@@ -224,14 +224,18 @@ func _on_inspection_button_pressed():
 		scene_path = "res://Scenes/Shared/Hallway.tscn"
 		Global.current_floor_scene = "floor%d" % (selected_floor_index + 1)
 
-
 	print("🔍 Loading floor scene:", scene_path)
 	var floor_scene = load(scene_path)
 	if floor_scene == null:
 		push_error("❌ Failed to load floor scene: %s" % scene_path)
 		return
 
+	# ✅ Store floor_index globally for the new scene to read
+	Global.current_inspection_floor = selected_floor_index
+
+	# ✅ Replace current scene entirely
 	get_tree().change_scene_to_packed(floor_scene)
+
 
 
 
@@ -321,3 +325,37 @@ func print_visibility(node: Node):
 	for child in node.get_children():
 		if child is Node:
 			print_visibility(child)
+# Called whenever a floor's state changes
+func _on_floor_state_changed(floor_index: int):
+	print("🌐 Floorplan: floor_state_changed received for floor", floor_index)
+	if floor_index < 0 or floor_index >= Global.building_floors.size():
+		push_error("❌ Invalid floor_index received in _on_floor_state_changed: %d" % floor_index)
+		return
+	_refresh_floor_buttons()
+
+# Refresh the UI for all floors based on Global.building_floors
+func _refresh_floor_buttons():
+	print("🌐 Floorplan: refreshing all floor buttons")
+	for i in range(Global.building_floors.size()):
+		var floor = Global.building_floors[i]
+		var button_name = "FloorButton%d" % (i + 1)
+		var btn = $FloorButtons.get_node_or_null(button_name)
+		if not btn:
+			print("⚠ Floorplan: button not found:", button_name)
+			continue
+
+		match floor["state"]:
+			Global.FloorState.LOCKED:
+				btn.disabled = true
+				btn.text = "Locked"
+			Global.FloorState.AVAILABLE:
+				btn.disabled = false
+				btn.text = "Inspect"
+			Global.FloorState.READY:
+				btn.disabled = false
+				btn.text = "Ready"
+			Global.FloorState.ASSIGNED:
+				btn.disabled = false
+				btn.text = "Assigned"
+
+		print("  🔹 Button", button_name, "set to", btn.text, "(state =", floor["state"], ")")

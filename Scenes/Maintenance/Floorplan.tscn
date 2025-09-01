@@ -6,6 +6,7 @@
 
 [node name="Window" type="Window"]
 position = Vector2i(0, 36)
+size = Vector2i(1000, 650)
 script = ExtResource("1_8kv2h")
 
 [node name="Tower" type="Control" parent="."]
@@ -27,7 +28,7 @@ offset_top = 21.5
 offset_right = 404.0
 offset_bottom = 472.5
 
-[node name="Floor14" type="Button" parent="Tower/FloorsContainer"]
+[node name="Floor13" type="Button" parent="Tower/FloorsContainer"]
 layout_mode = 2
 text = "FLOOR13"
 
