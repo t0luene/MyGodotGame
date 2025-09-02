@@ -15,7 +15,7 @@ func _ready():
 	if exit_to_hallway:
 		exit_to_hallway.body_entered.connect(_on_exit_entered)
 
-	Fade.fade_in(0.5)
+	#Fade.fade_in(0.5)
 
 func _on_exit_entered(body):
 	if body.name != "Player":
@@ -23,7 +23,7 @@ func _on_exit_entered(body):
 
 	print("🚶 Player exited room -> going back to hallway")
 
-	Fade.fade_out(0.5)
+	#Fade.fade_out(0.5)
 	await get_tree().create_timer(0.5).timeout
 
 	var hallway_scene = load("res://Scenes/Shared/Hallway.tscn")

@@ -13,7 +13,7 @@ const Employee = preload("res://Scenes/Shared/Employee.gd")
 const EmployeeGenerator = preload("res://Scenes/Globals/EmployeeGenerator.gd")
 
 # --------------------------- Player / Business State 💰🪫 ---------------------------
-var money: int = 20
+var money: int = 200
 var energy: int = 5
 var stress: int = 0
 var reputation: int = 0
@@ -202,25 +202,20 @@ func initialize_floor_ids():
 		if not floor.has("floor_id"):
 			floor["floor_id"] = "floor_%d" % floor_index
 
-		# Initialize rooms array if missing
-		if not floor.has("rooms"):
-			floor["rooms"] = []
-			for room_slot in range(7):
-				var room_id = "%s_room_%d" % [floor["floor_id"], room_slot + 1]
-				floor["rooms"].append({
-					"id": room_id, 
-					"scene": "res://Scenes/Rooms/RoomA.tscn",  # default room scene
-					"row": 0,                                     # default row
-					"col": room_slot                              # default column
-				})
-
-		# Build room_ids shortcut list
-		if not floor.has("room_ids"):
-			floor["room_ids"] = []
-			for room in floor["rooms"]:
-				floor["room_ids"].append(room["id"])
+		# Only add 1 default room if none exist
+		if not floor.has("rooms") or floor["rooms"].size() == 0:
+			var room_id = "%s_room_1" % floor["floor_id"]
+			floor["rooms"] = [{
+				"id": room_id,
+				"scene": "res://Scenes/Rooms/RoomA.tscn",
+				"row": 0,
+				"col": 0
+			}]
+			floor["room_ids"] = [room_id]
+			floor["next_room_num"] = 2
 
 		building_floors[floor_index] = floor
+
 
 # --- Add a New Room to a Floor ---
 func add_room_to_floor(floor_index: int, scene_path: String, row: int, col: int):
@@ -312,7 +307,7 @@ func ensure_building_floors_initialized():
 			# Initialize rooms array with default room
 			floor["rooms"] = [{
 				"id": "floor_%d_room_1" % i,
-				"scene": "res://Scenes/Shared/RoomSquare.tscn",
+				"scene": "res://Scenes/Rooms/RoomA.tscn",
 				"row": 0,
 				"col": 0
 			}]

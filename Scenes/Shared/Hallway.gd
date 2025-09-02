@@ -39,7 +39,7 @@ func _ready():
 			room_paths.append(str(room_dict["scene"]))
 	else:
 		# Default single room to ensure at least one door
-		room_paths.append("res://Scenes/Shared/RoomSquare.tscn")
+		room_paths.append("res://Scenes/Rooms/RoomA.tscn")
 
 	print("📦 Floor %d has %d room(s):" % [floor_index + 1, room_paths.size()])
 	for r in room_paths:
@@ -141,7 +141,6 @@ func _on_door_pressed(room_path: String):
 		return
 
 	var room_instance = room_scene.instantiate()
-
 	var floor_data = Global.building_floors[floor_index]
 
 	if not floor_data.has("floor_id"):
@@ -153,15 +152,27 @@ func _on_door_pressed(room_path: String):
 	if not floor_data.has("room_ids"):
 		floor_data["room_ids"] = []
 
-	var room_index = floor_data["rooms"].find(room_path)
+	# Find room index (handle dictionary vs string case)
+	var room_index := -1
+	for i in range(floor_data["rooms"].size()):
+		var entry = floor_data["rooms"][i]
+		if typeof(entry) == TYPE_STRING and entry == room_path:
+			room_index = i
+			break
+		elif typeof(entry) == TYPE_DICTIONARY and entry.has("scene") and entry["scene"] == room_path:
+			room_index = i
+			break
 
+	# Add if not found
 	if room_index == -1:
-		floor_data["rooms"].append(room_path)
-		room_index = floor_data["rooms"].size() - 1   # recompute the correct index
-		print("➕ Added new room to floor %d: %s" % [floor_index + 1, room_path])
+		var new_entry = {"scene": room_path}
+		floor_data["rooms"].append(new_entry)
+		room_index = floor_data["rooms"].size() - 1
+		print("➕ Added new room entry to floor %d: %s" % [floor_index + 1, room_path])
 
-	if room_index >= floor_data["room_ids"].size():
-		floor_data["room_ids"].append("%s_room_%d" % [floor_data["floor_id"], room_index + 1])
+	# Ensure room_ids is long enough
+	while floor_data["room_ids"].size() <= room_index:
+		floor_data["room_ids"].append("%s_room_%d" % [floor_data["floor_id"], floor_data["room_ids"].size() + 1])
 
 	Global.building_floors[floor_index] = floor_data
 
@@ -170,6 +181,7 @@ func _on_door_pressed(room_path: String):
 	print("📦 Floor %d now has %d room(s)" % [floor_index + 1, floor_data["rooms"].size()])
 
 	call_deferred("_switch_to_room", room_instance)
+
 
 
 func _switch_to_room(room_instance: Node2D):

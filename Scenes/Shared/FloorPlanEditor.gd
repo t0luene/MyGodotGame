@@ -74,46 +74,53 @@ func setup(floor_idx, data):
 
 # --------------------- Load existing rooms ---------------------
 func _load_rooms():
-	if floor_data == null:
-		return
+	if floor_index == -1:
+		print("🔹 _load_rooms() in building-wide manage mode")
+		for f_idx in range(Global.building_floors.size()):
+			var floor = Global.building_floors[f_idx]
+			if not floor.has("rooms"):
+				continue
+			print("   Floor %d rooms from Global:" % (f_idx + 1))
+			for cell in floor["rooms"]:
+				if typeof(cell) == TYPE_DICTIONARY and cell.has("row") and cell.has("col"):
+					_fill_slot(cell["row"], cell["col"])
+					print("      Room ID=%s row=%d col=%d" % [cell["id"], cell["row"], cell["col"]])
+				else:
+					push_error("Invalid room entry in floor %d: %s" % [f_idx, cell])
+	else:
+		print("🔹 _load_rooms() for floor_index:%d" % floor_index)
+		if floor_data == null:
+			return
 
-	var default_scene_path = room_scene.resource_path if room_scene else "res://Scenes/Shared/RoomSquare.tscn"
+		if not floor_data.has("rooms") or floor_data["rooms"].size() == 0:
+			var default_scene_path = room_scene.resource_path if room_scene else "res://Scenes/Rooms/RoomA.tscn"
+			var default_room = {
+				"id": "floor_%d_room_1" % floor_index,
+				"scene": default_scene_path,
+				"row": 0,
+				"col": MIDDLE_COL
+			}
+			floor_data["rooms"] = [default_room]
+			if floor_index >= 0 and floor_index < Global.building_floors.size():
+				Global.building_floors[floor_index] = floor_data
 
-	# If no rooms exist, create default room in middle column
-	if not floor_data.has("rooms") or floor_data["rooms"].size() == 0:
-		var default_room = {
-			"id": "floor_%d_room_1" % floor_index,
-			"scene": default_scene_path,
-			"row": 0,
-			"col": MIDDLE_COL
-		}
-		floor_data["rooms"] = [default_room]
-		if floor_index >= 0 and floor_index < Global.building_floors.size():
-			Global.building_floors[floor_index] = floor_data
-		elif floor_index == -1:
-			# Building-wide manage mode: assume floor_data is an array of floors
-			for i in range(Global.building_floors.size()):
-				if not "rooms" in Global.building_floors[i]:
-					Global.building_floors[i]["rooms"] = []
-
-	# Now fill the slots for existing rooms
-	for cell in floor_data["rooms"]:
-		if typeof(cell) == TYPE_DICTIONARY and cell.has("row") and cell.has("col"):
-			_fill_slot(cell["row"], cell["col"])
-		else:
-			push_error("Invalid room entry in floor_data['rooms']: %s" % cell)
+		print("   Rooms in UI for floor %d:" % floor_index)
+		for cell in floor_data["rooms"]:
+			if typeof(cell) == TYPE_DICTIONARY and cell.has("row") and cell.has("col"):
+				_fill_slot(cell["row"], cell["col"])
+				print("      Room ID=%s row=%d col=%d" % [cell["id"], cell["row"], cell["col"]])
+			else:
+				push_error("Invalid room entry in floor_data['rooms']: %s" % cell)
 
 
 # --------------------- Place a new room ------------------------
 func _place_room(row: int, col: int):
-	var scene_path = room_scene.resource_path if room_scene else "res://Scenes/Shared/RoomSquare.tscn"
+	var scene_path = room_scene.resource_path if room_scene else "res://Scenes/Rooms/RoomA.tscn"
 
 	if building_manage_mode:
-		# Map row to target floor
 		var target_floor_index = row_to_floor[row] if row < row_to_floor.size() else 0
 		var floor = Global.building_floors[target_floor_index]
 
-		# Only allow adding if floor is READY
 		if floor["state"] != Global.FloorState.READY:
 			print("⚠ Cannot add room to Floor %d: not READY" % (target_floor_index + 1))
 			return
@@ -126,17 +133,28 @@ func _place_room(row: int, col: int):
 		floor["rooms"].append(new_room)
 		Global.building_floors[target_floor_index] = floor
 
-		print("🟢 Added room to Floor %d with ID %s at row %d, col %d. Total rooms now: %d"
-			% [target_floor_index + 1, room_id, row, col, floor["rooms"].size()])
+		print("🟢 Added room to Floor %d with ID %s at row %d, col %d" % [target_floor_index + 1, room_id, row, col])
+		print("   Current rooms on this floor:")
+		for r in floor["rooms"]:
+			print("      %s at row %d, col %d" % [r["id"], r["row"], r["col"]])
 	else:
 		_fill_slot(row, col)
+
 		if floor_data == null:
+			print("⚠ floor_data is null, cannot add room.")
 			return
 
 		Global.add_room_to_floor(floor_index, scene_path, row, col)
 		floor_data = Global.building_floors[floor_index]
 
+		print("🟢 Added room to Floor %d (floor_index) via floor_data with ID %s at row %d, col %d"
+			% [floor_index + 1, "new_room?", row, col])
+		print("   Updated floor_data['rooms'] now has %d entries" % floor_data["rooms"].size())
+		for r in floor_data["rooms"]:
+			print("      %s at row %d, col %d" % [r["id"], r["row"], r["col"]])
+
 	_fill_slot(row, col)
+
 
 
 # --------------------- Button & Hover Handling -----------------

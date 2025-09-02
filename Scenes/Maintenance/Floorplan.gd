@@ -8,7 +8,7 @@ const FLOOR_ASSIGN_COST = 300    # Expensive setup (when assigning purpose)
 @onready var money_label = $Tower/MoneyLabel
 @export var max_capacity := 4
 @onready var building_container = $Tower/BuildingContainer
-@export var room_scene: PackedScene = preload("res://Scenes/Shared/RoomSquare.tscn")
+@export var room_scene: PackedScene = preload("res://Scenes/Rooms/RoomA.tscn")
 @onready var travel_button = $Tower/FloorOptionsPanel/TravelButton
 @export var building_manage_mode := false  # default false, true for whole-building Manage
 
