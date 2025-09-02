@@ -10,57 +10,49 @@ signal entrance_pressed(target_room_path: String)
 signal crew_stairs_pressed()
 signal elevator_pressed()
 
-var connected_rooms: Array[String] = []
+
+var connected_rooms: Array[String] = []  # <--- ensure typed as Array[String]
 
 
 func set_floor_index(idx: int) -> void:
 	floor_index = idx
 	print("🔹 Hallway floor_index set to:", floor_index)
 
+
 func _ready():
 	print("✅ Hallway ready")
 	floor_index = Global.current_inspection_floor if "current_inspection_floor" in Global else -1
 	print("Hallway ready with floor_index:", floor_index)
-
-	# Debug floor_index
-	print("🔹 Hallway floor_index:", floor_index)
-	if floor_index == -1:
-		push_warning("⚠ floor_index is -1! Crew button won't mark floor READY.")
-
-	# Connect crew button safely
 	if crew_stairs_button:
 		crew_stairs_button.pressed.connect(Callable(self, "_on_crew_stairs_pressed"))
+
+	if floor_index < 0 or floor_index >= Global.building_floors.size():
+		push_error("⚠ Invalid floor_index in Hallway _ready(): %d" % floor_index)
+		return
+
+	var floor_data = Global.building_floors[floor_index]
+	var room_paths: Array[String] = []
+
+	# Add default room if none exist
+	if floor_data.has("rooms") and floor_data["rooms"].size() > 0:
+		for room_dict in floor_data["rooms"]:
+			room_paths.append(str(room_dict["scene"]))
 	else:
-		push_error("❌ CrewStairsButton not found!")
+		# Default single room to ensure at least one door
+		room_paths.append("res://Scenes/Shared/RoomSquare.tscn")
 
-	# Connect elevator button safely
-	if elevator_button:
-		elevator_button.pressed.connect(Callable(self, "_on_elevator_pressed"))
-	else:
-		push_error("❌ ElevatorButton not found!")
+	print("📦 Floor %d has %d room(s):" % [floor_index + 1, room_paths.size()])
+	for r in room_paths:
+		print("   Room Scene:", r)
+		
 
-	# Fade in
-	if Fade.has_method("fade_in"):
-		Fade.fade_in(0.5)
+	setup_hallway(room_paths)
 
-	# Setup test doors
-	setup_hallway([
-		"res://Scenes/Rooms/RoomA.tscn",
-	])
-
-# -------------------------
-# Setup hallway with a list of rooms
-# -------------------------
-func setup_hallway(rooms: Array[String]):
-	print("🛠 setup_hallway called with:", rooms)
-	connected_rooms = rooms
-	_generate_doors()
-	_update_background()
 
 # -------------------------
 # Generate doors dynamically
 # -------------------------
-func _generate_doors():
+func _generate_doors() -> void:
 	print("🔧 Generating doors for rooms:", connected_rooms)
 
 	# Clear old doors
@@ -69,7 +61,7 @@ func _generate_doors():
 	print("🧹 Cleared old doors")
 
 	for i in range(connected_rooms.size()):
-		var room_path = connected_rooms[i]
+		var room_path: String = connected_rooms[i]
 		print("➡ Creating door for:", room_path)
 
 		var door_scene = preload("res://Scenes/Shared/Door.tscn")
@@ -77,7 +69,6 @@ func _generate_doors():
 		door_container.add_child(door_instance)
 		print("✅ Door instance added")
 
-		# Position the door at placeholder
 		var placeholder_name = "Room%dPos" % (i + 1)
 		var placeholder = $DoorPositions.get_node_or_null(placeholder_name)
 		if placeholder:
@@ -86,11 +77,57 @@ func _generate_doors():
 		else:
 			push_warning("⚠ Door placeholder '%s' not found!" % placeholder_name)
 
-		# Connect signal
 		door_instance.pressed.connect(func():
 			print("📢 Door pressed signal received for:", room_path)
-			_on_door_pressed(room_path)
-		)
+			_on_door_pressed(room_path))
+
+	# Now update background once
+	_update_background()
+	
+
+# -------------------------
+# Setup hallway with a list of rooms
+# -------------------------
+func setup_hallway(rooms: Array) -> void:
+	# Convert rooms to Array[String] if they are not already
+	connected_rooms.clear()
+	for r in rooms:
+		connected_rooms.append(str(r))
+
+	print("🛠 setup_hallway called with:", connected_rooms)
+	_generate_doors()  # background update happens inside _generate_doors()
+
+	
+	
+# -------------------------
+# Update background based on doors
+# -------------------------
+func _update_background() -> void:
+	print("🖼 Updating background for door count:", connected_rooms.size())
+	match connected_rooms.size():
+		1,2,3,4,5,6,7:
+			$Background.texture = preload("res://Assets/Rooms/Hallway2.png")
+			
+#-----ROOMS------
+
+func _print_floor_rooms():
+	if floor_index < 0 or floor_index >= Global.building_floors.size():
+		print("⚠ Invalid floor_index:", floor_index)
+		return
+
+	var floor = Global.building_floors[floor_index]
+	if floor.has("rooms") and floor["rooms"] is Array:
+		print("📦 Floor %d has %d room(s):" % [floor_index + 1, floor["rooms"].size()])
+		for room_dict in floor["rooms"]:
+			print("   Room ID:", room_dict.get("id", "N/A"),
+				  "Scene:", room_dict.get("scene", "N/A"),
+				  "Row:", room_dict.get("row", "N/A"),
+				  "Col:", room_dict.get("col", "N/A"))
+	else:
+		print("📦 Floor %d has no rooms!" % (floor_index + 1))
+
+
+
 
 # -------------------------
 # Handle door press
@@ -117,18 +154,23 @@ func _on_door_pressed(room_path: String):
 		floor_data["room_ids"] = []
 
 	var room_index = floor_data["rooms"].find(room_path)
+
 	if room_index == -1:
 		floor_data["rooms"].append(room_path)
+		room_index = floor_data["rooms"].size() - 1   # recompute the correct index
+		print("➕ Added new room to floor %d: %s" % [floor_index + 1, room_path])
 
-		if room_index >= floor_data["room_ids"].size():
-			floor_data["room_ids"].append("%s_room_%d" % [floor_data["floor_id"], room_index + 1])
+	if room_index >= floor_data["room_ids"].size():
+		floor_data["room_ids"].append("%s_room_%d" % [floor_data["floor_id"], room_index + 1])
 
 	Global.building_floors[floor_index] = floor_data
 
 	room_instance.room_id = floor_data["room_ids"][room_index]
 	print("🚀 Room instance ID:", room_instance.room_id)
+	print("📦 Floor %d now has %d room(s)" % [floor_index + 1, floor_data["rooms"].size()])
 
 	call_deferred("_switch_to_room", room_instance)
+
 
 func _switch_to_room(room_instance: Node2D):
 	var current = get_tree().current_scene
@@ -178,12 +220,3 @@ func _on_crew_stairs_pressed():
 func _on_elevator_pressed():
 	print("🔹 ElevatorButton pressed")
 	emit_signal("elevator_pressed")
-
-# -------------------------
-# Background swap
-# -------------------------
-func _update_background():
-	print("🖼 Updating background for door count:", connected_rooms.size())
-	match connected_rooms.size():
-		1,2,3,4,5,6,7:
-			$Background.texture = preload("res://Assets/Rooms/Hallway2.png")

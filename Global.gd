@@ -191,6 +191,7 @@ var current_inspection_floor: int = -1
 var persistent_hallways: Dictionary = {}  # floor_index -> Hallway instance
 var persistent_rooms: Dictionary = {}     # room_id -> Room instance
 
+# --- Initialize Floors with Permanent Room IDs ---
 func initialize_floor_ids():
 	while building_floors.size() < 13:
 		building_floors.append({})
@@ -201,21 +202,68 @@ func initialize_floor_ids():
 		if not floor.has("floor_id"):
 			floor["floor_id"] = "floor_%d" % floor_index
 
-		if not floor.has("room_ids"):
-			floor["room_ids"] = []
-			for room_slot in range(7):
-				floor["room_ids"].append("%s_room_%d" % [floor["floor_id"], room_slot + 1])
-
+		# Initialize rooms array if missing
 		if not floor.has("rooms"):
 			floor["rooms"] = []
+			for room_slot in range(7):
+				var room_id = "%s_room_%d" % [floor["floor_id"], room_slot + 1]
+				floor["rooms"].append({
+					"id": room_id, 
+					"scene": "res://Scenes/Rooms/RoomA.tscn",  # default room scene
+					"row": 0,                                     # default row
+					"col": room_slot                              # default column
+				})
 
-		if floor["rooms"].empty():
-			floor["rooms"].append("res://Scenes/Rooms/RoomA.tscn")
+		# Build room_ids shortcut list
+		if not floor.has("room_ids"):
+			floor["room_ids"] = []
+			for room in floor["rooms"]:
+				floor["room_ids"].append(room["id"])
 
 		building_floors[floor_index] = floor
 
+# --- Add a New Room to a Floor ---
+func add_room_to_floor(floor_index: int, scene_path: String, row: int, col: int):
+	if floor_index < 0 or floor_index >= building_floors.size():
+		push_error("Invalid floor_index in add_room_to_floor: %d" % floor_index)
+		return
 
-		
+	var floor = building_floors[floor_index]
+
+	if not floor.has("floor_id"):
+		floor["floor_id"] = "floor_%d" % floor_index
+
+	if not floor.has("rooms"):
+		floor["rooms"] = []
+
+	if not floor.has("room_ids"):
+		floor["room_ids"] = []
+
+	if not floor.has("next_room_num"):
+		floor["next_room_num"] = floor["rooms"].size() + 1
+
+	var next_room_num = floor["next_room_num"]
+	var room_id = "%s_room_%d" % [floor["floor_id"], next_room_num]
+	floor["next_room_num"] = next_room_num + 1
+
+	var room_data = {
+		"id": room_id,
+		"scene": scene_path,
+		"row": row,
+		"col": col
+	}
+
+	floor["rooms"].append(room_data)
+	floor["room_ids"].append(room_id)
+
+	building_floors[floor_index] = floor
+
+	print("🟢 Added room to Floor %d with ID %s at row %d, col %d. Total rooms now: %d" %
+		  [floor_index + 1, room_id, row, col, floor["rooms"].size()])
+
+
+#-------------------
+
 	
 func _unlock_floor(floor_index: int) -> void:
 	if floor_index < 0 or floor_index >= building_floors.size():
@@ -252,9 +300,29 @@ func set_floor_state(floor_index: int, new_state: int):
 	building_floors[floor_index]["state"] = new_state
 	emit_signal("floor_state_changed", floor_index)
 
+# Global.gd
 func ensure_building_floors_initialized():
 	if building_floors.size() == 0:
-		init_building_floors(13)
+		init_building_floors(13)  # your total floor count
+
+	# Ensure every floor has at least 1 default room
+	for i in range(building_floors.size()):
+		var floor = building_floors[i]
+		if not floor.has("rooms") or floor["rooms"].size() == 0:
+			# Initialize rooms array with default room
+			floor["rooms"] = [{
+				"id": "floor_%d_room_1" % i,
+				"scene": "res://Scenes/Shared/RoomSquare.tscn",
+				"row": 0,
+				"col": 0
+			}]
+			# Initialize room_ids
+			floor["room_ids"] = ["floor_%d_room_1" % i]
+			# Ensure floor_id exists
+			if not floor.has("floor_id"):
+				floor["floor_id"] = "floor_%d" % i
+		building_floors[i] = floor
+
 
 func set_floor(floor_name: String):
 	current_floor_scene = floor_name

@@ -10,6 +10,7 @@ const FLOOR_ASSIGN_COST = 300    # Expensive setup (when assigning purpose)
 @onready var building_container = $Tower/BuildingContainer
 @export var room_scene: PackedScene = preload("res://Scenes/Shared/RoomSquare.tscn")
 @onready var travel_button = $Tower/FloorOptionsPanel/TravelButton
+@export var building_manage_mode := false  # default false, true for whole-building Manage
 
 
 var selected_floor_index = -1  # no floor selected initially
@@ -30,25 +31,34 @@ func _ready():
 	travel_button.visible = true
 	travel_button.disabled = false
 
-
+	# Initialize selection variables
 	selected_floor_index = -1
 	current_manage_index = -1
 	selected_slot = -1
 	inspected_floor_index = Global.current_inspection_floor if "current_inspection_floor" in Global else -1
 
+	# Show FloorOptionsPanel and enable Manage button by default
 	$Tower/FloorOptionsPanel.visible = true
-	_disable_floor_option_buttons()
-	$Tower/FloorOptionsPanel/FloorInfoLabel.text = "Select a floor"
+	$Tower/FloorOptionsPanel/ManageButton.disabled = false  # <-- ENABLE Manage immediately
+	$Tower/FloorOptionsPanel/FloorInfoLabel.text = "Manage Building"
+
+	# Other buttons start disabled
+	$Tower/FloorOptionsPanel/TrainingButton.disabled = true
+	$Tower/FloorOptionsPanel/WorkButton.disabled = true
+	$Tower/FloorOptionsPanel/InspectButton.disabled = true
 
 	update_money_label()
 	update_floor_ui()
 
+	# Connect signals
 	$Tower/FloorOptionsPanel/TrainingButton.pressed.connect(_on_training_button_pressed)
 	$Tower/FloorOptionsPanel/WorkButton.pressed.connect(_on_work_button_pressed)
 	$Tower/FloorOptionsPanel/InspectButton.pressed.connect(_on_inspection_button_pressed)
 	$Tower/FloorOptionsPanel/ManageButton.pressed.connect(_on_manage_button_pressed)
+
 	$Tower/FloorInspectionMode.visible = false
-	
+
+
 #-----TRAVEL-----
 
 func _on_travel_button_pressed() -> void:
@@ -250,13 +260,11 @@ func _on_inspection_button_pressed():
 
 	var scene_path: String
 
-	# -------------------------
 	# Tutorial floor logic
-	# -------------------------
 	if selected_floor_index == 0:  # Floor1 tutorial
 		scene_path = "res://Scenes/Floors/Floor1.tscn"  # custom tutorial hallway
 		Global.current_floor_scene = "floor1_tutorial"
-	else:  # Floor2 onward → dynamic system
+	else:  # Floor2 onward → dynamic hallway
 		scene_path = "res://Scenes/Shared/Hallway.tscn"
 		Global.current_floor_scene = "floor%d" % (selected_floor_index + 1)
 
@@ -266,11 +274,10 @@ func _on_inspection_button_pressed():
 		push_error("❌ Failed to load floor scene: %s" % scene_path)
 		return
 
-	# ✅ Store floor_index globally for the new scene to read
 	Global.current_inspection_floor = selected_floor_index
 
-	# ✅ Replace current scene entirely
 	get_tree().change_scene_to_packed(floor_scene)
+
 
 
 
@@ -315,18 +322,19 @@ func mark_floor_ready(floor_index: int):
 	Global.set_floor_state(floor_index, Global.FloorState.READY)
 
 	# Initialize rooms array if it doesn't exist
-	if not floor.has("rooms"):
-		floor["rooms"] = []  # stores room scene paths for this floor
+	if not floor.has("rooms") or !(floor["rooms"] is Array):
+		floor["rooms"] = []
 
 	# Assign persistent unique IDs for this floor and its rooms
 	if not floor.has("floor_id"):
 		floor["floor_id"] = "floor_%d" % floor_index
 
-	if not floor.has("room_ids"):
+	if not floor.has("room_ids") or !(floor["room_ids"] is Array):
 		floor["room_ids"] = []
-		for room_path in floor["rooms"]:
-			var unique_id = "%s_%s" % [floor["floor_id"], room_path.get_file().get_basename()]
-			floor["room_ids"].append(unique_id)
+		for room_dict in floor["rooms"]:
+			if room_dict.has("scene"):
+				var unique_id = "%s_%s" % [floor["floor_id"], room_dict["scene"].get_file().get_basename()]
+				floor["room_ids"].append(unique_id)
 
 	Global.building_floors[floor_index] = floor
 
@@ -344,11 +352,15 @@ func mark_floor_ready(floor_index: int):
 	show_floor_assignment_options(floor, floor_index)
 
 
+ 
 
 func _on_manage_button_pressed():
-	if selected_floor_index == -1:
-		return
-	show_floor_editor(selected_floor_index)
+	var editor = preload("res://Scenes/Shared/FloorPlanEditor.tscn").instantiate()
+	clear_children($FloorPlanContainer)
+	$FloorPlanContainer.add_child(editor)
+	$FloorPlanContainer.visible = true
+	editor.setup(-1, Global.building_floors)  
+	editor.room_scene = room_scene
 
 
 
