@@ -1,4 +1,4 @@
-extends Window
+extends Popup
 
 @onready var cards_container = $ScrollContainer/CardsContainer
 @onready var description_panel = $DescriptionPanel

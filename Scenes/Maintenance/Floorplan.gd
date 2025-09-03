@@ -1,4 +1,4 @@
-extends Window
+extends Popup
 
 const FLOOR_UNLOCK_COST = 5      # Cheap unlock (just access)
 const FLOOR_ASSIGN_COST = 300    # Expensive setup (when assigning purpose)

@@ -14,17 +14,17 @@ var current_quest_id: int = 0
 # Quest definitions
 var quests = {
 	0: {
-		"name": "Walk to point",
+		"name": "Q0 Walk to point",
 		"requirements": [{"type": "walk_to_trigger", "completed": false}],
 		"reward_claimed": false
 	},
 	1: {
-		"name": "Talk to boss",
+		"name": "Q1 Talk to boss",
 		"requirements": [{"type": "talk_to_boss", "completed": false}],
 		"reward_claimed": false
 	},
 	2: {
-		"name": "Visit HR",
+		"name": "Q2 Visit HR",
 		"requirements": [
 			{"type": "exit_boss", "completed": false},
 			{"type": "enter_hr", "completed": false}
@@ -32,18 +32,18 @@ var quests = {
 		"reward_claimed": false
 	},
 	3: {
-		"name": "Complete HR paperwork",
+		"name": "Q3 Complete HR paperwork",
 		"requirements": [
 			{"type": "talk_hr", "completed": false},
-			{"type": "talk_boss_fulltime", "completed": false}
+			{"type": "talk_to_boss", "completed": false}
 		],
 		"reward_claimed": false
 	},
 	4: {
-		"name": "Maintenance Overview",
+		"name": "Q4 Maintenance Overview",
 		"requirements": [
-			{"type": "talk_to_boss_maint", "completed": false},
-			{"type": "exit_boss_for_maint", "completed": false},
+			{"type": "talk_to_boss", "completed": false},
+			{"type": "exit_boss", "completed": false},
 			{"type": "enter_elevator", "completed": false},
 			{"type": "arrive_floor_minus1", "completed": false},
 			{"type": "enter_maint_room", "completed": false},
@@ -53,20 +53,20 @@ var quests = {
 	},
 	5: {
 		"id": 5,
-		"name": "Grid Overview",
+		"name": "Q5 Grid Overview",
 		"requirements": [
 			{"type": "talk_to_boss", "completed": false},           # 0
 			{"type": "enter_elevator", "completed": false},    # 1
 			{"type": "arrive_grid_floor", "completed": false},    # 2
 			{"type": "enter_grid_room", "completed": false},        # 3
 			{"type": "talk_to_grid_navigator", "completed": false}, # 4
-			{"type": "return_to_boss_grid", "completed": false}     # 5
+			{"type": "talk_to_boss", "completed": false}     # 5
 		],
 		"reward_claimed": false,
 	},
 	6: {
 		"id": 6,
-		"name": "Hiring and Assignment",
+		"name": "Q6 Hiring and Assignment",
 		"requirements": [
 			{"type": "talk_to_boss", "completed": false},            # 0
 			{"type": "talk_to_hr", "completed": false},              # 1
@@ -79,7 +79,7 @@ var quests = {
 	},
 	7: {
 		"id": 7,
-		"name": "New Day",
+		"name": "Q7 New Day",
 		"requirements": [
 			{"type": "talk_to_boss", "completed": false},          # 0
 			{"type": "new_day", "completed": false},          # 1
@@ -89,7 +89,7 @@ var quests = {
 		},
 	8: {
 		"id": 8,
-		"name": "Floor Inspection & Repairs",
+		"name": "Q8 Floor Inspection & Repairs",
 		"requirements": [
 			{"type": "talk_to_boss", "completed": false},          # 0
 			{"type": "talk_maint_lead", "completed": false},          # 1
@@ -98,7 +98,7 @@ var quests = {
 		},
 	9: {
 		"id": 9,
-		"name": "Floor1 Inspection",
+		"name": "Q9 Floor1 Inspection",
 		"requirements": [
 			{"type": "talk_maint_lead", "completed": false},          # 0
 			{"type": "enter_floor1", "completed": false},        	  # 1
@@ -112,7 +112,7 @@ var quests = {
 	},
 	10: {
 		"id": 10,
-		"name": "Floor assignments",
+		"name": "Q10 Floor assignments",
 		"requirements": [
 			{"type": "talk_maint_lead", "completed": false},          # 0
 			{"type": "floor1_assignment", "completed": false},        # 1
@@ -193,28 +193,40 @@ func player_walked_to_trigger():
 # Reuse existing function
 func player_talked_to_boss():
 	if current_quest_id == 1:
-		complete_requirement(1, 0)  # Quest2
+		complete_requirement(1, 0)
+	elif current_quest_id == 3:
+		complete_requirement(3, 1)
 	elif current_quest_id == 4:
-		# Task 0 is already handled
-		complete_requirement(4, 0)  # Quest4 first task
-		# ✅ New: also check task 4 (requirement index 3)
-		if not quests[4]["requirements"][3]["completed"]:
-			complete_requirement(4, 3)  # Quest4 task 4
+		complete_requirement(4, 0)
 	elif current_quest_id == 5:
-		complete_requirement(5, 0)  # Quest5
+		if not quests[5]["requirements"][0]["completed"]:
+			complete_requirement(5, 0)
+		elif quests[5]["requirements"][0]["completed"] and not quests[5]["requirements"][5]["completed"]:
+			complete_requirement(5, 5)
 	elif current_quest_id == 6:
-		complete_requirement(6, 0)  # Quest6
+		complete_requirement(6, 0)
 	elif current_quest_id == 7:
-		# First talk = requirement 0
 		if not quests[7]["requirements"][0]["completed"]:
 			complete_requirement(7, 0)
-		# Second talk (after new day) = requirement 2
 		elif quests[7]["requirements"][1]["completed"] and not quests[7]["requirements"][2]["completed"]:
 			complete_requirement(7, 2)
 	elif current_quest_id == 8:
 		complete_requirement(8, 0)
+	elif current_quest_id == 10:
+		# Only complete requirement 4 (talk_to_boss) if requirements 0-3 are done
+		var reqs = quests[10]["requirements"]
+		if reqs[0]["completed"] and reqs[1]["completed"] and reqs[2]["completed"] and reqs[3]["completed"]:
+			complete_requirement(10, 4)
 
-		
+
+
+func player_talked_hr():
+	if current_quest_id == 3:
+		complete_requirement(3, 0)
+	elif current_quest_id == 6:
+		if not quests[6]["requirements"][1]["completed"]:
+			complete_requirement(6, 1)
+
 
 func player_talked_maint_lead():
 	match current_quest_id:
@@ -266,13 +278,6 @@ func player_entered_hr():
 	if current_quest_id == 2:
 		complete_requirement(2, 1)
 
-func player_talked_hr():
-	if current_quest_id == 3:
-		complete_requirement(3, 0)
-
-func player_talked_boss_fulltime():
-	if current_quest_id == 3:
-		complete_requirement(3, 1)
 
 func enter_maint_room():
 	complete_requirement(4, 4)  # Quest 4, requirement index 4 ("enter_maint_room")		
@@ -379,6 +384,13 @@ func assign_floor1_type(floor_type: String):
 		# Mark requirement complete
 		if not quests[10]["requirements"][1]["completed"]:
 			complete_requirement(10, 1)
+			
+
+func open_floor_management():
+	if current_quest_id == 10:
+		if not quests[10]["requirements"][3]["completed"]:
+			complete_requirement(10, 3)
+
 
 # ---------------------------
 # Rewards

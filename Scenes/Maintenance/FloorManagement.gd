@@ -13,6 +13,9 @@ var EmployeeAvatar = preload("res://EmployeeAvatar.tscn")
 
 
 func _ready():
+		# Flag Quest10 requirement 3 as done immediately
+	if QuestManager.current_quest_id == 10:
+		QuestManager.open_floor_management()
 	close_requested.connect(_on_close_requested)
 	popup_centered_ratio(0.8)
 	populate_floor_dropdown()

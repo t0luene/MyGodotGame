@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://7amhdqr48s3b"]
+
+[ext_resource type="Script" uid="uid://boy1v4toeuov1" path="res://Scenes/UI/VirtualJoystick.gd" id="1_t71nj"]
+[ext_resource type="Texture2D" uid="uid://g2fcu3068heu" path="res://Assets/UI/Base.png" id="2_7taa8"]
+[ext_resource type="Texture2D" uid="uid://cna512lorcul8" path="res://Assets/UI/Stick.png" id="3_t1b8g"]
+
+[node name="VirtualJoystick" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(50, 50)
+script = ExtResource("1_t71nj")
+
+[node name="Base" type="TextureRect" parent="."]
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 40.0
+pivot_offset = Vector2(50, 50)
+texture = ExtResource("2_7taa8")
+
+[node name="Stick" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 100.0
+offset_bottom = 100.0
+scale = Vector2(0.7, 0.7)
+pivot_offset = Vector2(50, 50)
+texture = ExtResource("3_t1b8g")

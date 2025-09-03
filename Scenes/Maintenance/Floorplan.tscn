@@ -4,9 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://djndrtbre5qli" path="res://Assets/Tower.png" id="2_3x5gf"]
 [ext_resource type="PackedScene" uid="uid://c5dsfyg20elyc" path="res://Scenes/Shared/FloorPlanEditor.tscn" id="3_3x5gf"]
 
-[node name="Window" type="Window"]
+[node name="Window" type="Popup"]
 position = Vector2i(0, 36)
 size = Vector2i(1000, 650)
+visible = true
 script = ExtResource("1_8kv2h")
 
 [node name="Tower" type="Control" parent="."]

@@ -3,7 +3,9 @@
 [ext_resource type="Script" uid="uid://8l45obcr4wj0" path="res://Scenes/HR/BulletinBoard.gd" id="1_6v6j6"]
 [ext_resource type="Texture2D" uid="uid://iadsopwf7pby" path="res://Assets/Bulletinboard.png" id="2_jctl4"]
 
-[node name="BulletinBoard" type="Window"]
+[node name="BulletinBoard" type="Popup"]
+size = Vector2i(1152, 648)
+visible = true
 script = ExtResource("1_6v6j6")
 
 [node name="TextureRect" type="TextureRect" parent="."]

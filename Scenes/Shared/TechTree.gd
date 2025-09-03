@@ -1,4 +1,4 @@
-extends Window
+extends Popup
 
 @export var node_scene: PackedScene = preload("res://Scenes/Shared/Node.tscn")
 @export var horizontal_spacing: int = 200

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://c8oqj8ka14uk7"]
+[gd_scene load_steps=6 format=3 uid="uid://c8oqj8ka14uk7"]
 
 [ext_resource type="Script" uid="uid://cqcfd85by31ia" path="res://Scenes/Shared/HUD.gd" id="1_gmkcw"]
 [ext_resource type="PackedScene" uid="uid://ba24dom3agjpy" path="res://Scenes/Shared/Dialogue.tscn" id="1_ixc3q"]
 [ext_resource type="PackedScene" uid="uid://b8vp0njl5yov7" path="res://ChecklistUI.tscn" id="2_gmkcw"]
 [ext_resource type="PackedScene" uid="uid://bnpj5hc2k5m0j" path="res://Scenes/Shared/RewardWindow.tscn" id="3_1tp3p"]
+[ext_resource type="PackedScene" uid="uid://7amhdqr48s3b" path="res://Scenes/UI/VirtualJoystick.tscn" id="5_gmkcw"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -47,3 +48,14 @@ offset_top = 89.0
 offset_right = 1042.0
 offset_bottom = 112.0
 text = "Energy"
+
+[node name="VirtualJoystick" parent="CanvasLayer" groups=["joystick"] instance=ExtResource("5_gmkcw")]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+offset_left = -105.0
+offset_top = -105.0
+offset_right = -105.0
+offset_bottom = -105.0
+grow_horizontal = 0
+grow_vertical = 0

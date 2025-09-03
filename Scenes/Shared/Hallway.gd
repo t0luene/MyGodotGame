@@ -60,6 +60,10 @@ func _generate_doors() -> void:
 		child.queue_free()
 	print("🧹 Cleared old doors")
 
+	# Check floor state once
+	var floor_data = Global.building_floors[floor_index]
+	var is_ready = floor_data.has("state") and floor_data["state"] == Global.FloorState.READY
+
 	for i in range(connected_rooms.size()):
 		var room_path: String = connected_rooms[i]
 		print("➡ Creating door for:", room_path)
@@ -77,14 +81,28 @@ func _generate_doors() -> void:
 		else:
 			push_warning("⚠ Door placeholder '%s' not found!" % placeholder_name)
 
+		# 🔹 Assign textures based on index + state
+		var sprite = door_instance.get_node_or_null("Sprite2D")
+		if sprite:
+			if is_ready:
+				# READY → use DoorA1 set
+				if i <= 2:  # doors 1–3
+					sprite.texture = preload("res://Assets/Floors/DoorA1.png")
+				elif i >= 3 and i <= 6:  # doors 4–7
+					sprite.texture = preload("res://Assets/Floors/DoorABack1.png")
+			else:
+				# NOT READY → default set
+				if i <= 2:  # doors 1–3
+					sprite.texture = preload("res://Assets/Floors/DoorA.png")  # your normal door
+				elif i >= 3 and i <= 6:  # doors 4–7
+					sprite.texture = preload("res://Assets/Floors/DoorABack.png")
+
 		door_instance.pressed.connect(func():
 			print("📢 Door pressed signal received for:", room_path)
 			_on_door_pressed(room_path))
-
 	# Now update background once
 	_update_background()
 	
-
 # -------------------------
 # Setup hallway with a list of rooms
 # -------------------------
@@ -103,10 +121,21 @@ func setup_hallway(rooms: Array) -> void:
 # Update background based on doors
 # -------------------------
 func _update_background() -> void:
-	print("🖼 Updating background for door count:", connected_rooms.size())
-	match connected_rooms.size():
-		1,2,3,4,5,6,7:
-			$Background.texture = preload("res://Assets/Rooms/Hallway2.png")
+	print("🖼 Updating background for floor_index:", floor_index)
+
+	if floor_index < 0 or floor_index >= Global.building_floors.size():
+		push_error("⚠ Invalid floor_index in _update_background: %d" % floor_index)
+		return
+
+	var floor_data = Global.building_floors[floor_index]
+
+	# 🔹 Change background if the floor is READY
+	if floor_data["state"] == Global.FloorState.READY:
+		$Background.texture = preload("res://Assets/Floors/HallwayB1.png")
+	else:
+		# default hallway background
+		$Background.texture = preload("res://Assets/Floors/HallwayB.png")
+
 			
 #-----ROOMS------
 
@@ -190,6 +219,18 @@ func _switch_to_room(room_instance: Node2D):
 		current.queue_free()
 	get_tree().root.add_child(room_instance)
 	get_tree().current_scene = room_instance
+
+	# 🔹 After switching, update RoomA background if needed
+	if room_instance.scene_file_path.ends_with("RoomA.tscn"):
+		var floor_data = Global.building_floors[floor_index]
+		if floor_data.has("state") and floor_data["state"] == Global.FloorState.READY:
+			var bg_sprite = room_instance.get_node_or_null("Background")
+			if bg_sprite:
+				bg_sprite.texture = preload("res://Assets/Floors/RoomA1.png")
+				print("🖼 Changed RoomA background to RoomA1.png (READY)")
+			else:
+				push_warning("⚠ RoomA has no Background node")
+
 
 # -------------------------
 # Crew stairs button

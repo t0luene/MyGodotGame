@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://clbq2elccjila" path="res://Scenes/Maintenance/Department.gd" id="1_smim0"]
 [ext_resource type="Texture2D" uid="uid://duyhq8lxps1ck" path="res://Assets/Floor_Zen.png" id="2_upbqj"]
 
-[node name="Window" type="Window"]
+[node name="Window" type="Popup"]
 position = Vector2i(0, 36)
+visible = true
 script = ExtResource("1_smim0")
 
 [node name="Control" type="Control" parent="."]

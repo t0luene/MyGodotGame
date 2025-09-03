@@ -14,6 +14,8 @@ var current_index: int = 0
 @onready var choices_container: VBoxContainer = get_node_or_null("ChoicesContainer")
 @onready var choice1_button: Button = get_node_or_null("ChoicesContainer/Choice1Button")
 @onready var choice2_button: Button = get_node_or_null("ChoicesContainer/Choice2Button")
+@onready var line_sound_player: AudioStreamPlayer = $AcSpeach1
+
 
 var choice1_action: String = ""
 var choice2_action: String = ""
@@ -60,7 +62,10 @@ func _show_line() -> void:
 		if next_button: next_button.visible = true
 		if choices_container: choices_container.visible = false
 		if portrait: portrait.texture = line.get("portrait", null)
-
+		
+		# Play dialogue sound
+		if line_sound_player:
+			line_sound_player.play()
 
 func _on_next_pressed() -> void:
 	current_index += 1

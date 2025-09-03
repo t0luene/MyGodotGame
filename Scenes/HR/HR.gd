@@ -12,6 +12,9 @@ var selected = Global.HR_state["selected"]
 
 # ---------- Dialogue map ----------
 var quest_dialogues = {
+	3: {0: [   # Quest3 talk_hr
+		{"speaker": "HR Lady", "text": "Hello! Let's get your paperwork started."}   # placeholder
+	]},
 	4: {0: [
 		{"speaker": "HR", "text": "All your paperwork is done!"}
 	]},
@@ -20,6 +23,7 @@ var quest_dialogues = {
 		{"speaker": "HR Lady", "text": "Click the Hiring icon to hire employees and expand your team."}
 	]}
 }
+
 
 func _ready():
 	# Quest4 enter HR
@@ -199,9 +203,22 @@ func _on_interact_pressed():
 	var quest_id = QuestManager.current_quest_id
 	var req_index = QuestManager.get_current_requirement_index()
 
-	# Quest-specific dialogues
-	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
+	# ---------- Automatically complete 'talk_hr' requirement ----------
+	if quest_id == 6:
+		var talk_hr_index = 1
+		if not QuestManager.quests[6]["requirements"][talk_hr_index]["completed"]:
+			QuestManager.complete_requirement(6, talk_hr_index)
+			print("Quest6: talk_to_hr done")
+	else:
+		if QuestManager.quests.has(quest_id):
+			var requirements = QuestManager.quests[quest_id].get("requirements", [])
+			for i in range(requirements.size()):
+				if requirements[i].get("type") == "talk_hr" and not requirements[i].get("completed", false):
+					QuestManager.complete_requirement(quest_id, i)
+					print("Quest%d: talk_to_hr done" % quest_id)
 
+	# ---------- Trigger dialogue for this quest step ----------
+	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
 	if dialogue_lines.size() > 0:
 		var dialogue_node = get_node_or_null("/root/HUD/CanvasLayer/Dialogue")
 		if dialogue_node:
@@ -215,28 +232,16 @@ func _on_interact_pressed():
 		else:
 			push_error("Dialogue node not found!")
 
-	# Quest requirement completions
-	if quest_id == 4:
-		if not QuestManager.quests[4]["requirements"][0]["completed"]:
-			QuestManager.complete_requirement(4, 0)
-			print("Quest4: talk_to_hr done")
-
+	# ---------- Quest6 specific logic ----------
 	if quest_id == 6:
-		if not QuestManager.quests[6]["requirements"][1]["completed"]:
-			QuestManager.complete_requirement(6, 1)
-			print("Quest6: talk_to_hr done")
-
-		# Enable only Hiring at first
 		_set_interactable($HiringImage, true, true)
 		selected["hiring"] = true
 		Global.HR_state.locked_images["hiring"] = false
 
-		# Keep others locked until progression finishes
 		_set_interactable($DepartmentImage, false)
 		_set_interactable($StaffImage, false)
 		_set_interactable($BulletinImage, false)
 		_set_interactable($TTImage, false)
 
-		# If Quest6 already complete when talking (edge case), unlock all
 		if _is_quest_completed(6):
 			unlock_all_images()

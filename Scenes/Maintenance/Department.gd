@@ -1,4 +1,4 @@
-extends Window
+extends Popup
 
 @export var max_capacity: int = 6
 @onready var floor_image: TextureRect = $Control/ManagePanel/LeftPanel/FloorVisual

@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://b0m6pf5gq6wyt"]
 
 [ext_resource type="Script" uid="uid://c3fswnoow6bgu" path="res://Scenes/Rooms/Hallway-1.gd" id="1_w8q1m"]
-[ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Rooms/Hallway2.png" id="2_m0g7n"]
+[ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Floors/HallwayB.png" id="2_m0g7n"]
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_v4v0d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_01lhd"]

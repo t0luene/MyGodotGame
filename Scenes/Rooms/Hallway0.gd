@@ -10,15 +10,22 @@ var player: Node2D = null
 
 func _ready():
 	if QuestManager.current_quest_id == 2:
-		# Task 1 = enter_hr
+		# Task 0 = enter_hr
 		QuestManager.complete_requirement(2, 0)
 		print("✅ Quest 2 Task 'enter_hr' complete")
+		
+	if QuestManager.current_quest_id == 4:
+		# Task 1 = exit_boss
+		QuestManager.complete_requirement(4, 1)
+		print("✅ Quest 4 Task 'exit_boss' complete")
+
 	hr_door.body_entered.connect(func(body):
 		_on_entrance_entered(body, "res://Scenes/HR/HR.tscn")
 	)
 	boss_door.body_entered.connect(func(body):
 		_on_entrance_entered(body, "res://Scenes/Boss/NEWBoss.tscn")
 	)
+	
 	player = get_parent().get_node_or_null("Player")
 	if player:
 		player.global_position = spawn.global_position
@@ -28,6 +35,8 @@ func _ready():
 	elevator_trigger.body_entered.connect(_on_elevator_triggered)
 	elevator_trigger.visible = false
 	elevator_trigger.monitoring = false
+
+
 
 func _process(_delta):
 	elevator_trigger.visible = true

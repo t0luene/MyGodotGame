@@ -54,14 +54,25 @@ var quest_dialogues = {
 			{"speaker": "Boss", "text": "Hello! I need you to walk to that point over there."},
 			{"speaker": "Player", "text": "Got it!"}
 		]},
-	4: {0: [
+	3: {0: [
+			{"speaker": "Boss", "text": "Hey! Please review your tasks for today."}
+		]},
+	4: {
+		0: [
 			{"speaker": "Boss", "text": "Maintenance is acting up. Please go help them."},
 			{"speaker": "Player", "text": "On it!"}
-		]},
-	5: {0: [
+		]
+	},
+	5: {
+		0: [
 			{"speaker": "Boss", "text": "Great work so far! Now I want you to visit the Grid room in floor -2."},
 			{"speaker": "Boss", "text": "Talk to the Navigator there and learn everything you need."}
-		]},
+		],
+		5: [
+			{"speaker": "Boss", "text": "Now that you returned from the Grid, let's continue your tasks."},
+			{"speaker": "Player", "text": "Understood!"}
+		]
+	},
 	6: {0: [
 			{"speaker": "Boss", "text": "Great work so far! Now I want you to visit the Grid room on floor -2."},
 			{"speaker": "Boss", "text": "Talk to the Navigator there and learn everything you need."}
@@ -71,7 +82,7 @@ var quest_dialogues = {
 			{"speaker": "Boss", "text": "Ah, it's time to start a new work day. Are you ready?"},
 			{"speaker": "Player", "text": "Yes, let's go!"}
 		],
-		1: [],  # no dialogue, step happens automatically
+		1: [],  
 		2: [
 			{"speaker": "Boss", "text": "It's a new day! Let's make it productive."},
 			{"speaker": "Player", "text": "On it!"}
@@ -82,7 +93,7 @@ var quest_dialogues = {
 			{"speaker": "Player", "text": "Got it!"}
 		]},
 	10: {
-		4: [  # Task 4 dialogue
+		4: [
 			{"speaker": "Boss", "text": "Great! Now that you learned everything, you can now inspect floors, hire employees, assign employees and help our business grow!"},
 			{"speaker": "Player", "text": "Yes sir..."},
 			{"speaker": "Boss", "text": "Well, what are you waiting for? Whenever you are ready, start the next business day!"}
@@ -90,30 +101,43 @@ var quest_dialogues = {
 	}
 }
 
-
-
 func _on_interact_pressed():
 	print("Starting dialogue with Boss")
 
 	var quest_id = QuestManager.current_quest_id
 	var req_index = QuestManager.get_current_requirement_index() # first incomplete requirement
 
-	# Handle Quest7 automatic step for new day
+	# If all requirements complete, fallback to 0 (or skip dialogue)
+	if req_index == -1:
+		req_index = 0
+
+	# ---------- Quest7 automatic step for new day ----------
 	if quest_id == 7 and req_index == 1:
 		QuestManager.quest7_new_day()
 		return
 
-	# Automatically complete "talk_to_boss" requirements if the current step is that type
-	var current_req = QuestManager.quests[quest_id]["requirements"][req_index]
-	if current_req["type"] == "talk_to_boss":
-		QuestManager.player_talked_to_boss()
+	# ---------- Automatically complete the first unfinished 'talk_to_boss' requirement ----------
+	if QuestManager.quests.has(quest_id):
+		var requirements = QuestManager.quests[quest_id].get("requirements", [])
+		for i in range(requirements.size()):
+			if requirements[i].get("type") == "talk_to_boss" and not requirements[i].get("completed", false):
+				# Complete normally
+				QuestManager.player_talked_to_boss()
+				print("Quest%d: talk_to_boss requirement %d done" % [quest_id, i])
+				break  # stop after completing the first unfinished one
 
-		# ✅ New: For Quest10, also complete task 4 (requirement index 4)
-		if quest_id == 10 and not QuestManager.quests[10]["requirements"][4]["completed"]:
-			QuestManager.complete_requirement(10, 4)
+	# ---------- Quest10 special: open Floor Management counts as task 4 ----------
+	if quest_id == 10:
+		if not QuestManager.quests[10]["requirements"][3]["completed"]:
+			QuestManager.complete_requirement(10, 3)
+			print("Quest10: Floor Management task (requirement 4) completed")
 
-	# Fetch dialogue lines from our quest_dialogues map
+	# ---------- Trigger dialogue for this quest step ----------
 	var dialogue_lines = quest_dialogues.get(quest_id, {}).get(req_index, [])
-	if dialogue_lines.size() > 0:
-		var dialogue = HUD.get_node("CanvasLayer/Dialogue")
-		dialogue.start(dialogue_lines)
+
+	var dialogue_node = HUD.get_node("CanvasLayer/Dialogue")
+	if dialogue_lines.size() > 0 and dialogue_node:
+		dialogue_node.start(dialogue_lines)
+	elif dialogue_node:
+		# fallback dialogue
+		dialogue_node.start([{"speaker": "Boss", "text": "Hello there! Let's get started."}])

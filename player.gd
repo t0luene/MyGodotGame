@@ -1,26 +1,19 @@
 extends CharacterBody2D
 
-@export var move_speed := 350.0
+@export var move_speed := 250.0
 @onready var anim := $AnimatedSprite2D  # Update path if needed
 @export var allow_vertical_movement: bool = true
 @export var player_portrait: Texture2D
 
 var can_move := true
-var target_position: Vector2 = Vector2.ZERO
-var moving: bool = false
+var joystick: Node = null  # will store reference
 
 func _ready():
 	if has_node("Camera2D"):
 		$Camera2D.make_current()
 
-func _unhandled_input(event: InputEvent) -> void:
-	# Detect screen taps for mobile
-	if event is InputEventScreenTouch and event.pressed:
-		set_target_position(event.position)
-
-func set_target_position(pos: Vector2) -> void:
-	target_position = pos
-	moving = true
+	# Find joystick if it exists
+	joystick = get_tree().get_first_node_in_group("joystick")
 
 func _physics_process(delta):
 	if not can_move:
@@ -34,15 +27,9 @@ func _physics_process(delta):
 				anim.play("idle")
 		return
 
-	# --- Mobile Tap-to-Move ---
-	if moving:
-		var direction = (target_position - global_position)
-		if direction.length() > 5:
-			velocity = direction.normalized() * move_speed
-		else:
-			velocity = Vector2.ZERO
-			moving = false
-
+	# --- Mobile Virtual Joystick ---
+	if joystick and joystick.direction.length() > 0.1:
+		velocity = joystick.direction.normalized() * move_speed
 		move_and_slide()
 		_update_animation()
 		return

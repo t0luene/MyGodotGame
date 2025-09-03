@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bi1v1ap66ydn1"]
 
 [ext_resource type="Script" uid="uid://clnvhnhiy3po6" path="res://Scenes/Shared/Hallway.gd" id="1_5wng4"]
-[ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Rooms/Hallway2.png" id="2_m0ahj"]
+[ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Floors/HallwayB.png" id="2_m0ahj"]
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_k78d8"]
 
 [node name="Node2D" type="Node2D"]
@@ -37,10 +37,10 @@ offset_bottom = 628.0
 text = "Inspect Elevator"
 
 [node name="CrewStairsButton" type="Button" parent="UI"]
-offset_left = 124.0
-offset_top = 120.0
-offset_right = 234.0
-offset_bottom = 151.0
+offset_left = 190.0
+offset_top = 109.0
+offset_right = 300.0
+offset_bottom = 140.0
 text = "Crew Stairs"
 
 [node name="Label" type="Label" parent="."]
@@ -56,21 +56,22 @@ position = Vector2(466, 392)
 [node name="DoorPositions" type="Node2D" parent="."]
 
 [node name="Room1Pos" type="Marker2D" parent="DoorPositions"]
-position = Vector2(816, 353)
+position = Vector2(794, 344)
 
 [node name="Room2Pos" type="Marker2D" parent="DoorPositions"]
-position = Vector2(532, 219)
+position = Vector2(511, 202)
 
 [node name="Room3Pos" type="Marker2D" parent="DoorPositions"]
-position = Vector2(336, 117)
+position = Vector2(321, 108)
 
 [node name="Room4Pos" type="Marker2D" parent="DoorPositions"]
-position = Vector2(647, 546)
+position = Vector2(108, 267)
 
 [node name="Room5Pos" type="Marker2D" parent="DoorPositions"]
-position = Vector2(399, 408)
+position = Vector2(321, 377)
 
 [node name="Room6Pos" type="Marker2D" parent="DoorPositions"]
-position = Vector2(98, 275)
+position = Vector2(530, 482)
 
 [node name="Room7Pos" type="Marker2D" parent="DoorPositions"]
+position = Vector2(747, 592)

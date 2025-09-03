@@ -1,7 +1,7 @@
 [gd_scene load_steps=18 format=3 uid="uid://dfxbhscpnecin"]
 
 [ext_resource type="Script" uid="uid://1op0i4v3ovn8" path="res://Scenes/Rooms/Room2.gd" id="1_56gl1"]
-[ext_resource type="Texture2D" uid="uid://cxbxp7o4356wt" path="res://Assets/Floors/Room1.png" id="2_wxkit"]
+[ext_resource type="Texture2D" uid="uid://cxbxp7o4356wt" path="res://Assets/Floors/RoomA.png" id="2_wxkit"]
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_nmtq4"]
 [ext_resource type="Script" uid="uid://d2wd6qefausdd" path="res://Box.gd" id="8_on84k"]
 [ext_resource type="Shader" uid="uid://d2j2u4n6ve7oc" path="res://PropOutlineAndInsideGlow.gdshader" id="10_k4lmf"]
