@@ -5,6 +5,8 @@ extends Node2D
 @onready var entrance2: Area2D = $Entrance2
 @onready var checklist_trigger: Area2D = $ChecklistTrigger
 @onready var elevator_trigger: Area2D = $ElevatorTrigger
+@export var floor_index: int = 121  # Basement 2
+
 
 func _ready():
 	print("Hello from Hallway-2, parent is: ", get_parent())

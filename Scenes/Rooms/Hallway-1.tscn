@@ -1,8 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://b0m6pf5gq6wyt"]
+[gd_scene load_steps=10 format=3 uid="uid://b0m6pf5gq6wyt"]
 
 [ext_resource type="Script" uid="uid://c3fswnoow6bgu" path="res://Scenes/Rooms/Hallway-1.gd" id="1_w8q1m"]
 [ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Floors/HallwayB.png" id="2_m0g7n"]
+[ext_resource type="Texture2D" uid="uid://d1u4wbqvj6g38" path="res://Assets/Floors/DoorA.png" id="3_61mrv"]
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_v4v0d"]
+[ext_resource type="Texture2D" uid="uid://f15jjw8i3fa" path="res://Assets/Floors/ElevatorDoors.png" id="4_rckui"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_01lhd"]
 size = Vector2(72, 176)
@@ -14,7 +16,7 @@ size = Vector2(72, 176)
 radius = 125.196
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_53yia"]
-radius = 46.6476
+radius = 85.1469
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_w8q1m")
@@ -30,12 +32,27 @@ position = Vector2(114, -68)
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="FloorSprite/StaticBody2D"]
 polygon = PackedVector2Array(-350, -104, -426, -142, -592, -254, -788, -314, -1184, -198, -1194, 18, 420, 822, 676, 826, 1062, 648, 752, 424, 1098, 550, 1090, 860, -1200, 866, -1196, -426, -169.587, -388.699, 400, -368, 944, 112, 736, 416, 512, 304, 512, 160, 384, 96, 384, 240, -52, 38, -52, -60, -212, -146, -208, -42)
 
+[node name="DoorA" type="Sprite2D" parent="."]
+position = Vector2(809, 286)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_61mrv")
+
+[node name="DoorA2" type="Sprite2D" parent="."]
+position = Vector2(522, 146)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_61mrv")
+
+[node name="ElevatorDoors" type="Sprite2D" parent="."]
+position = Vector2(1026, 518)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_rckui")
+
 [node name="Player" parent="." groups=["player"] instance=ExtResource("3_v4v0d")]
 z_index = 20
 position = Vector2(551, 397)
 
 [node name="Entrance1" type="Area2D" parent="."]
-position = Vector2(830, 331)
+position = Vector2(843, 327)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance1"]
 position = Vector2(-20, -38)
@@ -58,7 +75,7 @@ position = Vector2(262, 194)
 shape = SubResource("CircleShape2D_vwktm")
 
 [node name="ElevatorTrigger" type="Area2D" parent="."]
-position = Vector2(995, 586)
+position = Vector2(1042, 582)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ElevatorTrigger"]
 shape = SubResource("CircleShape2D_53yia")

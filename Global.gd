@@ -303,20 +303,37 @@ func ensure_building_floors_initialized():
 	# Ensure every floor has at least 1 default room
 	for i in range(building_floors.size()):
 		var floor = building_floors[i]
+
+		# If floor is null, initialize it fresh
+		if floor == null:
+			floor = {
+				"floor_id": "floor_%d" % i,
+				"rooms": [{
+					"id": "floor_%d_room_1" % i,
+					"scene": "res://Scenes/Rooms/RoomA.tscn",
+					"row": 0,
+					"col": 0
+				}],
+				"room_ids": ["floor_%d_room_1" % i],
+				"next_room_num": 2
+			}
+			building_floors[i] = floor
+			continue
+
+		# If floor exists but has no rooms
 		if not floor.has("rooms") or floor["rooms"].size() == 0:
-			# Initialize rooms array with default room
 			floor["rooms"] = [{
 				"id": "floor_%d_room_1" % i,
 				"scene": "res://Scenes/Rooms/RoomA.tscn",
 				"row": 0,
 				"col": 0
 			}]
-			# Initialize room_ids
 			floor["room_ids"] = ["floor_%d_room_1" % i]
-			# Ensure floor_id exists
 			if not floor.has("floor_id"):
 				floor["floor_id"] = "floor_%d" % i
+
 		building_floors[i] = floor
+
 
 
 func set_floor(floor_name: String):
@@ -327,6 +344,7 @@ func init_building_floors(count: int = 13):
 	if building_floors.size() > 0:
 		return
 
+	# Normal above-ground floors
 	for i in range(count):
 		var scene_path := ""
 		var label_text := ""
@@ -334,15 +352,13 @@ func init_building_floors(count: int = 13):
 
 		match i:
 			0:
-				scene_path = "res://Scenes/Floors/Floor1.tscn"
-				label_text = "Floor 1"
-				state_val = FloorState.AVAILABLE
-			1:
-				scene_path = "res://Scenes/Floors/Floor2.tscn"
-				label_text = "Floor 2"
+				scene_path = "res://Scenes/Floors/Floor0.tscn"
+				label_text = "Floor 0"
+				state_val = FloorState.READY
 			_:
-				scene_path = "res://Scenes/Floors/Floor%d.tscn" % (i + 1)
-				label_text = "Floor %d" % (i + 1)
+				scene_path = "res://Scenes/Floors/Floor%d.tscn" % i
+				label_text = "Floor %d" % i
+
 
 		var floor := {
 			"scene": scene_path,
@@ -356,6 +372,28 @@ func init_building_floors(count: int = 13):
 			floor["assigned_employee_indices"].append(null)
 
 		building_floors.append(floor)
+
+	# --- Add Basement floors at indices 120 and 121 ---
+	building_floors.resize(122)  # Make sure array is big enough
+
+	building_floors[120] = {
+		"scene": "res://Scenes/Floors/Basement0.tscn",
+		"label": "Basement 1",
+		"state": FloorState.LOCKED,
+		"purpose": "",
+		"capacity": 3,
+		"assigned_employee_indices": [null, null, null]
+	}
+
+	building_floors[121] = {
+		"scene": "res://Scenes/Floors/Basement1.tscn",
+		"label": "Basement 2",
+		"state": FloorState.LOCKED,
+		"purpose": "",
+		"capacity": 3,
+		"assigned_employee_indices": [null, null, null]
+	}
+
 
 # --------------------------- Hiring Capacity 🧾 ---------------------------
 var hiring_window: Window = null

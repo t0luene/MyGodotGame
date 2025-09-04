@@ -72,11 +72,14 @@ func _on_travel_button_pressed() -> void:
 		print("Travel button pressed -> floor not ready:", selected_floor_index)
 		return
 
-
 	print("Travel button pressed -> traveling to floor_index:", selected_floor_index)
 
-	# Use your existing hallway system
-	var scene_path = "res://Scenes/Shared/Hallway.tscn"
+	var scene_path: String
+	if selected_floor_index == 0:
+		scene_path = "res://Scenes/Rooms/Hallway0.tscn"
+	else:
+		scene_path = "res://Scenes/Shared/Hallway.tscn"
+
 	var hallway_scene = load(scene_path)
 	if hallway_scene == null:
 		push_error("❌ Failed to load hallway scene for travel: %s" % scene_path)
@@ -87,6 +90,7 @@ func _on_travel_button_pressed() -> void:
 
 	# Replace current scene
 	get_tree().change_scene_to_packed(hallway_scene)
+
 
 
 
@@ -130,7 +134,7 @@ func clear_children(container: Node) -> void:
 
 func update_floor_ui():
 	for i in range(Global.building_floors.size()):
-		var btn_name = "Floor%d" % (i + 1)
+		var btn_name = "Floor%d" % i
 		var btn = floors_container.get_node_or_null(btn_name)
 		if btn == null:
 			push_error("⚠ Missing button: %s" % btn_name)
@@ -138,25 +142,41 @@ func update_floor_ui():
 
 		var floor = Global.building_floors[i]
 
-		match floor["state"]:
-			Global.FloorState.LOCKED:
-				btn.text = "🔒 Floor %d – Unlock $%d" % [i + 1, FLOOR_UNLOCK_COST]
+		# Ensure floor always has a state
+		if not floor.has("state"):
+			if i == 0:
+				floor["state"] = Global.FloorState.READY
+			else:
+				floor["state"] = Global.FloorState.LOCKED
+			Global.building_floors[i] = floor
 
-			Global.FloorState.AVAILABLE:
-				btn.text = "Floor %d – Available to Inspect" % (i + 1)
-			Global.FloorState.READY:
-				btn.text = "Floor %d – Ready (%s)" % [i + 1, floor.get("purpose", "No Purpose")]
-			Global.FloorState.ASSIGNED:
-				btn.text = "Floor %d – %s Floor" % [i + 1, floor.get("purpose", "Unknown")]
+		if i == 0:
+			btn.text = "Floor 0 – Ready (Lobby)"
+		else:
+			match floor["state"]:
+				Global.FloorState.LOCKED:
+					btn.text = "🔒 Floor %d – Unlock $%d" % [i, FLOOR_UNLOCK_COST]
+				Global.FloorState.AVAILABLE:
+					btn.text = "Floor %d – Available to Inspect" % i
+				Global.FloorState.READY:
+					btn.text = "Floor %d – Ready (%s)" % [i, floor.get("purpose", "No Purpose")]
+				Global.FloorState.ASSIGNED:
+					btn.text = "Floor %d – %s Floor" % [i, floor.get("purpose", "Unknown")]
 
 		# Connect pressed signal safely
 		if not btn.pressed.is_connected(_on_floor_button_pressed.bind(i)):
 			btn.pressed.connect(_on_floor_button_pressed.bind(i))
 
 
+
 func _on_floor_button_pressed(index):
 	selected_floor_index = index
 	var floor = Global.building_floors[index]
+
+	if index == 0:
+		# Floor0 is always ready – skip unlock/inspection
+		show_floor_assignment_options(floor, index)
+		return
 
 	match floor["state"]:
 		Global.FloorState.LOCKED:
@@ -166,15 +186,16 @@ func _on_floor_button_pressed(index):
 				Global.building_floors[index] = floor
 				update_floor_ui()
 				_disable_floor_option_buttons()
-				print("✅ Floor %d unlocked for $%d" % [index + 1, FLOOR_UNLOCK_COST])
+				print("✅ Floor %d unlocked for $%d" % [index, FLOOR_UNLOCK_COST])
 			else:
-				print("❌ Not enough money to unlock floor %d" % (index + 1))
+				print("❌ Not enough money to unlock floor %d" % index)
+
 		Global.FloorState.AVAILABLE:
 			show_floor_options(floor, index)
-		Global.FloorState.READY:
+
+		Global.FloorState.READY, Global.FloorState.ASSIGNED:
 			show_floor_assignment_options(floor, index)
-		Global.FloorState.ASSIGNED:
-			show_floor_assignment_options(floor, index)
+
 
 
 
@@ -254,17 +275,19 @@ func _on_inspection_button_pressed():
 		return
 
 	var floor = Global.building_floors[selected_floor_index]
-	if floor["state"] != Global.FloorState.AVAILABLE:
+	if floor["state"] != Global.FloorState.AVAILABLE and selected_floor_index != 0:
 		print("Floor not inspectable right now.")
 		return
 
 	var scene_path: String
 
-	# Tutorial floor logic
-	if selected_floor_index == 0:  # Floor1 tutorial
-		scene_path = "res://Scenes/Floors/Floor1.tscn"  # custom tutorial hallway
+	if selected_floor_index == 0:
+		scene_path = "res://Scenes/Rooms/Hallway0.tscn"
+		Global.current_floor_scene = "floor0_lobby"
+	elif selected_floor_index == 1:  # Floor1 tutorial
+		scene_path = "res://Scenes/Floors/Floor1.tscn"
 		Global.current_floor_scene = "floor1_tutorial"
-	else:  # Floor2 onward → dynamic hallway
+	else:
 		scene_path = "res://Scenes/Shared/Hallway.tscn"
 		Global.current_floor_scene = "floor%d" % (selected_floor_index + 1)
 
@@ -275,7 +298,6 @@ func _on_inspection_button_pressed():
 		return
 
 	Global.current_inspection_floor = selected_floor_index
-
 	get_tree().change_scene_to_packed(floor_scene)
 
 

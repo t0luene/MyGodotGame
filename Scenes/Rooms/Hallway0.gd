@@ -5,6 +5,8 @@ extends Node2D
 @onready var boss_door = $Entrance2
 @onready var spawn = $SpawnPoint
 @onready var elevator_trigger: Area2D = $ElevatorTrigger
+@export var floor_index: int = -1  # must be set in the editor or dynamically
+
 
 var player: Node2D = null
 
@@ -46,12 +48,22 @@ func _on_elevator_triggered(body):
 	if body.name != "Player":
 		return
 
+	# Use floor_index safely
+	if floor_index >= 0 and floor_index < Global.building_floors.size():
+		Global.current_floor_scene = Global.building_floors[floor_index]["scene"]
+		print("📍 Global.current_floor_scene set to:", Global.current_floor_scene)
+	else:
+		print("⚠️ Invalid floor_index! Defaulting to Floor0")
+		Global.current_floor_scene = "res://Scenes/Floors/Floor0.tscn"
+
 	# Unified elevator handling for multiple quests
 	if QuestManager.current_quest_id in [4, 5]:
 		QuestManager.player_entered_elevator()
 
+	# Small delay for fade
 	await get_tree().create_timer(0.5).timeout
 	get_tree().change_scene_to_file("res://Scenes/Shared/Elevator.tscn")
+
 
 
 

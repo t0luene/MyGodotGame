@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bi1v1ap66ydn1"]
+[gd_scene load_steps=5 format=3 uid="uid://bi1v1ap66ydn1"]
 
 [ext_resource type="Script" uid="uid://clnvhnhiy3po6" path="res://Scenes/Shared/Hallway.gd" id="1_5wng4"]
 [ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Floors/HallwayB.png" id="2_m0ahj"]
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_k78d8"]
+[ext_resource type="Texture2D" uid="uid://f15jjw8i3fa" path="res://Assets/Floors/ElevatorDoors.png" id="3_o1jiq"]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_5wng4")
@@ -14,6 +15,11 @@ texture = ExtResource("2_m0ahj")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="Background"]
 position = Vector2(114, -68)
+
+[node name="ElevatorDoors" type="Sprite2D" parent="."]
+position = Vector2(1026, 518)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_o1jiq")
 
 [node name="DoorContainer" type="Node2D" parent="."]
 

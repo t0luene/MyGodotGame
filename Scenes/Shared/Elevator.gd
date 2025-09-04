@@ -6,8 +6,8 @@ extends Control
 
 # Floors list – make sure Floor-1 path is correct
 var floors = [
-	{"scene":"res://Scenes/Floors/Floor-2.tscn", "label":"Floor -2"},
-	{"scene":"res://Scenes/Floors/Floor-1.tscn", "label":"Floor -1"},
+	{"scene":"res://Scenes/Floors/Floor-2.tscn", "label":"Floor BM2"},
+	{"scene":"res://Scenes/Floors/Floor-1.tscn", "label":"Floor BM1"},
 	{"scene":"res://Scenes/Floors/Floor0.tscn", "label":"Floor 0"},
 	{"scene":"res://Scenes/Floors/Floor1.tscn", "label":"Floor 1"},
 	{"scene":"res://Scenes/Floors/Floor2.tscn", "label":"Floor 2"},
@@ -17,20 +17,34 @@ var floors = [
 ]
 
 func _ready():
-	_setup_floors()
+	# Set the current floor first
+	if "current_floor_index" in Global and Global.current_floor_index >= 0:
+		Global.current_floor_scene = floors[Global.current_floor_index]["scene"]
+
+	print("📍 Global.current_floor_scene is:", Global.current_floor_scene)
+
+	# Defer setup to ensure OptionButton is ready
+	call_deferred("_setup_floors")
+
 	go_button.pressed.connect(_on_go_pressed)
 	close_button.pressed.connect(_on_close_pressed)
 	Fade.fade_in(0.5)
-	
+
+
 func _setup_floors():
 	floor_dropdown.clear()
+
+	print("🔹 Setting up floors. Global.current_floor_scene:", Global.current_floor_scene)
 
 	for i in range(floors.size()):
 		var f = floors[i]
 		var label = f["label"]
+
 		if f["scene"] == Global.current_floor_scene:
 			label += " (YOU ARE HERE)"
 			floor_dropdown.select(i)
+			print("✅ Marking floor as YOU ARE HERE:", label)
+
 		floor_dropdown.add_item(label)
 		floor_dropdown.set_item_text(i, label)
 
@@ -41,6 +55,8 @@ func _setup_floors():
 		floor_dropdown.add_item(label)
 		floor_dropdown.set_item_text(index, label)
 		floor_dropdown.set_item_disabled(index, true)
+
+
 
 func _on_go_pressed():
 	var selected_index = floor_dropdown.get_selected()

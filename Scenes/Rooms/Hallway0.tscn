@@ -1,8 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://y7ovugodt4bj"]
+[gd_scene load_steps=11 format=3 uid="uid://y7ovugodt4bj"]
 
 [ext_resource type="Script" uid="uid://do4fstp6jqpdi" path="res://Scenes/Rooms/Hallway0.gd" id="1_dvb7u"]
 [ext_resource type="Texture2D" uid="uid://b0tracv1kkbox" path="res://Assets/Floors/HallwayB.png" id="2_su8bj"]
 [ext_resource type="PackedScene" uid="uid://dfj46c5lerfbn" path="res://Player.tscn" id="3_dvb7u"]
+[ext_resource type="Texture2D" uid="uid://d1u4wbqvj6g38" path="res://Assets/Floors/DoorA.png" id="3_kryjx"]
+[ext_resource type="Texture2D" uid="uid://cwtvewtp6rj1n" path="res://Assets/Floors/DoorABack.png" id="4_e1fl2"]
+[ext_resource type="Texture2D" uid="uid://f15jjw8i3fa" path="res://Assets/Floors/ElevatorDoors.png" id="6_e1fl2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_01lhd"]
 size = Vector2(72, 176)
@@ -11,7 +14,7 @@ size = Vector2(72, 176)
 size = Vector2(72, 176)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_53yia"]
-radius = 46.6476
+radius = 81.1542
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_dvb7u"]
 radius = 130.863
@@ -30,6 +33,35 @@ position = Vector2(114, -68)
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="FloorSprite/StaticBody2D"]
 polygon = PackedVector2Array(-350, -104, -426, -142, -592, -254, -788, -314, -1184, -198, -1194, 18, 420, 822, 676, 826, 1062, 648, 752, 424, 1098, 550, 1090, 860, -1200, 866, -1196, -426, -169.587, -388.699, 400, -368, 944, 112, 736, 416, 512, 304, 512, 160, 384, 96, 384, 240, -52, 38, -52, -60, -212, -146, -208, -42)
 
+[node name="DoorA" type="Sprite2D" parent="."]
+position = Vector2(809, 286)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_kryjx")
+
+[node name="DoorABack" type="Sprite2D" parent="."]
+position = Vector2(483, 391)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_e1fl2")
+
+[node name="ElevatorDoors" type="Sprite2D" parent="."]
+position = Vector2(1026, 518)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("6_e1fl2")
+
+[node name="HR" type="Label" parent="."]
+offset_left = 820.0
+offset_top = 182.0
+offset_right = 860.0
+offset_bottom = 205.0
+text = "HR"
+
+[node name="Boss" type="Label" parent="."]
+offset_left = 481.0
+offset_top = 290.0
+offset_right = 521.0
+offset_bottom = 313.0
+text = "Boss"
+
 [node name="Entrance1" type="Area2D" parent="."]
 position = Vector2(845, 320)
 
@@ -38,7 +70,7 @@ position = Vector2(-20, -38)
 shape = SubResource("RectangleShape2D_01lhd")
 
 [node name="Entrance2" type="Area2D" parent="."]
-position = Vector2(541, 202)
+position = Vector2(496, 444)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Entrance2"]
 position = Vector2(-4, -48)
@@ -48,7 +80,7 @@ shape = SubResource("RectangleShape2D_vwktm")
 position = Vector2(690, 462)
 
 [node name="ElevatorTrigger" type="Area2D" parent="."]
-position = Vector2(995, 586)
+position = Vector2(1032, 578)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ElevatorTrigger"]
 shape = SubResource("CircleShape2D_53yia")
