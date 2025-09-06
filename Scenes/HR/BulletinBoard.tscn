@@ -11,13 +11,14 @@ script = ExtResource("1_6v6j6")
 [node name="TextureRect" type="TextureRect" parent="."]
 offset_right = 1152.0
 offset_bottom = 648.0
+scale = Vector2(0.8, 0.8)
 texture = ExtResource("2_jctl4")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
-offset_left = 54.0
-offset_top = 137.0
-offset_right = 754.0
-offset_bottom = 587.0
+offset_left = 27.0
+offset_top = 91.0
+offset_right = 627.0
+offset_bottom = 491.0
 
 [node name="CommentsContainer" type="VBoxContainer" parent="ScrollContainer"]
 layout_mode = 2

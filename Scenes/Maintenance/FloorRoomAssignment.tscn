@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://d0rk08lml5uwh"]
+
+[ext_resource type="Script" uid="uid://dk015tb6uaqn2" path="res://Scenes/Maintenance/FloorRoomAssignment.gd" id="1_cebnl"]
+
+[node name="FloorRoomAssignment" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cebnl")
+
+[node name="RoomLabel" type="Label" parent="."]
+layout_mode = 2
+
+[node name="EmployeeSlotsGrid" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 3
+
+[node name="slot_1" type="Button" parent="EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+text = "1"
+
+[node name="slot_2" type="Button" parent="EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+text = "2"
+
+[node name="slot_3" type="Button" parent="EmployeeSlotsGrid"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+text = "3"

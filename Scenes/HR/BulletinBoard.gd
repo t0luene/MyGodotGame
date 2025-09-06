@@ -2,7 +2,6 @@ extends Popup
 
 @onready var comments_container = $ScrollContainer/CommentsContainer
 @onready var comment_item_scene = preload("res://CommentItem.tscn")
-
 @onready var emoji_menu = $EmojiMenu
 var selected_comment_index := -1
 

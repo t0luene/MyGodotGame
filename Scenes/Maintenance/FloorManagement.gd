@@ -1,4 +1,3 @@
-# NEW SIMPLE JUST FLOOR LOGIC WORKING
 extends Popup
 
 @export var max_capacity: int = 6
@@ -31,8 +30,15 @@ func populate_floor_dropdown():
 
 	Global.ensure_building_floors_initialized()
 
-	for i in range(Global.building_floors.size()):
+	# Only loop Floor1–Floor13
+	for i in range(1, 14):
+		if i >= Global.building_floors.size():
+			continue
+
 		var floor_dict = Global.building_floors[i]
+		if not floor_dict.has("label"):
+			continue
+
 		floor_dropdown.add_item(floor_dict["label"])
 		floor_dropdown.set_item_metadata(floor_dropdown.get_item_count() - 1, i)
 		var is_ready = floor_dict.get("state", Global.FloorState.LOCKED) == Global.FloorState.READY
@@ -45,6 +51,7 @@ func populate_floor_dropdown():
 			floor_dropdown.select(i)
 			_on_floor_dropdown_selected(i)
 			break
+
 
 func _on_floor_dropdown_selected(index: int):
 	var meta = floor_dropdown.get_item_metadata(index)
@@ -142,14 +149,17 @@ func show_employee_list():
 	$Control/ScrollContainer.visible = true
 	clear_children(container)
 
-
 	var assigned_indices = Global.building_floors[current_floor_index]["assigned_employee_indices"]
 
-
 	for emp in Global.hired_employees:
-		# Skip if employee is already assigned to **any floor**
+		# Skip if employee is already assigned to **any floor 1–13**
 		var is_assigned = false
-		for floor_dict in Global.building_floors:
+		for i in range(1, 14):
+			if i >= Global.building_floors.size():
+				continue
+			var floor_dict = Global.building_floors[i]
+			if not floor_dict.has("assigned_employee_indices"):
+				continue
 			if emp.id in floor_dict["assigned_employee_indices"]:
 				is_assigned = true
 				break
@@ -166,9 +176,8 @@ func show_employee_list():
 		card.get_node("NameLabel").text = emp.name
 		card.get_node("RoleLabel").text = emp.role
 
-
-
 		container.add_child(card)
+
 
 func _on_slot_pressed(slot_index: int) -> void:
 	selected_slot_index = slot_index

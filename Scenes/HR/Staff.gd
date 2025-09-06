@@ -1,4 +1,4 @@
-extends Control
+extends Popup
 
 # Your staff data
 var staff_members = [
@@ -52,10 +52,15 @@ var selected_emp_id: int = -1
 var employee_card_scene = preload("res://EmployeeCard.tscn")  # Reuse your EmployeeCard scene
 
 func _ready():
+	close_requested.connect(_on_close_requested)
+	popup_centered_ratio(0.8)
 	description_panel.visible = false
 	fire_button.connect("pressed", Callable(self, "_on_fire_pressed"))
 	promote_button.connect("pressed", Callable(self, "_on_promote_pressed"))
 	spawn_cards()
+
+func _on_close_requested():
+	queue_free()
 
 func spawn_cards():
 	for child in cards_container.get_children():

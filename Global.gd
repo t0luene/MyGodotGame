@@ -193,28 +193,37 @@ var persistent_rooms: Dictionary = {}     # room_id -> Room instance
 
 # --- Initialize Floors with Permanent Room IDs ---
 func initialize_floor_ids():
-	while building_floors.size() < 13:
-		building_floors.append({})
+	for i in range(building_floors.size()):
+		var floor = building_floors[i]
 
-	for floor_index in range(0, 13):
-		var floor = building_floors[floor_index]
+		if floor == null:
+			floor = {
+				"floor_id": "floor_%d" % i,
+				"rooms": [{
+					"id": "floor_%d_room_1" % i,
+					"scene": "res://Scenes/Rooms/RoomA.tscn",
+					"row": 0,
+					"col": 0
+				}],
+				"room_ids": ["floor_%d_room_1" % i],
+				"next_room_num": 2,
+				"label": "Floor %d" % i   # ✅ Ensure label exists
+			}
+			building_floors[i] = floor
+			continue
 
-		if not floor.has("floor_id"):
-			floor["floor_id"] = "floor_%d" % floor_index
+		# Ensure room_ids exists
+		if not floor.has("room_ids"):
+			floor["room_ids"] = []
+			for room in floor.get("rooms", []):
+				floor["room_ids"].append(room["id"])
 
-		# Only add 1 default room if none exist
-		if not floor.has("rooms") or floor["rooms"].size() == 0:
-			var room_id = "%s_room_1" % floor["floor_id"]
-			floor["rooms"] = [{
-				"id": room_id,
-				"scene": "res://Scenes/Rooms/RoomA.tscn",
-				"row": 0,
-				"col": 0
-			}]
-			floor["room_ids"] = [room_id]
-			floor["next_room_num"] = 2
+		# ✅ Ensure every floor has a label
+		if not floor.has("label"):
+			floor["label"] = "Floor %d" % i
 
-		building_floors[floor_index] = floor
+		building_floors[i] = floor
+
 
 
 # --- Add a New Room to a Floor ---
@@ -295,16 +304,14 @@ func set_floor_state(floor_index: int, new_state: int):
 	building_floors[floor_index]["state"] = new_state
 	emit_signal("floor_state_changed", floor_index)
 
-# Global.gd
+
 func ensure_building_floors_initialized():
 	if building_floors.size() == 0:
-		init_building_floors(13)  # your total floor count
+		init_building_floors(13)  # total floor count
 
-	# Ensure every floor has at least 1 default room
 	for i in range(building_floors.size()):
 		var floor = building_floors[i]
 
-		# If floor is null, initialize it fresh
 		if floor == null:
 			floor = {
 				"floor_id": "floor_%d" % i,
@@ -315,12 +322,13 @@ func ensure_building_floors_initialized():
 					"col": 0
 				}],
 				"room_ids": ["floor_%d_room_1" % i],
-				"next_room_num": 2
+				"next_room_num": 2,
+				"label": "Floor %d" % i   # ✅ Ensure label exists
 			}
 			building_floors[i] = floor
 			continue
 
-		# If floor exists but has no rooms
+		# Ensure rooms/room_ids exist
 		if not floor.has("rooms") or floor["rooms"].size() == 0:
 			floor["rooms"] = [{
 				"id": "floor_%d_room_1" % i,
@@ -331,6 +339,10 @@ func ensure_building_floors_initialized():
 			floor["room_ids"] = ["floor_%d_room_1" % i]
 			if not floor.has("floor_id"):
 				floor["floor_id"] = "floor_%d" % i
+
+		# ✅ Ensure every floor has a label
+		if not floor.has("label"):
+			floor["label"] = "Floor %d" % i
 
 		building_floors[i] = floor
 
